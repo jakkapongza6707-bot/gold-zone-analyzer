@@ -3402,6 +3402,29 @@ if (
             }
           );
 
+        // เลื่อนหน้าจอมาหาผลวิเคราะห์ทั้งหมด
+setTimeout(() => {
+
+  const results =
+    document.getElementById("results");
+
+  if (!results)
+    return;
+
+  const y =
+    results.getBoundingClientRect().top +
+    window.pageYOffset -
+    20;
+
+  window.scrollTo({
+
+    top: y,
+
+    behavior: "smooth"
+
+  });
+
+}, 100);
       }
       catch(error) {
 
