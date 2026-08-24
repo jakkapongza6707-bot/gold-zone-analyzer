@@ -104,7 +104,7 @@
     }
 
     input,
-    textarea {
+    select {
       width: 100%;
       padding: 13px 12px;
       border-radius: 10px;
@@ -115,22 +115,14 @@
       outline: none;
     }
 
-    textarea {
-      min-height: 180px;
-      resize: vertical;
-      font-family: monospace;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
     input:focus,
-    textarea:focus {
+    select:focus {
       border-color: #d6a928;
       box-shadow: 0 0 0 3px rgba(214,169,40,.12);
     }
 
     .analyze-btn,
-    .backtest-btn {
+    #runBacktestBtn {
       width: 100%;
       padding: 16px;
       border: none;
@@ -141,10 +133,6 @@
       font-weight: 800;
       cursor: pointer;
       margin-top: 5px;
-    }
-
-    .backtest-btn {
-      margin-top: 12px;
     }
 
     #clearDataBtn {
@@ -159,58 +147,67 @@
       cursor: pointer;
     }
 
+    .file-box {
+      border: 1px dashed #555;
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+      background: #111;
+      margin-bottom: 15px;
+    }
+
+    #backtestFile {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      background: #181818;
+      border-radius: 10px;
+    }
+
+    .file-name {
+      color: #aaa;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
     .results {
       margin-top: 20px;
     }
 
-    .result-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
-    .result-count {
-      color: #888;
-      font-size: 12px;
-    }
-
-    .nearest-panel {
+    .stats-grid,
+    .analysis-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 18px;
+      grid-template-columns: repeat(2,1fr);
+      gap: 10px;
     }
 
-    .nearest-card,
-    .feature-card,
-    .stat-card {
+    .stat-card,
+    .feature-card {
       background: #151515;
       border: 1px solid #292929;
-      border-radius: 14px;
-      padding: 16px;
+      border-radius: 12px;
+      padding: 14px;
     }
 
-    .nearest-card:first-child {
-      border-left: 4px solid #43d17a;
-    }
-
-    .nearest-card:last-child {
-      border-left: 4px solid #ff5b5b;
-    }
-
-    .nearest-label,
     .feature-label {
-      font-size: 12px;
+      color: #888;
+      font-size: 10px;
       font-weight: 800;
-      color: #aaa;
-      margin-bottom: 8px;
     }
 
-    .nearest-price {
-      font-size: 25px;
+    .feature-value {
+      font-size: 18px;
       font-weight: 800;
-      color: #f2c94c;
+      margin-top: 5px;
+    }
+
+    .win {
+      color: #43d17a;
+    }
+
+    .loss {
+      color: #ff5b5b;
     }
 
     .nearest-info {
@@ -220,177 +217,22 @@
       margin-top: 6px;
     }
 
-    .feature-value {
-      font-size: 18px;
-      font-weight: 800;
-      color: #f2c94c;
-    }
-
-    .analysis-grid,
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2,1fr);
-      gap: 10px;
-    }
-
-    .stats-grid {
-      grid-template-columns: repeat(4,1fr);
-    }
-
-    .stat-card {
-      text-align: center;
-    }
-
-    .win {
-      color: #43d17a !important;
-    }
-
-    .loss {
-      color: #ff5b5b !important;
-    }
-
-    .confluence-box {
-      background: linear-gradient(
-        135deg,
-        rgba(214,169,40,.10),
-        rgba(155,124,255,.08)
-      );
-      border: 1px solid #62521f;
-      border-radius: 15px;
-      padding: 16px;
-      margin-bottom: 10px;
-    }
-
-    .confluence-title {
-      color: #f2c94c;
-      font-weight: 800;
-      font-size: 13px;
-    }
-
-    .confluence-price {
-      color: #fff;
-      font-size: 23px;
-      font-weight: 800;
-      margin-top: 7px;
-    }
-
-    .zone {
-      padding: 16px;
-      margin: 9px 0;
-      border-radius: 14px;
-      background: #151515;
-      border: 1px solid #292929;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-    }
-
-    .zone-main {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .zone-name {
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    .zone-price {
-      color: #f2c94c;
-      font-size: 21px;
-      font-weight: 800;
-      margin-top: 4px;
-    }
-
-    .zone-distance {
-      text-align: right;
-      font-size: 12px;
-      color: #999;
-      white-space: nowrap;
-    }
-
-    .above {
-      border-left: 4px solid #3fa7ff;
-    }
-
-    .below {
-      border-left: 4px solid #ff5b5b;
-    }
-
-    .strength-box {
-      margin-top: 13px;
-      padding: 12px;
-      border-radius: 11px;
-      background: #101010;
-      border: 1px solid #262626;
-    }
-
-    .strength-title {
-      color: #aaa;
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .strength-score {
-      color: #f2c94c;
-      font-size: 18px;
-      font-weight: 800;
-      margin-top: 3px;
-    }
-
-    .strength-bar {
-      width: 100%;
-      height: 7px;
-      background: #292929;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-top: 8px;
-    }
-
-    .strength-fill {
-      height: 100%;
-      background: linear-gradient(90deg,#8f701e,#f2c94c);
-      border-radius: 10px;
-    }
-
-    .why-title {
-      color: #888;
-      font-size: 10px;
-      font-weight: 800;
-      margin-top: 12px;
-    }
-
-    .why-list {
-      margin: 5px 0 0;
-      padding-left: 17px;
-      color: #aaa;
-      font-size: 11px;
-      line-height: 1.7;
-    }
-
-    .backtest-table-wrap {
-      overflow-x: auto;
-      margin-top: 15px;
-    }
-
     .backtest-table {
       width: 100%;
       border-collapse: collapse;
+      margin-top: 15px;
       font-size: 11px;
-      min-width: 700px;
     }
 
     .backtest-table th,
     .backtest-table td {
       border-bottom: 1px solid #292929;
-      padding: 9px 7px;
-      text-align: center;
+      padding: 8px 5px;
+      text-align: left;
     }
 
     .backtest-table th {
-      color: #f2c94c;
-      background: #111;
+      color: #888;
     }
 
     .footer {
@@ -401,7 +243,6 @@
     }
 
     @media(max-width:650px) {
-
       .container {
         padding: 18px 12px 40px;
       }
@@ -411,25 +252,19 @@
       }
 
       .grid,
-      .nearest-panel,
+      .stats-grid,
       .analysis-grid {
         grid-template-columns: 1fr;
       }
 
-      .stats-grid {
-        grid-template-columns: repeat(2,1fr);
-      }
-
-      .zone {
-        padding: 13px;
-      }
-
-      .zone-price {
-        font-size: 18px;
-      }
-
       .price-input {
         font-size: 30px !important;
+      }
+
+      .backtest-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
       }
     }
   </style>
@@ -462,7 +297,6 @@
       type="number"
       id="price"
       placeholder="4616"
-      step="0.01"
     >
 
   </div>
@@ -479,22 +313,38 @@
 
       <div class="field">
         <label>MA12</label>
-        <input type="number" id="d1ma12" placeholder="4418.6869">
+        <input
+          type="number"
+          id="d1ma12"
+          placeholder="4418.6869"
+        >
       </div>
 
       <div class="field">
         <label>ATR14</label>
-        <input type="number" id="d1atr" placeholder="91.657">
+        <input
+          type="number"
+          id="d1atr"
+          placeholder="91.657"
+        >
       </div>
 
       <div class="field">
         <label>SD20</label>
-        <input type="number" id="d1sd" placeholder="160.7930">
+        <input
+          type="number"
+          id="d1sd"
+          placeholder="160.7930"
+        >
       </div>
 
       <div class="field">
         <label>MA247</label>
-        <input type="number" id="d1ma247" placeholder="Optional">
+        <input
+          type="number"
+          id="d1ma247"
+          placeholder="Optional"
+        >
       </div>
 
     </div>
@@ -513,22 +363,36 @@
 
       <div class="field">
         <label>MA12</label>
-        <input type="number" id="w1ma12" placeholder="4210.2075">
+        <input
+          type="number"
+          id="w1ma12"
+          placeholder="4210.2075"
+        >
       </div>
 
       <div class="field">
         <label>ATR14</label>
-        <input type="number" id="w1atr" placeholder="226.111">
+        <input
+          type="number"
+          id="w1atr"
+          placeholder="226.111"
+        >
       </div>
 
       <div class="field">
         <label>SD20</label>
-        <input type="number" id="w1sd" placeholder="260.7582">
+        <input
+          type="number"
+          id="w1sd"
+          placeholder="260.7582"
+        >
       </div>
 
     </div>
 
   </div>
+
+  <!-- ANALYZE -->
 
   <button class="analyze-btn">
     🔍 วิเคราะห์ Gold Zones
@@ -538,35 +402,45 @@
     🧹 ล้างข้อมูลที่บันทึกไว้
   </button>
 
-  <!-- ANALYSIS -->
-
-  <div id="results"></div>
 
   <!-- BACKTEST -->
 
   <div class="panel">
 
     <div class="panel-title">
-      🧪 Backtest ระบบ
+      🧪 Backtest
     </div>
 
-    <div class="nearest-info">
-      วางข้อมูลย้อนหลังแบบ CSV ในช่องด้านล่าง
-      โดยต้องมี Date, Open, High, Low, Close
+    <div class="file-box">
+
+      <strong>
+        📁 เลือกไฟล์ข้อมูลย้อนหลัง
+      </strong>
+
+      <input
+        type="file"
+        id="backtestFile"
+        accept=".csv,text/csv"
+      >
+
+      <div
+        id="backtestFileName"
+        class="file-name"
+      >
+        ยังไม่ได้เลือกไฟล์
+      </div>
+
     </div>
 
-    <textarea
-      id="backtestData"
-      placeholder="Date,Open,High,Low,Close
-2026-08-01,4520,4550,4500,4535
-2026-08-02,4535,4580,4520,4570
-2026-08-03,4570,4600,4540,4585"
-    ></textarea>
 
-    <div class="grid" style="margin-top:12px">
+    <div class="grid">
 
       <div class="field">
-        <label>Minimum Strength</label>
+
+        <label>
+          Minimum Strength
+        </label>
+
         <input
           type="number"
           id="minStrength"
@@ -574,10 +448,16 @@
           min="0"
           max="100"
         >
+
       </div>
 
+
       <div class="field">
-        <label>Risk (R)</label>
+
+        <label>
+          Risk (R)
+        </label>
+
         <input
           type="number"
           id="riskR"
@@ -585,10 +465,16 @@
           step="0.1"
           min="0.1"
         >
+
       </div>
 
+
       <div class="field">
-        <label>Reward (R)</label>
+
+        <label>
+          Reward (R)
+        </label>
+
         <input
           type="number"
           id="rewardR"
@@ -596,20 +482,30 @@
           step="0.1"
           min="0.1"
         >
+
       </div>
 
     </div>
 
-    <button
-      class="backtest-btn"
-      id="runBacktestBtn"
-    >
-      🧪 เริ่ม Backtest
+
+    <button id="runBacktestBtn">
+      🚀 เริ่ม Backtest
     </button>
+
+
+    <div id="backtestResults"></div>
 
   </div>
 
-  <div id="backtestResults"></div>
+
+  <!-- RESULTS -->
+
+  <div id="results">
+
+    <div id="marketAnalysis"></div>
+
+  </div>
+
 
   <div class="footer">
     Gold Zone Analyzer Pro • XAUUSD Quantitative Tool
@@ -617,7 +513,120 @@
 
 </div>
 
+
 <script src="script.js?v=6"></script>
+
+<script>
+
+  const fileInput =
+    document.getElementById("backtestFile");
+
+  const fileName =
+    document.getElementById("backtestFileName");
+
+
+  fileInput.addEventListener(
+    "change",
+    function() {
+
+      if (!this.files.length) {
+
+        fileName.textContent =
+          "ยังไม่ได้เลือกไฟล์";
+
+        return;
+
+      }
+
+      fileName.textContent =
+        "ไฟล์ที่เลือก: " +
+        this.files[0].name;
+
+    }
+  );
+
+
+  document
+    .getElementById("runBacktestBtn")
+    .addEventListener(
+      "click",
+      async function() {
+
+        const file =
+          fileInput.files[0];
+
+        if (!file) {
+
+          alert(
+            "กรุณาเลือกไฟล์ CSV ก่อนครับ"
+          );
+
+          return;
+
+        }
+
+        try {
+
+          const text =
+            await file.text();
+
+
+          /*
+           * ส่งข้อมูล CSV เข้า textarea
+           * ที่ script.js เดิมต้องการ
+           */
+
+          let textarea =
+            document.getElementById(
+              "backtestData"
+            );
+
+
+          if (!textarea) {
+
+            textarea =
+              document.createElement(
+                "textarea"
+              );
+
+            textarea.id =
+              "backtestData";
+
+            textarea.style.display =
+              "none";
+
+            document.body.appendChild(
+              textarea
+            );
+
+          }
+
+
+          textarea.value =
+            text;
+
+
+          /*
+           * ให้ script.js เดิมทำงาน
+           */
+
+          textarea.dispatchEvent(
+            new Event("change")
+          );
+
+        } catch(error) {
+
+          alert(
+            "อ่านไฟล์ไม่สำเร็จ\n\n" +
+            error.message
+          );
+
+        }
+
+      }
+    );
+
+</script>
 
 </body>
 </html>
