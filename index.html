@@ -141,6 +141,23 @@
       filter: brightness(1.08);
     }
 
+    #clearDataBtn {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: 1px solid #333;
+      border-radius: 12px;
+      background: #151515;
+      color: #999;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    #clearDataBtn:hover {
+      border-color: #555;
+      color: #ddd;
+    }
+
     .results {
       margin-top: 20px;
     }
@@ -157,10 +174,90 @@
       font-size: 12px;
     }
 
+    /* =====================================================
+       NEAREST SUPPORT / RESISTANCE
+       ===================================================== */
+
+    .nearest-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .nearest-card {
+      background: #151515;
+      border: 1px solid #292929;
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .nearest-card:first-child {
+      border-left: 4px solid #43d17a;
+    }
+
+    .nearest-card:last-child {
+      border-left: 4px solid #ff5b5b;
+    }
+
+    .nearest-label {
+      font-size: 12px;
+      font-weight: 800;
+      color: #aaa;
+      margin-bottom: 8px;
+    }
+
+    .nearest-price {
+      font-size: 25px;
+      font-weight: 800;
+      color: #f2c94c;
+    }
+
+    .nearest-info {
+      color: #888;
+      font-size: 11px;
+      line-height: 1.7;
+      margin-top: 6px;
+    }
+
+    /* =====================================================
+       CONFLUENCE
+       ===================================================== */
+
+    .confluence-box {
+      background:
+        linear-gradient(
+          135deg,
+          rgba(214,169,40,0.10),
+          rgba(155,124,255,0.08)
+        );
+      border: 1px solid #62521f;
+      border-radius: 15px;
+      padding: 16px;
+      margin-bottom: 10px;
+    }
+
+    .confluence-title {
+      color: #f2c94c;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .confluence-price {
+      color: #fff;
+      font-size: 23px;
+      font-weight: 800;
+      margin-top: 7px;
+    }
+
+    /* =====================================================
+       ZONE CARD
+       ===================================================== */
+
     .zone {
-      padding: 15px;
+      padding: 16px;
       margin: 9px 0;
-      border-radius: 13px;
+      border-radius: 14px;
       background: #151515;
       border: 1px solid #292929;
       display: flex;
@@ -181,7 +278,7 @@
 
     .zone-price {
       color: #f2c94c;
-      font-size: 20px;
+      font-size: 21px;
       font-weight: 800;
       margin-top: 4px;
     }
@@ -209,109 +306,69 @@
       color: #ff6868;
     }
 
+    /* =====================================================
+       STRENGTH
+       ===================================================== */
+
     .strength-box {
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 10px;
+      margin-top: 13px;
+      padding: 12px;
+      border-radius: 11px;
       background: #101010;
-      border: 1px solid #292929;
+      border: 1px solid #262626;
     }
 
     .strength-title {
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    .strength-score {
-      font-size: 18px;
-      font-weight: 900;
-      margin-top: 3px;
-    }
-
-    .strength-bar {
-      height: 6px;
-      border-radius: 10px;
-      background: #292929;
-      overflow: hidden;
-      margin-top: 7px;
-    }
-
-    .strength-fill {
-      height: 100%;
-      border-radius: 10px;
-      background: #f2c94c;
-    }
-
-    .why-title {
-      margin-top: 10px;
       color: #aaa;
       font-size: 11px;
       font-weight: 700;
     }
 
+    .strength-score {
+      color: #f2c94c;
+      font-size: 18px;
+      font-weight: 800;
+      margin-top: 3px;
+    }
+
+    .strength-bar {
+      width: 100%;
+      height: 7px;
+      background: #292929;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .strength-fill {
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        #8f701e,
+        #f2c94c
+      );
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
+
+    .why-title {
+      color: #888;
+      font-size: 10px;
+      font-weight: 800;
+      margin-top: 12px;
+      letter-spacing: 0.5px;
+    }
+
     .why-list {
       margin: 5px 0 0;
-      padding-left: 18px;
-      color: #777;
+      padding-left: 17px;
+      color: #aaa;
       font-size: 11px;
       line-height: 1.7;
     }
 
-    .confluence-box {
-      padding: 15px;
-      margin: 12px 0;
-      border-radius: 13px;
-      background: linear-gradient(
-        135deg,
-        rgba(242,201,76,0.10),
-        rgba(155,124,255,0.10)
-      );
-      border: 1px solid #65551f;
-    }
-
-    .confluence-title {
-      font-size: 15px;
-      font-weight: 900;
-      color: #f2c94c;
-    }
-
-    .confluence-price {
-      font-size: 21px;
-      font-weight: 900;
-      margin-top: 5px;
-    }
-
-    .nearest-panel {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .nearest-card {
-      padding: 14px;
-      border-radius: 13px;
-      background: #151515;
-      border: 1px solid #292929;
-    }
-
-    .nearest-label {
-      color: #999;
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .nearest-price {
-      font-size: 21px;
-      font-weight: 900;
-      margin-top: 5px;
-    }
-
-    .nearest-info {
-      color: #777;
-      font-size: 11px;
-      margin-top: 5px;
-      line-height: 1.6;
+    .why-list li {
+      margin: 2px 0;
     }
 
     .footer {
@@ -320,6 +377,10 @@
       font-size: 11px;
       margin-top: 30px;
     }
+
+    /* =====================================================
+       MOBILE
+       ===================================================== */
 
     @media (max-width: 650px) {
 
@@ -335,6 +396,10 @@
         grid-template-columns: 1fr;
       }
 
+      .nearest-panel {
+        grid-template-columns: 1fr;
+      }
+
       .zone {
         padding: 13px;
       }
@@ -347,27 +412,34 @@
         font-size: 30px !important;
       }
 
-      .nearest-panel {
-        grid-template-columns: 1fr;
+      .strength-box {
+        margin-top: 11px;
       }
     }
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 </head>
 
 <body>
 
   <div class="container">
 
+    <!-- HEADER -->
+
     <div class="header">
 
-      <div class="logo">🥇</div>
+      <div class="logo">
+        🥇
+      </div>
 
-      <h1>Gold Zone Analyzer Pro</h1>
+      <h1>
+        Gold Zone Analyzer Pro
+      </h1>
 
       <div class="subtitle">
-        XAUUSD • Quantitative Zone & Volatility Analysis
+        XAUUSD • Statistical Volatility Analysis
       </div>
 
     </div>
@@ -402,39 +474,62 @@
       <div class="grid">
 
         <div class="field">
-          <label>MA12</label>
+
+          <label>
+            MA12
+          </label>
+
           <input
             type="number"
             id="d1ma12"
             placeholder="4418.6869"
           >
+
         </div>
 
+
         <div class="field">
-          <label>ATR14</label>
+
+          <label>
+            ATR14
+          </label>
+
           <input
             type="number"
             id="d1atr"
             placeholder="91.657"
           >
+
         </div>
 
+
         <div class="field">
-          <label>SD20</label>
+
+          <label>
+            SD20
+          </label>
+
           <input
             type="number"
             id="d1sd"
             placeholder="160.7930"
           >
+
         </div>
 
+
         <div class="field">
-          <label>MA247</label>
+
+          <label>
+            MA247
+          </label>
+
           <input
             type="number"
             id="d1ma247"
             placeholder="Optional"
           >
+
         </div>
 
       </div>
@@ -453,30 +548,47 @@
       <div class="grid">
 
         <div class="field">
-          <label>MA12</label>
+
+          <label>
+            MA12
+          </label>
+
           <input
             type="number"
             id="w1ma12"
             placeholder="4210.2075"
           >
+
         </div>
 
+
         <div class="field">
-          <label>ATR14</label>
+
+          <label>
+            ATR14
+          </label>
+
           <input
             type="number"
             id="w1atr"
             placeholder="226.111"
           >
+
         </div>
 
+
         <div class="field">
-          <label>SD20</label>
+
+          <label>
+            SD20
+          </label>
+
           <input
             type="number"
             id="w1sd"
             placeholder="260.7582"
           >
+
         </div>
 
       </div>
@@ -486,247 +598,39 @@
 
     <!-- BUTTON -->
 
-    <button
-      class="analyze-btn"
-      type="button"
-    >
+    <button class="analyze-btn">
+
       🔍 วิเคราะห์ Gold Zones
+
     </button>
 
 
-    <!-- CLEAR -->
+    <button id="clearDataBtn">
 
-    <button
-      id="clearDataBtn"
-      type="button"
-      style="
-        width:100%;
-        padding:12px;
-        margin-top:10px;
-        border:1px solid #333;
-        border-radius:12px;
-        background:#151515;
-        color:#999;
-        font-size:14px;
-        cursor:pointer;
-      "
-    >
       🧹 ล้างข้อมูลที่บันทึกไว้
+
     </button>
 
 
     <!-- RESULTS -->
 
-    <div
-      id="results"
-      class="results"
-    ></div>
+    <div id="results"></div>
 
+
+    <!-- FOOTER -->
 
     <div class="footer">
+
       Gold Zone Analyzer Pro • XAUUSD Quantitative Tool
+
     </div>
 
   </div>
 
 
-  <!-- SCRIPT -->
+  <!-- JS -->
 
   <script src="script.js?v=4"></script>
 
 </body>
 </html>
-      gap: 12px;
-    }
-
-    .zone-main {
-      min-width: 0;
-    }
-
-    .zone-name {
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    .zone-price {
-      color: #f2c94c;
-      font-size: 20px;
-      font-weight: 800;
-      margin-top: 4px;
-    }
-
-    .zone-distance {
-      text-align: right;
-      font-size: 12px;
-      color: #999;
-      white-space: nowrap;
-    }
-
-    .above {
-      border-left: 4px solid #3fa7ff;
-    }
-
-    .below {
-      border-left: 4px solid #ff5b5b;
-    }
-
-    .direction-above {
-      color: #55b8ff;
-    }
-
-    .direction-below {
-      color: #ff6868;
-    }
-
-    .footer {
-      text-align: center;
-      color: #555;
-      font-size: 11px;
-      margin-top: 30px;
-    }
-
-    @media (max-width: 650px) {
-      .container {
-        padding: 18px 12px 40px;
-      }
-
-      h1 {
-        font-size: 25px;
-      }
-
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .zone {
-        padding: 13px;
-      }
-
-      .zone-price {
-        font-size: 18px;
-      }
-
-      .price-input {
-        font-size: 30px !important;
-      }
-    }
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-
-<body>
-
-  <div class="container">
-
-    <div class="header">
-      <div class="logo">🥇</div>
-      <h1>Gold Zone Analyzer</h1>
-      <div class="subtitle">
-        XAUUSD • Statistical Volatility Analysis
-      </div>
-    </div>
-
-    <div class="price-box">
-      <div class="price-label">CURRENT GOLD PRICE</div>
-      <input
-        class="price-input"
-        type="number"
-        id="price"
-        placeholder="4616"
-      >
-    </div>
-
-    <div class="panel">
-
-      <div class="panel-title">
-        📅 D1 Market Data
-      </div>
-
-      <div class="grid">
-
-        <div class="field">
-          <label>MA12</label>
-          <input type="number" id="d1ma12" placeholder="4418.6869">
-        </div>
-
-        <div class="field">
-          <label>ATR14</label>
-          <input type="number" id="d1atr" placeholder="91.657">
-        </div>
-
-        <div class="field">
-          <label>SD20</label>
-          <input type="number" id="d1sd" placeholder="160.7930">
-        </div>
-
-        <div class="field">
-          <label>MA247</label>
-          <input type="number" id="d1ma247" placeholder="Optional">
-        </div>
-
-      </div>
-
-    </div>
-
-    <div class="panel">
-
-      <div class="panel-title">
-        📊 W1 Market Data
-      </div>
-
-      <div class="grid">
-
-        <div class="field">
-          <label>MA12</label>
-          <input type="number" id="w1ma12" placeholder="4210.2075">
-        </div>
-
-        <div class="field">
-          <label>ATR14</label>
-          <input type="number" id="w1atr" placeholder="226.111">
-        </div>
-
-        <div class="field">
-          <label>SD20</label>
-          <input type="number" id="w1sd" placeholder="260.7582">
-        </div>
-
-      </div>
-
-    </div>
-
-    <button class="analyze-btn">
-      🔍 วิเคราะห์ Gold Zones
-    </button>
-    <button
-  id="clearDataBtn"
-  style="
-    width:100%;
-    padding:12px;
-    margin-top:10px;
-    border:1px solid #333;
-    border-radius:12px;
-    background:#151515;
-    color:#999;
-    font-size:14px;
-    cursor:pointer;
-  "
->
-  🧹 ล้างข้อมูลที่บันทึกไว้
-</button>
-
-    <div id="results"></div>
-
-    <div class="footer">
-      Gold Zone Analyzer • XAUUSD Quantitative Tool
-    </div>
-
-  </div>
-
-<<script src="script.js?v=4"></script>
-
-</body>
-</html>
-
-</body>
-</html>t.js"></script>
