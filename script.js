@@ -12,19 +12,6 @@ const supabaseClient =
 
 
 // ======================================================
-// HELPERS
-// ======================================================
-
-function num(id) {
-  const el = document.getElementById(id);
-
-  if (!el) return NaN;
-
-  return Number(el.value);
-}
-
-
-// ======================================================
 // VOLATILITY
 // ======================================================
 
@@ -110,30 +97,35 @@ function calculateMarketPosition(
 
   const distance = price - ma12;
 
-  const atrPosition = distance / atr;
-  const sdPosition = distance / sd;
+  const atrPosition =
+    distance / atr;
+
+  const sdPosition =
+    distance / sd;
 
   if (
-    atrPosition >= .75 ||
+    atrPosition >= 0.75 ||
     sdPosition >= 1
   ) {
     return {
       level: "Upper Range",
       icon: "🔴",
-      reason: "ราคาอยู่เหนือ MA12 และเข้าใกล้ Upper Range",
+      reason:
+        "ราคาอยู่เหนือ MA12 และเข้าใกล้ Upper Range",
       atrPosition,
       sdPosition
     };
   }
 
   if (
-    atrPosition <= -.75 ||
+    atrPosition <= -0.75 ||
     sdPosition <= -1
   ) {
     return {
       level: "Lower Range",
       icon: "🟢",
-      reason: "ราคาอยู่ต่ำกว่า MA12 และเข้าใกล้ Lower Range",
+      reason:
+        "ราคาอยู่ต่ำกว่า MA12 และเข้าใกล้ Lower Range",
       atrPosition,
       sdPosition
     };
@@ -142,7 +134,8 @@ function calculateMarketPosition(
   return {
     level: "Middle Range",
     icon: "🟡",
-    reason: "ราคาอยู่บริเวณรอบ MA12",
+    reason:
+      "ราคาอยู่บริเวณรอบ MA12",
     atrPosition,
     sdPosition
   };
@@ -191,23 +184,26 @@ function calculateMarketFeatures(
 
 function getStrengthLabel(score) {
 
-  if (score >= 80)
+  if (score >= 80) {
     return {
       label: "Strong",
       icon: "🔥"
     };
+  }
 
-  if (score >= 60)
+  if (score >= 60) {
     return {
       label: "Moderate",
       icon: "🟡"
     };
+  }
 
-  if (score >= 40)
+  if (score >= 40) {
     return {
       label: "Weak",
       icon: "🟠"
     };
+  }
 
   return {
     label: "Low",
@@ -255,7 +251,7 @@ function calculateStrength(
     zone.atr;
 
 
-  if (distanceATR <= .25) {
+  if (distanceATR <= 0.25) {
 
     score += 20;
 
@@ -263,7 +259,7 @@ function calculateStrength(
       "อยู่ใกล้ราคาปัจจุบันมาก"
     );
 
-  } else if (distanceATR <= .50) {
+  } else if (distanceATR <= 0.50) {
 
     score += 15;
 
@@ -312,7 +308,7 @@ function calculateStrength(
         );
 
       if (
-        multiple === .5 ||
+        multiple === 0.5 ||
         multiple === 1
       ) {
 
@@ -372,7 +368,7 @@ function calculateStrength(
           zone.price -
           other.price
         ) <=
-        referenceATR * .20
+        referenceATR * 0.20
       );
     });
 
@@ -429,7 +425,7 @@ function createZones(
 
     {
       name: `${type} +0.75 ATR`,
-      price: ma12 + atr * .75,
+      price: ma12 + atr * 0.75,
       type,
       atr,
       sd
@@ -437,7 +433,7 @@ function createZones(
 
     {
       name: `${type} +0.50 ATR`,
-      price: ma12 + atr * .50,
+      price: ma12 + atr * 0.50,
       type,
       atr,
       sd
@@ -445,7 +441,7 @@ function createZones(
 
     {
       name: `${type} +0.25 ATR`,
-      price: ma12 + atr * .25,
+      price: ma12 + atr * 0.25,
       type,
       atr,
       sd
@@ -461,7 +457,7 @@ function createZones(
 
     {
       name: `${type} -0.25 ATR`,
-      price: ma12 - atr * .25,
+      price: ma12 - atr * 0.25,
       type,
       atr,
       sd
@@ -469,7 +465,7 @@ function createZones(
 
     {
       name: `${type} -0.50 ATR`,
-      price: ma12 - atr * .50,
+      price: ma12 - atr * 0.50,
       type,
       atr,
       sd
@@ -477,7 +473,7 @@ function createZones(
 
     {
       name: `${type} -0.75 ATR`,
-      price: ma12 - atr * .75,
+      price: ma12 - atr * 0.75,
       type,
       atr,
       sd
@@ -533,71 +529,58 @@ function createZones(
 
 async function loadSavedData() {
 
-  try {
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .from("gold_settings")
-        .select("*")
-        .eq("id",1)
-        .maybeSingle();
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("gold_settings")
+      .select("*")
+      .eq("id", 1)
+      .maybeSingle();
 
 
-    if (error) {
-
-      console.error(
-        "โหลดข้อมูลไม่สำเร็จ:",
-        error
-      );
-
-      return;
-    }
-
-
-    if (!data)
-      return;
-
-
-    const ids = {
-
-      price: data.price,
-
-      d1ma12: data.d1ma12,
-      d1atr: data.d1atr,
-      d1sd: data.d1sd,
-      d1ma247: data.d1ma247,
-
-      w1ma12: data.w1ma12,
-      w1atr: data.w1atr,
-      w1sd: data.w1sd
-
-    };
-
-
-    Object.entries(ids)
-      .forEach(([id,value]) => {
-
-        const element =
-          document.getElementById(id);
-
-        if (element)
-          element.value =
-            value ?? "";
-
-      });
-
-  } catch(error) {
+  if (error) {
 
     console.error(
-      "Load Error:",
+      "โหลดข้อมูลไม่สำเร็จ:",
       error
     );
 
+    return;
   }
 
+
+  if (!data)
+    return;
+
+
+  const ids = {
+
+    price: data.price,
+
+    d1ma12: data.d1ma12,
+    d1atr: data.d1atr,
+    d1sd: data.d1sd,
+    d1ma247: data.d1ma247,
+
+    w1ma12: data.w1ma12,
+    w1atr: data.w1atr,
+    w1sd: data.w1sd
+  };
+
+
+  Object.entries(ids)
+    .forEach(([id, value]) => {
+
+      const element =
+        document.getElementById(id);
+
+      if (element)
+        element.value =
+          value ?? "";
+
+    });
 }
 
 
@@ -611,28 +594,56 @@ document
     "click",
     async function() {
 
-      const price = num("price");
+      const price =
+        Number(
+          document
+            .getElementById("price")
+            .value
+        );
+
 
       const d1ma12Value =
-        document.getElementById("d1ma12").value.trim();
+        document
+          .getElementById("d1ma12")
+          .value
+          .trim();
 
       const d1atrValue =
-        document.getElementById("d1atr").value.trim();
+        document
+          .getElementById("d1atr")
+          .value
+          .trim();
 
       const d1sdValue =
-        document.getElementById("d1sd").value.trim();
+        document
+          .getElementById("d1sd")
+          .value
+          .trim();
 
       const d1ma247Value =
-        document.getElementById("d1ma247").value.trim();
+        document
+          .getElementById("d1ma247")
+          .value
+          .trim();
+
 
       const w1ma12Value =
-        document.getElementById("w1ma12").value.trim();
+        document
+          .getElementById("w1ma12")
+          .value
+          .trim();
 
       const w1atrValue =
-        document.getElementById("w1atr").value.trim();
+        document
+          .getElementById("w1atr")
+          .value
+          .trim();
 
       const w1sdValue =
-        document.getElementById("w1sd").value.trim();
+        document
+          .getElementById("w1sd")
+          .value
+          .trim();
 
 
       const d1HasAny =
@@ -660,7 +671,7 @@ document
         w1sdValue;
 
 
-      if (!Number.isFinite(price) || price <= 0) {
+      if (!price) {
 
         alert(
           "กรุณากรอกราคาทอง"
@@ -731,37 +742,24 @@ document
           : null;
 
 
-      const {
-        error: saveError
-      } =
-        await supabaseClient
-          .from("gold_settings")
-          .upsert({
+      await supabaseClient
+        .from("gold_settings")
+        .upsert({
 
-            id: 1,
+          id: 1,
 
-            price,
+          price,
 
-            d1ma12,
-            d1atr,
-            d1sd,
-            d1ma247,
+          d1ma12,
+          d1atr,
+          d1sd,
+          d1ma247,
 
-            w1ma12,
-            w1atr,
-            w1sd
+          w1ma12,
+          w1atr,
+          w1sd
 
-          });
-
-
-      if (saveError) {
-
-        console.error(
-          "Save Error:",
-          saveError
-        );
-
-      }
+        });
 
 
       const d1Zones =
@@ -911,9 +909,15 @@ document
             : "W1 Only";
 
 
-      // MARKET ANALYSIS
+      const analysis =
+        document.createElement("div");
 
-      results.innerHTML += `
+
+      analysis.className =
+        "market-analysis";
+
+
+      analysis.innerHTML = `
 
         <div class="panel">
 
@@ -936,16 +940,13 @@ document
 
               <div class="nearest-info">
                 ${volatility.reason}
-
                 <br>
-
                 ${
                   volatility.ratio !== null
                     ? "SD / ATR = " +
                       volatility.ratio.toFixed(2)
                     : ""
                 }
-
               </div>
 
             </div>
@@ -982,7 +983,8 @@ document
               marketFeatures
                 ? `
 
-                  <div class="analysis-grid">
+                  <div class="analysis-grid"
+                       style="margin-top:10px">
 
                     <div>
                       ATR
@@ -1029,138 +1031,149 @@ document
                   </div>
 
                 `
-                :
-                `<div class="nearest-info">
-                  ข้อมูลไม่เพียงพอ
-                </div>`
+                : `
+                  <div class="nearest-info">
+                    ข้อมูลไม่เพียงพอ
+                  </div>
+                `
             }
 
           </div>
 
         </div>
-
       `;
 
 
-      // HEADER
+      results.appendChild(analysis);
 
-      results.innerHTML += `
 
-        <div class="result-header">
+      const header =
+        document.createElement("div");
 
-          <div>
+      header.className =
+        "result-header";
 
-            <h2 style="margin:0">
-              🎯 Gold Zones
-            </h2>
 
-            <div class="nearest-info">
-              ราคาอ้างอิง
-              ${price.toFixed(2)}
-            </div>
+      header.innerHTML = `
 
+        <div>
+
+          <h2 style="margin:0">
+            🎯 Gold Zones
+          </h2>
+
+          <div class="nearest-info">
+            ราคาอ้างอิง
+            ${price.toFixed(2)}
           </div>
 
-          <div class="result-count">
-            ${mode}
-          </div>
+        </div>
 
+        <div class="nearest-info">
+          ${mode}
         </div>
 
       `;
 
 
-      // SUPPORT / RESISTANCE
+      results.appendChild(header);
 
-      results.innerHTML += `
 
-        <div class="nearest-panel">
+      const nearest =
+        document.createElement("div");
 
-          <div class="nearest-card">
+      nearest.className =
+        "nearest-panel";
 
-            <div class="nearest-label">
-              🟢 NEAREST SUPPORT
-            </div>
 
-            ${
-              nearestSupport
-                ? `
+      nearest.innerHTML = `
 
-                  <div class="nearest-price">
-                    ${nearestSupport.price.toFixed(2)}
-                  </div>
+        <div class="nearest-card">
 
-                  <div class="nearest-info">
+          <div class="nearest-label">
+            🟢 NEAREST SUPPORT
+          </div>
 
-                    ${nearestSupport.name}
+          ${
+            nearestSupport
+              ? `
 
-                    <br>
+                <div class="nearest-price">
+                  ${nearestSupport.price.toFixed(2)}
+                </div>
 
-                    Distance:
-                    ${nearestSupport.distance.toFixed(2)}
+                <div class="nearest-info">
 
-                    <br>
+                  ${nearestSupport.name}
 
-                    Strength:
-                    ${nearestSupport.strength}/100
+                  <br>
 
-                  </div>
+                  Distance:
+                  ${nearestSupport.distance.toFixed(2)}
 
-                `
-                :
-                `<div class="nearest-info">
+                  <br>
+
+                  Strength:
+                  ${nearestSupport.strength}/100
+
+                </div>
+
+              `
+              : `
+                <div class="nearest-info">
                   ไม่พบ Support
-                </div>`
-            }
+                </div>
+              `
+          }
 
+        </div>
+
+
+        <div class="nearest-card">
+
+          <div class="nearest-label">
+            🔴 NEAREST RESISTANCE
           </div>
 
+          ${
+            nearestResistance
+              ? `
 
-          <div class="nearest-card">
+                <div class="nearest-price">
+                  ${nearestResistance.price.toFixed(2)}
+                </div>
 
-            <div class="nearest-label">
-              🔴 NEAREST RESISTANCE
-            </div>
+                <div class="nearest-info">
 
-            ${
-              nearestResistance
-                ? `
+                  ${nearestResistance.name}
 
-                  <div class="nearest-price">
-                    ${nearestResistance.price.toFixed(2)}
-                  </div>
+                  <br>
 
-                  <div class="nearest-info">
+                  Distance:
+                  ${nearestResistance.distance.toFixed(2)}
 
-                    ${nearestResistance.name}
+                  <br>
 
-                    <br>
+                  Strength:
+                  ${nearestResistance.strength}/100
 
-                    Distance:
-                    ${nearestResistance.distance.toFixed(2)}
+                </div>
 
-                    <br>
-
-                    Strength:
-                    ${nearestResistance.strength}/100
-
-                  </div>
-
-                `
-                :
-                `<div class="nearest-info">
+              `
+              : `
+                <div class="nearest-info">
                   ไม่พบ Resistance
-                </div>`
-            }
-
-          </div>
+                </div>
+              `
+          }
 
         </div>
 
       `;
 
 
-      // CONFLUENCE
+      results.appendChild(nearest);
+
 
       const confluences = [];
 
@@ -1178,7 +1191,7 @@ document
               Math.min(
                 d1.atr,
                 w1.atr
-              ) * .20;
+              ) * 0.20;
 
 
             const difference =
@@ -1208,14 +1221,25 @@ document
 
       if (confluences.length) {
 
-        results.innerHTML += `
-          <h3>🔗 Zone Confluence</h3>
-        `;
+        const title =
+          document.createElement("h3");
+
+        title.textContent =
+          "🔗 Zone Confluence";
+
+        results.appendChild(title);
 
 
         confluences
           .slice(0,5)
           .forEach(group => {
+
+            const box =
+              document.createElement("div");
+
+            box.className =
+              "confluence-box";
+
 
             const strength =
               Math.round(
@@ -1226,157 +1250,168 @@ document
               );
 
 
-            results.innerHTML += `
+            box.innerHTML = `
 
-              <div class="confluence-box">
+              <div class="confluence-title">
+                🔥 D1 + W1 CONFLUENCE
+              </div>
 
-                <div class="confluence-title">
-                  🔥 D1 + W1 CONFLUENCE
-                </div>
+              <div class="confluence-price">
 
-                <div class="confluence-price">
+                ${Math.min(
+                  group.d1.price,
+                  group.w1.price
+                ).toFixed(2)}
 
-                  ${Math.min(
-                    group.d1.price,
-                    group.w1.price
-                  ).toFixed(2)}
+                —
 
-                  —
+                ${Math.max(
+                  group.d1.price,
+                  group.w1.price
+                ).toFixed(2)}
 
-                  ${Math.max(
-                    group.d1.price,
-                    group.w1.price
-                  ).toFixed(2)}
+              </div>
 
-                </div>
+              <div class="nearest-info">
 
-                <div class="nearest-info">
+                D1:
+                ${group.d1.name}
 
-                  D1:
-                  ${group.d1.name}
+                <br>
 
-                  <br>
+                W1:
+                ${group.w1.name}
 
-                  W1:
-                  ${group.w1.name}
+                <br>
 
-                  <br>
-
-                  Combined Strength:
-                  ${strength}/100
-
-                </div>
+                Combined Strength:
+                ${strength}/100
 
               </div>
 
             `;
+
+
+            results.appendChild(box);
 
           });
 
       }
 
 
-      // ZONES
+      const title =
+        document.createElement("h3");
 
-      results.innerHTML += `
-        <h3>📍 Zone Analysis</h3>
-      `;
+      title.textContent =
+        "📍 Zone Analysis";
+
+      results.appendChild(title);
 
 
       allZones
         .sort(
           (a,b) =>
-            a.distance - b.distance
+            a.distance -
+            b.distance
         )
         .slice(0,10)
         .forEach((zone,index) => {
 
-          results.innerHTML += `
+          const card =
+            document.createElement("div");
 
-            <div class="zone ${
+          card.className =
+            "zone " +
+            (
               zone.above
                 ? "above"
                 : "below"
-            }">
+            );
 
-              <div class="zone-main">
 
-                <div class="zone-name">
+          card.innerHTML = `
+
+            <div class="zone-main">
+
+              <div class="zone-name">
+
+                ${
+                  index === 0
+                    ? "⭐ "
+                    : ""
+                }
+
+                ${zone.name}
+
+              </div>
+
+              <div class="zone-price">
+                ${zone.price.toFixed(2)}
+              </div>
+
+              <div class="strength-box">
+
+                <div class="strength-title">
+                  ${zone.strengthLabel.icon}
+                  Strength
+                </div>
+
+                <div class="strength-score">
+                  ${zone.strength}/100
+                  ${zone.strengthLabel.label}
+                </div>
+
+                <div class="strength-bar">
+
+                  <div
+                    class="strength-fill"
+                    style="width:${zone.strength}%"
+                  ></div>
+
+                </div>
+
+                <div class="why-title">
+                  WHY THIS ZONE?
+                </div>
+
+                <ul class="why-list">
 
                   ${
-                    index === 0
-                      ? "⭐ "
-                      : ""
-                  }
-
-                  ${zone.name}
-
-                </div>
-
-                <div class="zone-price">
-                  ${zone.price.toFixed(2)}
-                </div>
-
-                <div class="strength-box">
-
-                  <div class="strength-title">
-                    ${zone.strengthLabel.icon}
-                    Strength
-                  </div>
-
-                  <div class="strength-score">
-                    ${zone.strength}/100
-                    ${zone.strengthLabel.label}
-                  </div>
-
-                  <div class="strength-bar">
-
-                    <div
-                      class="strength-fill"
-                      style="width:${zone.strength}%"
-                    ></div>
-
-                  </div>
-
-                  <div class="why-title">
-                    WHY THIS ZONE?
-                  </div>
-
-                  <ul class="why-list">
-
-                    ${zone.reasons
+                    zone.reasons
                       .slice(0,5)
                       .map(
                         r =>
                           `<li>${r}</li>`
                       )
-                      .join("")}
+                      .join("")
+                  }
 
-                  </ul>
-
-                </div>
-
-              </div>
-
-
-              <div class="zone-distance">
-
-                ${
-                  zone.above
-                    ? "⬆️ ด้านบน"
-                    : "⬇️ ด้านล่าง"
-                }
-
-                <br>
-
-                ห่าง
-                ${zone.distance.toFixed(2)}
+                </ul>
 
               </div>
 
             </div>
 
+
+            <div class="zone-distance">
+
+              ${
+                zone.above
+                  ? "⬆️ ด้านบน"
+                  : "⬇️ ด้านล่าง"
+              }
+
+              <br>
+
+              ห่าง
+              ${zone.distance.toFixed(2)}
+
+            </div>
+
           `;
+
+
+          results.appendChild(card);
 
         });
 
@@ -1390,38 +1425,25 @@ document
 
 function parseCSV(text) {
 
-  if (!text || !text.trim()) {
-
-    throw new Error(
-      "ยังไม่มีข้อมูล CSV"
-    );
-
-  }
-
-
   const lines =
     text
+      .replace(/^\uFEFF/, "")
       .trim()
       .split(/\r?\n/)
       .filter(Boolean);
 
 
-  if (lines.length < 2) {
-
-    throw new Error(
-      "CSV ต้องมี Header และข้อมูลอย่างน้อย 1 แถว"
-    );
-
-  }
+  if (lines.length < 2)
+    return [];
 
 
   const headers =
     lines[0]
-      .replace(/^\uFEFF/, "")
       .split(",")
       .map(
         h =>
           h.trim()
+            .replace(/^"|"$/g,"")
             .toLowerCase()
       );
 
@@ -1451,9 +1473,8 @@ function parseCSV(text) {
   ) {
 
     throw new Error(
-      "CSV ต้องมี Date, Open, High, Low, Close"
+      "CSV ต้องมีคอลัมน์ Date, Open, High, Low, Close"
     );
-
   }
 
 
@@ -1468,26 +1489,36 @@ function parseCSV(text) {
       return {
 
         date:
-          parts[dateIndex]?.trim(),
+          parts[dateIndex]
+            ?.trim()
+            .replace(/^"|"$/g,""),
 
         open:
           Number(
             parts[openIndex]
+              ?.trim()
+              .replace(/"/g,"")
           ),
 
         high:
           Number(
             parts[highIndex]
+              ?.trim()
+              .replace(/"/g,"")
           ),
 
         low:
           Number(
             parts[lowIndex]
+              ?.trim()
+              .replace(/"/g,"")
           ),
 
         close:
           Number(
             parts[closeIndex]
+              ?.trim()
+              .replace(/"/g,"")
           )
 
       };
@@ -1500,7 +1531,6 @@ function parseCSV(text) {
       Number.isFinite(row.low) &&
       Number.isFinite(row.close)
     );
-
 }
 
 
@@ -1520,12 +1550,9 @@ function runBacktest(
   if (
     !candles.length ||
     !Number.isFinite(ma12) ||
-    !Number.isFinite(atr) ||
-    atr <= 0
+    !Number.isFinite(atr)
   ) {
-
     return [];
-
   }
 
 
@@ -1543,7 +1570,7 @@ function runBacktest(
 
   for (
     let i = 0;
-    i < candles.length;
+    i < candles.length - 1;
     i++
   ) {
 
@@ -1565,7 +1592,7 @@ function runBacktest(
 
       if (
         distance <=
-        atr * .20
+        atr * 0.20
       ) {
 
         if (
@@ -1608,9 +1635,7 @@ function runBacktest(
       strength.score <
       minStrength
     ) {
-
       continue;
-
     }
 
 
@@ -1680,7 +1705,6 @@ function runBacktest(
           };
 
           break;
-
         }
 
 
@@ -1693,7 +1717,6 @@ function runBacktest(
           };
 
           break;
-
         }
 
 
@@ -1706,7 +1729,6 @@ function runBacktest(
           };
 
           break;
-
         }
 
       } else {
@@ -1730,7 +1752,6 @@ function runBacktest(
           };
 
           break;
-
         }
 
 
@@ -1743,7 +1764,6 @@ function runBacktest(
           };
 
           break;
-
         }
 
 
@@ -1756,7 +1776,6 @@ function runBacktest(
           };
 
           break;
-
         }
 
       }
@@ -1796,12 +1815,11 @@ function runBacktest(
 
 
   return results;
-
 }
 
 
 // ======================================================
-// BACKTEST STATS
+// BACKTEST STATISTICS
 // ======================================================
 
 function calculateBacktestStats(trades) {
@@ -1818,21 +1836,18 @@ function calculateBacktestStats(trades) {
       profitFactor: 0,
       maxDrawdown: 0
     };
-
   }
 
 
   const wins =
     trades.filter(
-      t =>
-        t.result === "WIN"
+      t => t.result === "WIN"
     );
 
 
   const losses =
     trades.filter(
-      t =>
-        t.result === "LOSS"
+      t => t.result === "LOSS"
     );
 
 
@@ -1875,7 +1890,8 @@ function calculateBacktestStats(trades) {
 
   const profitFactor =
     grossLoss > 0
-      ? grossProfit / grossLoss
+      ? grossProfit /
+        grossLoss
       : Infinity;
 
 
@@ -1894,10 +1910,8 @@ function calculateBacktestStats(trades) {
         equity
       );
 
-
     const drawdown =
       peak - equity;
-
 
     maxDrawdown =
       Math.max(
@@ -1910,27 +1924,61 @@ function calculateBacktestStats(trades) {
 
   return {
 
-    total:
-      trades.length,
+    total: trades.length,
 
-    wins:
-      wins.length,
+    wins: wins.length,
 
-    losses:
-      losses.length,
+    losses: losses.length,
 
     winRate,
 
     averageR,
 
-    expectancy:
-      averageR,
+    expectancy: averageR,
 
     profitFactor,
 
     maxDrawdown
 
   };
+}
+
+
+// ======================================================
+// BACKTEST FILE INPUT
+// ======================================================
+
+const backtestFile =
+  document.getElementById(
+    "backtestFile"
+  );
+
+
+if (backtestFile) {
+
+  backtestFile.addEventListener(
+    "change",
+    function() {
+
+      const file =
+        this.files?.[0];
+
+      const name =
+        document.getElementById(
+          "backtestFileName"
+        );
+
+      if (name) {
+
+        name.textContent =
+          file
+            ? `ไฟล์ที่เลือก: ${file.name}`
+            : "ยังไม่ได้เลือกไฟล์";
+
+      }
+
+    }
+  );
 
 }
 
@@ -1939,20 +1987,46 @@ function calculateBacktestStats(trades) {
 // BACKTEST BUTTON
 // ======================================================
 
-document
-  .getElementById("runBacktestBtn")
-  .addEventListener(
+const runBacktestBtn =
+  document.getElementById(
+    "runBacktestBtn"
+  );
+
+
+if (runBacktestBtn) {
+
+  runBacktestBtn.addEventListener(
     "click",
-    function() {
+    async function() {
 
       try {
 
+        const fileInput =
+          document.getElementById(
+            "backtestFile"
+          );
+
+
+        if (
+          !fileInput ||
+          !fileInput.files ||
+          !fileInput.files.length
+        ) {
+
+          alert(
+            "กรุณาเลือกไฟล์ CSV ก่อนครับ"
+          );
+
+          return;
+        }
+
+
+        const file =
+          fileInput.files[0];
+
+
         const csv =
-          document
-            .getElementById(
-              "backtestData"
-            )
-            .value;
+          await file.text();
 
 
         const candles =
@@ -1962,32 +2036,51 @@ document
         if (!candles.length) {
 
           alert(
-            "ยังไม่มีข้อมูลย้อนหลัง"
+            "ไม่พบข้อมูลแท่งเทียนในไฟล์ CSV"
           );
 
           return;
-
         }
 
 
         const ma12 =
-          num("d1ma12");
+          Number(
+            document
+              .getElementById("d1ma12")
+              .value
+          );
 
 
         const atr =
-          num("d1atr");
+          Number(
+            document
+              .getElementById("d1atr")
+              .value
+          );
 
 
         const minStrength =
-          num("minStrength");
+          Number(
+            document
+              .getElementById("minStrength")
+              .value
+          );
 
 
         const riskR =
-          num("riskR");
+          Number(
+            document
+              .getElementById("riskR")
+              .value
+          );
 
 
         const rewardR =
-          num("rewardR");
+          Number(
+            document
+              .getElementById("rewardR")
+              .value
+          );
 
 
         if (
@@ -1995,15 +2088,18 @@ document
           !Number.isFinite(atr) ||
           !Number.isFinite(minStrength) ||
           !Number.isFinite(riskR) ||
-          !Number.isFinite(rewardR)
+          !Number.isFinite(rewardR) ||
+          ma12 <= 0 ||
+          atr <= 0 ||
+          riskR <= 0 ||
+          rewardR <= 0
         ) {
 
           alert(
-            "กรุณากรอก D1 MA12, ATR, Strength และ Risk/Reward"
+            "กรุณากรอก D1 MA12, ATR, Minimum Strength, Risk และ Reward ให้ถูกต้อง"
           );
 
           return;
-
         }
 
 
@@ -2030,6 +2126,10 @@ document
           );
 
 
+        if (!output)
+          return;
+
+
         output.innerHTML = `
 
           <div class="panel">
@@ -2038,74 +2138,104 @@ document
               🧪 BACKTEST RESULTS
             </div>
 
+            <div class="nearest-info">
+              ข้อมูลทั้งหมด:
+              ${candles.length.toLocaleString()}
+              candles
+              <br>
+              Trades:
+              ${stats.total}
+            </div>
+
 
             <div class="stats-grid">
 
               <div class="stat-card">
+
                 <div class="feature-label">
                   TOTAL TRADES
                 </div>
+
                 <div class="feature-value">
                   ${stats.total}
                 </div>
+
               </div>
 
 
               <div class="stat-card">
+
                 <div class="feature-label">
                   WIN RATE
                 </div>
+
                 <div class="feature-value">
                   ${stats.winRate.toFixed(2)}%
                 </div>
+
               </div>
 
 
               <div class="stat-card">
+
                 <div class="feature-label">
                   WINS
                 </div>
+
                 <div class="feature-value win">
                   ${stats.wins}
                 </div>
+
               </div>
 
 
               <div class="stat-card">
+
                 <div class="feature-label">
                   LOSSES
                 </div>
+
                 <div class="feature-value loss">
                   ${stats.losses}
                 </div>
+
               </div>
 
 
               <div class="stat-card">
+
                 <div class="feature-label">
                   AVERAGE R
                 </div>
+
                 <div class="feature-value">
                   ${stats.averageR.toFixed(2)}R
                 </div>
+
               </div>
 
 
               <div class="stat-card">
+
                 <div class="feature-label">
                   EXPECTANCY
                 </div>
+
                 <div class="feature-value">
                   ${stats.expectancy.toFixed(2)}R
                 </div>
+
               </div>
 
 
               <div class="stat-card">
+
                 <div class="feature-label">
                   PROFIT FACTOR
                 </div>
+
                 <div class="feature-value">
+
                   ${
                     Number.isFinite(
                       stats.profitFactor
@@ -2113,17 +2243,22 @@ document
                       ? stats.profitFactor.toFixed(2)
                       : "∞"
                   }
+
                 </div>
+
               </div>
 
 
               <div class="stat-card">
+
                 <div class="feature-label">
                   MAX DRAWDOWN
                 </div>
+
                 <div class="feature-value">
                   ${stats.maxDrawdown.toFixed(2)}R
                 </div>
+
               </div>
 
             </div>
@@ -2133,7 +2268,7 @@ document
               trades.length
                 ? `
 
-                  <div class="backtest-table-wrap">
+                  <div style="overflow-x:auto">
 
                     <table class="backtest-table">
 
@@ -2185,9 +2320,7 @@ document
                                     ? "win"
                                     : "loss"
                                 }">
-
                                   ${t.result}
-
                                 </td>
 
                                 <td class="${
@@ -2195,9 +2328,7 @@ document
                                     ? "win"
                                     : "loss"
                                 }">
-
                                   ${t.r.toFixed(2)}
-
                                 </td>
 
                               </tr>
@@ -2213,14 +2344,15 @@ document
                   </div>
 
                 `
-                :
-                `
+                : `
 
-                  <div class="nearest-info"
-                       style="margin-top:15px">
+                  <div
+                    class="nearest-info"
+                    style="margin-top:15px"
+                  >
 
                     ไม่พบ Trade ที่ผ่านเงื่อนไข
-                    Strength ${minStrength}
+                    Strength ที่กำหนด
 
                   </div>
 
@@ -2255,14 +2387,22 @@ document
     }
   );
 
+}
+
 
 // ======================================================
 // CLEAR DATA
 // ======================================================
 
-document
-  .getElementById("clearDataBtn")
-  .addEventListener(
+const clearDataBtn =
+  document.getElementById(
+    "clearDataBtn"
+  );
+
+
+if (clearDataBtn) {
+
+  clearDataBtn.addEventListener(
     "click",
     async function() {
 
@@ -2271,9 +2411,7 @@ document
           "ต้องการล้างข้อมูลที่บันทึกไว้ใช่ไหม?"
         )
       ) {
-
         return;
-
       }
 
 
@@ -2294,7 +2432,6 @@ document
         );
 
         return;
-
       }
 
 
@@ -2319,14 +2456,41 @@ document
       });
 
 
-      document.getElementById(
-        "results"
-      ).innerHTML = "";
+      const results =
+        document.getElementById(
+          "results"
+        );
+
+      if (results)
+        results.innerHTML = "";
 
 
-      document.getElementById(
-        "backtestResults"
-      ).innerHTML = "";
+      const backtestResults =
+        document.getElementById(
+          "backtestResults"
+        );
+
+      if (backtestResults)
+        backtestResults.innerHTML = "";
+
+
+      const fileInput =
+        document.getElementById(
+          "backtestFile"
+        );
+
+      if (fileInput)
+        fileInput.value = "";
+
+
+      const fileName =
+        document.getElementById(
+          "backtestFileName"
+        );
+
+      if (fileName)
+        fileName.textContent =
+          "ยังไม่ได้เลือกไฟล์";
 
 
       alert(
@@ -2335,6 +2499,8 @@ document
 
     }
   );
+
+}
 
 
 // ======================================================
