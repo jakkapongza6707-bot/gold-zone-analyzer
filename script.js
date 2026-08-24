@@ -12,6 +12,7 @@ document.querySelector("button").addEventListener("click", function () {
 
   if (!price || !d1ma12 || !d1atr || !d1sd ||
       !w1ma12 || !w1atr || !w1sd) {
+
     alert("กรุณากรอกข้อมูลให้ครบ");
     return;
   }
@@ -57,31 +58,93 @@ document.querySelector("button").addEventListener("click", function () {
   );
 
   let html = `
-    <h2>ผลการวิเคราะห์</h2>
-    <p>ราคาปัจจุบัน: <strong>${price.toFixed(2)}</strong></p>
+    <div class="panel results">
+      <div class="result-header">
+        <div class="panel-title">
+          🎯 Analysis Result
+        </div>
+
+        <div class="result-count">
+          TOP 10 ZONES
+        </div>
+      </div>
+
+      <div style="
+        padding:12px;
+        margin-bottom:14px;
+        background:#111;
+        border-radius:10px;
+        text-align:center;
+      ">
+        <div style="color:#888;font-size:12px;">
+          ANALYZED PRICE
+        </div>
+
+        <div style="
+          color:#f2c94c;
+          font-size:25px;
+          font-weight:800;
+        ">
+          ${price.toFixed(2)}
+        </div>
+      </div>
   `;
 
   allZones.slice(0, 10).forEach((zone, index) => {
 
     const distance = Math.abs(zone[1] - price);
-    const direction = zone[1] > price
+
+    const isAbove = zone[1] > price;
+
+    const direction = isAbove
       ? "⬆️ ด้านบน"
       : "⬇️ ด้านล่าง";
 
+    const zoneClass = isAbove ? "above" : "below";
+
+    const directionClass = isAbove
+      ? "direction-above"
+      : "direction-below";
+
     html += `
-      <div style="
-        padding:10px;
-        margin:6px 0;
-        border:1px solid #ccc;
-        border-radius:8px;
-      ">
-        <strong>#${index + 1} ${zone[0]}</strong><br>
-        ราคา: <strong>${zone[1].toFixed(2)}</strong><br>
-        ${direction} | ห่าง ${distance.toFixed(2)}
+      <div class="zone ${zoneClass}">
+
+        <div class="zone-main">
+
+          <div class="zone-name">
+            #${index + 1} ${zone[0]}
+          </div>
+
+          <div class="zone-price">
+            ${zone[1].toFixed(2)}
+          </div>
+
+        </div>
+
+        <div class="zone-distance">
+
+          <div class="${directionClass}">
+            ${direction}
+          </div>
+
+          <div>
+            ห่าง ${distance.toFixed(2)}
+          </div>
+
+        </div>
+
       </div>
     `;
   });
 
-  document.body.insertAdjacentHTML("beforeend", html);
+  html += `</div>`;
+
+  document.getElementById("results").innerHTML = html;
+
+  document.getElementById("results")
+    .scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
 
 });
