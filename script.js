@@ -19,19 +19,15 @@ async function loadSavedData() {
     .eq("id", 1)
     .maybeSingle();
 
-if (saveError) {
-  console.error("บันทึกไม่สำเร็จ:", saveError);
+  if (error) {
+    console.error("โหลดข้อมูลไม่สำเร็จ:", error);
+    return;
+  }
 
-  alert(
-    "บันทึกไม่สำเร็จ\n\n" +
-    "ข้อความ: " + (saveError.message || "") + "\n" +
-    "รหัส: " + (saveError.code || "") + "\n" +
-    "รายละเอียด: " + (saveError.details || "") + "\n" +
-    "Hint: " + (saveError.hint || "")
-  );
-
-  return;
-}
+  if (!data) {
+    console.log("ยังไม่มีข้อมูลที่บันทึกไว้");
+    return;
+  }
 
   document.getElementById("price").value = data.price ?? "";
   document.getElementById("d1ma12").value = data.d1ma12 ?? "";
@@ -48,7 +44,7 @@ if (saveError) {
 
 
 // ================================
-// วิเคราะห์
+// วิเคราะห์ Gold Zones
 // ================================
 
 document.querySelector("button").addEventListener("click", async function () {
@@ -60,12 +56,17 @@ document.querySelector("button").addEventListener("click", async function () {
   const d1sd = Number(document.getElementById("d1sd").value);
 
   const d1ma247Value = document.getElementById("d1ma247").value;
-  const d1ma247 = d1ma247Value === "" ? null : Number(d1ma247Value);
+  const d1ma247 =
+    d1ma247Value === "" ? null : Number(d1ma247Value);
 
   const w1ma12 = Number(document.getElementById("w1ma12").value);
   const w1atr = Number(document.getElementById("w1atr").value);
   const w1sd = Number(document.getElementById("w1sd").value);
 
+
+  // ================================
+  // ตรวจข้อมูล
+  // ================================
 
   if (
     !price ||
@@ -99,9 +100,23 @@ document.querySelector("button").addEventListener("click", async function () {
       w1sd: w1sd
     });
 
+
+  // ================================
+  // แสดง Error ตัวจริง
+  // ================================
+
   if (saveError) {
+
     console.error("บันทึกไม่สำเร็จ:", saveError);
-    alert("บันทึกข้อมูลไม่สำเร็จ");
+
+    alert(
+      "บันทึกไม่สำเร็จ\n\n" +
+      "ข้อความ: " + (saveError.message || "") + "\n" +
+      "รหัส: " + (saveError.code || "") + "\n" +
+      "รายละเอียด: " + (saveError.details || "") + "\n" +
+      "Hint: " + (saveError.hint || "")
+    );
+
     return;
   }
 
@@ -111,11 +126,14 @@ document.querySelector("button").addEventListener("click", async function () {
   // ================================
 
   const d1Zones = [
+
     ["D1 +1 ATR", d1ma12 + d1atr],
     ["D1 +0.75 ATR", d1ma12 + d1atr * 0.75],
     ["D1 +0.50 ATR", d1ma12 + d1atr * 0.50],
     ["D1 +0.25 ATR", d1ma12 + d1atr * 0.25],
+
     ["D1 MA12", d1ma12],
+
     ["D1 -0.25 ATR", d1ma12 - d1atr * 0.25],
     ["D1 -0.50 ATR", d1ma12 - d1atr * 0.50],
     ["D1 -0.75 ATR", d1ma12 - d1atr * 0.75],
@@ -123,6 +141,7 @@ document.querySelector("button").addEventListener("click", async function () {
 
     ["D1 +1 SD", d1ma12 + d1sd],
     ["D1 +2 SD", d1ma12 + d1sd * 2],
+
     ["D1 -1 SD", d1ma12 - d1sd],
     ["D1 -2 SD", d1ma12 - d1sd * 2]
   ];
@@ -133,11 +152,14 @@ document.querySelector("button").addEventListener("click", async function () {
   // ================================
 
   const w1Zones = [
+
     ["W1 +1 ATR", w1ma12 + w1atr],
     ["W1 +0.75 ATR", w1ma12 + w1atr * 0.75],
     ["W1 +0.50 ATR", w1ma12 + w1atr * 0.50],
     ["W1 +0.25 ATR", w1ma12 + w1atr * 0.25],
+
     ["W1 MA12", w1ma12],
+
     ["W1 -0.25 ATR", w1ma12 - w1atr * 0.25],
     ["W1 -0.50 ATR", w1ma12 - w1atr * 0.50],
     ["W1 -0.75 ATR", w1ma12 - w1atr * 0.75],
@@ -145,16 +167,30 @@ document.querySelector("button").addEventListener("click", async function () {
 
     ["W1 +1 SD", w1ma12 + w1sd],
     ["W1 +2 SD", w1ma12 + w1sd * 2],
+
     ["W1 -1 SD", w1ma12 - w1sd],
     ["W1 -2 SD", w1ma12 - w1sd * 2]
   ];
 
 
-  const allZones = [...d1Zones, ...w1Zones];
+  // ================================
+  // รวม Zones
+  // ================================
+
+  const allZones = [
+    ...d1Zones,
+    ...w1Zones
+  ];
 
 
-  allZones.sort((a, b) =>
-    Math.abs(a[1] - price) - Math.abs(b[1] - price)
+  // ================================
+  // เรียงจากใกล้ราคาปัจจุบันที่สุด
+  // ================================
+
+  allZones.sort(
+    (a, b) =>
+      Math.abs(a[1] - price) -
+      Math.abs(b[1] - price)
   );
 
 
@@ -164,38 +200,66 @@ document.querySelector("button").addEventListener("click", async function () {
 
   let html = `
     <h2>ผลการวิเคราะห์</h2>
-    <p>ราคาปัจจุบัน: <strong>${price.toFixed(2)}</strong></p>
+    <p>
+      ราคาปัจจุบัน:
+      <strong>${price.toFixed(2)}</strong>
+    </p>
   `;
 
 
-  allZones.slice(0, 10).forEach((zone, index) => {
+  allZones
+    .slice(0, 10)
+    .forEach((zone, index) => {
 
-    const distance = Math.abs(zone[1] - price);
+      const distance =
+        Math.abs(zone[1] - price);
 
-    const direction =
-      zone[1] > price
-        ? "⬆️ ด้านบน"
-        : "⬇️ ด้านล่าง";
-
-
-    html += `
-      <div style="
-        padding:10px;
-        margin:6px 0;
-        border:1px solid #ccc;
-        border-radius:8px;
-      ">
-        <strong>#${index + 1} ${zone[0]}</strong><br>
-        ราคา: <strong>${zone[1].toFixed(2)}</strong><br>
-        ${direction} | ห่าง ${distance.toFixed(2)}
-      </div>
-    `;
-  });
+      const direction =
+        zone[1] > price
+          ? "⬆️ ด้านบน"
+          : "⬇️ ด้านล่าง";
 
 
-  document.body.insertAdjacentHTML("beforeend", html);
+      html += `
+        <div style="
+          padding:10px;
+          margin:6px 0;
+          border:1px solid #ccc;
+          border-radius:8px;
+        ">
 
-  alert("บันทึกข้อมูลเรียบร้อยแล้ว ☁️");
+          <strong>
+            #${index + 1} ${zone[0]}
+          </strong>
+
+          <br>
+
+          ราคา:
+          <strong>
+            ${zone[1].toFixed(2)}
+          </strong>
+
+          <br>
+
+          ${direction}
+          |
+          ห่าง ${distance.toFixed(2)}
+
+        </div>
+      `;
+    });
+
+
+  document.body.insertAdjacentHTML(
+    "beforeend",
+    html
+  );
+
+
+  alert(
+    "บันทึกข้อมูลเรียบร้อยแล้ว ☁️"
+  );
+
 });
 
 
