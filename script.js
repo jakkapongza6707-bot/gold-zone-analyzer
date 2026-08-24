@@ -19,15 +19,19 @@ async function loadSavedData() {
     .eq("id", 1)
     .maybeSingle();
 
-  if (error) {
-    console.error("โหลดข้อมูลไม่สำเร็จ:", error);
-    return;
-  }
+if (saveError) {
+  console.error("บันทึกไม่สำเร็จ:", saveError);
 
-  if (!data) {
-    console.log("ยังไม่มีข้อมูลที่บันทึกไว้");
-    return;
-  }
+  alert(
+    "บันทึกไม่สำเร็จ\n\n" +
+    "ข้อความ: " + (saveError.message || "") + "\n" +
+    "รหัส: " + (saveError.code || "") + "\n" +
+    "รายละเอียด: " + (saveError.details || "") + "\n" +
+    "Hint: " + (saveError.hint || "")
+  );
+
+  return;
+}
 
   document.getElementById("price").value = data.price ?? "";
   document.getElementById("d1ma12").value = data.d1ma12 ?? "";
