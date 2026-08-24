@@ -1294,7 +1294,86 @@ marketAnalysis.innerHTML = `
           margin-bottom:6px;
         ">
           VOLATILITY REGIME
+        </div> 
+
+        <div style="
+  background:#101010;
+  border:1px solid #292929;
+  border-radius:11px;
+  padding:13px;
+  margin-top:10px;
+">
+
+  <div style="
+    color:#888;
+    font-size:11px;
+    margin-bottom:8px;
+  ">
+    📐 MARKET FEATURES
+  </div>
+
+  ${
+    marketFeatures
+      ? `
+        <div style="
+          display:grid;
+          grid-template-columns:1fr 1fr;
+          gap:8px;
+          font-size:11px;
+        ">
+
+          <div>
+            ATR
+            <strong>
+              ${marketFeatures.atr.toFixed(2)}
+            </strong>
+          </div>
+
+          <div>
+            SD
+            <strong>
+              ${marketFeatures.sd.toFixed(2)}
+            </strong>
+          </div>
+
+          <div>
+            SD / ATR
+            <strong>
+              ${marketFeatures.sdAtrRatio.toFixed(2)}
+            </strong>
+          </div>
+
+          <div>
+            Distance / ATR
+            <strong>
+              ${marketFeatures.distanceATR.toFixed(2)}
+            </strong>
+          </div>
+
+          <div>
+            Distance / SD
+            <strong>
+              ${marketFeatures.distanceSD.toFixed(2)}
+            </strong>
+          </div>
+
+          <div>
+            Price − MA12
+            <strong>
+              ${marketFeatures.priceDistance.toFixed(2)}
+            </strong>
+          </div>
+
         </div>
+      `
+      : `
+        <div style="color:#777;font-size:11px;">
+          ข้อมูลไม่เพียงพอ
+        </div>
+      `
+  }
+
+</div>
 
         <div style="
           font-size:16px;
