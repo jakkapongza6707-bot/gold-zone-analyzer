@@ -10,7 +10,121 @@ const supabaseClient = window.supabase.createClient(
 // ======================================================
 // GOLD ZONE ANALYZER PRO V3.1
 // ======================================================
+// ======================================================
+// V3.2 — VOLATILITY REGIME
+// ======================================================
 
+function calculateVolatilityRegime(atr, sd) {
+
+  if (!atr || !sd || atr <= 0 || sd <= 0) {
+    return {
+      level: "Unknown",
+      icon: "⚪",
+      ratio: null,
+      reason: "ข้อมูล ATR / SD ไม่เพียงพอ"
+    };
+  }
+
+  const ratio = sd / atr;
+
+  if (ratio >= 2.0) {
+    return {
+      level: "Extreme Volatility",
+      icon: "🔥",
+      ratio,
+      reason: "SD สูงมากเมื่อเทียบกับ ATR"
+    };
+  }
+
+  if (ratio >= 1.5) {
+    return {
+      level: "High Volatility",
+      icon: "🔴",
+      ratio,
+      reason: "SD สูงเมื่อเทียบกับ ATR"
+    };
+  }
+
+  if (ratio >= 1.0) {
+    return {
+      level: "Normal Volatility",
+      icon: "🟡",
+      ratio,
+      reason: "ความผันผวนอยู่ในระดับปกติ"
+    };
+  }
+
+  return {
+    level: "Low Volatility",
+    icon: "🟢",
+    ratio,
+    reason: "SD ต่ำเมื่อเทียบกับ ATR"
+  };
+}
+
+
+// ======================================================
+// V3.2 — MARKET POSITION
+// ======================================================
+
+function calculateMarketPosition(price, ma12, atr, sd) {
+
+  if (
+    !price ||
+    !ma12 ||
+    !atr ||
+    !sd ||
+    atr <= 0 ||
+    sd <= 0
+  ) {
+    return {
+      level: "Unknown",
+      icon: "⚪",
+      reason: "ข้อมูลไม่เพียงพอ"
+    };
+  }
+
+  const distance = price - ma12;
+  const atrPosition = distance / atr;
+  const sdPosition = distance / sd;
+
+  if (
+    atrPosition >= 0.75 ||
+    sdPosition >= 1
+  ) {
+    return {
+      level: "Upper Range",
+      icon: "🔴",
+      reason:
+        "ราคาอยู่เหนือ MA12 และเข้าใกล้ Upper Volatility Range",
+      atrPosition,
+      sdPosition
+    };
+  }
+
+  if (
+    atrPosition <= -0.75 ||
+    sdPosition <= -1
+  ) {
+    return {
+      level: "Lower Range",
+      icon: "🟢",
+      reason:
+        "ราคาอยู่ต่ำกว่า MA12 และเข้าใกล้ Lower Volatility Range",
+      atrPosition,
+      sdPosition
+    };
+  }
+
+  return {
+    level: "Middle Range",
+    icon: "🟡",
+    reason:
+      "ราคาอยู่ในบริเวณรอบ MA12 และยังไม่เข้า Extreme Range",
+    atrPosition,
+    sdPosition
+  };
+}
 
 // ======================================================
 // โหลดข้อมูลเก่า
