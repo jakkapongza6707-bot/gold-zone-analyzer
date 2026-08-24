@@ -97,35 +97,30 @@ function calculateMarketPosition(
 
   const distance = price - ma12;
 
-  const atrPosition =
-    distance / atr;
-
-  const sdPosition =
-    distance / sd;
+  const atrPosition = distance / atr;
+  const sdPosition = distance / sd;
 
   if (
-    atrPosition >= 0.75 ||
+    atrPosition >= .75 ||
     sdPosition >= 1
   ) {
     return {
       level: "Upper Range",
       icon: "🔴",
-      reason:
-        "ราคาอยู่เหนือ MA12 และเข้าใกล้ Upper Range",
+      reason: "ราคาอยู่เหนือ MA12 และเข้าใกล้ Upper Range",
       atrPosition,
       sdPosition
     };
   }
 
   if (
-    atrPosition <= -0.75 ||
+    atrPosition <= -.75 ||
     sdPosition <= -1
   ) {
     return {
       level: "Lower Range",
       icon: "🟢",
-      reason:
-        "ราคาอยู่ต่ำกว่า MA12 และเข้าใกล้ Lower Range",
+      reason: "ราคาอยู่ต่ำกว่า MA12 และเข้าใกล้ Lower Range",
       atrPosition,
       sdPosition
     };
@@ -134,8 +129,7 @@ function calculateMarketPosition(
   return {
     level: "Middle Range",
     icon: "🟡",
-    reason:
-      "ราคาอยู่บริเวณรอบ MA12",
+    reason: "ราคาอยู่บริเวณรอบ MA12",
     atrPosition,
     sdPosition
   };
@@ -167,13 +161,24 @@ function calculateMarketFeatures(
   const distance = price - ma12;
 
   return {
+
     atr,
     sd,
-    sdAtrRatio: sd / atr,
-    priceDistance: distance,
-    absoluteDistance: Math.abs(distance),
-    distanceATR: Math.abs(distance) / atr,
-    distanceSD: Math.abs(distance) / sd
+
+    sdAtrRatio:
+      sd / atr,
+
+    priceDistance:
+      distance,
+
+    absoluteDistance:
+      Math.abs(distance),
+
+    distanceATR:
+      Math.abs(distance) / atr,
+
+    distanceSD:
+      Math.abs(distance) / sd
   };
 }
 
@@ -184,26 +189,23 @@ function calculateMarketFeatures(
 
 function getStrengthLabel(score) {
 
-  if (score >= 80) {
+  if (score >= 80)
     return {
       label: "Strong",
       icon: "🔥"
     };
-  }
 
-  if (score >= 60) {
+  if (score >= 60)
     return {
       label: "Moderate",
       icon: "🟡"
     };
-  }
 
-  if (score >= 40) {
+  if (score >= 40)
     return {
       label: "Weak",
       icon: "🟠"
     };
-  }
 
   return {
     label: "Low",
@@ -242,16 +244,14 @@ function calculateStrength(
 
   const distance =
     Math.abs(
-      zone.price -
-      currentPrice
+      zone.price - currentPrice
     );
 
   const distanceATR =
-    distance /
-    zone.atr;
+    distance / zone.atr;
 
 
-  if (distanceATR <= 0.25) {
+  if (distanceATR <= .25) {
 
     score += 20;
 
@@ -259,7 +259,7 @@ function calculateStrength(
       "อยู่ใกล้ราคาปัจจุบันมาก"
     );
 
-  } else if (distanceATR <= 0.50) {
+  } else if (distanceATR <= .50) {
 
     score += 15;
 
@@ -308,7 +308,7 @@ function calculateStrength(
         );
 
       if (
-        multiple === 0.5 ||
+        multiple === .5 ||
         multiple === 1
       ) {
 
@@ -365,10 +365,9 @@ function calculateStrength(
 
       return (
         Math.abs(
-          zone.price -
-          other.price
+          zone.price - other.price
         ) <=
-        referenceATR * 0.20
+        referenceATR * .20
       );
     });
 
@@ -425,7 +424,7 @@ function createZones(
 
     {
       name: `${type} +0.75 ATR`,
-      price: ma12 + atr * 0.75,
+      price: ma12 + atr * .75,
       type,
       atr,
       sd
@@ -433,7 +432,7 @@ function createZones(
 
     {
       name: `${type} +0.50 ATR`,
-      price: ma12 + atr * 0.50,
+      price: ma12 + atr * .50,
       type,
       atr,
       sd
@@ -441,7 +440,7 @@ function createZones(
 
     {
       name: `${type} +0.25 ATR`,
-      price: ma12 + atr * 0.25,
+      price: ma12 + atr * .25,
       type,
       atr,
       sd
@@ -457,7 +456,7 @@ function createZones(
 
     {
       name: `${type} -0.25 ATR`,
-      price: ma12 - atr * 0.25,
+      price: ma12 - atr * .25,
       type,
       atr,
       sd
@@ -465,7 +464,7 @@ function createZones(
 
     {
       name: `${type} -0.50 ATR`,
-      price: ma12 - atr * 0.50,
+      price: ma12 - atr * .50,
       type,
       atr,
       sd
@@ -473,7 +472,7 @@ function createZones(
 
     {
       name: `${type} -0.75 ATR`,
-      price: ma12 - atr * 0.75,
+      price: ma12 - atr * .75,
       type,
       atr,
       sd
@@ -529,58 +528,67 @@ function createZones(
 
 async function loadSavedData() {
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("gold_settings")
-      .select("*")
-      .eq("id", 1)
-      .maybeSingle();
+  try {
 
-
-  if (error) {
-
-    console.error(
-      "โหลดข้อมูลไม่สำเร็จ:",
+    const {
+      data,
       error
-    );
+    } =
+      await supabaseClient
+        .from("gold_settings")
+        .select("*")
+        .eq("id",1)
+        .maybeSingle();
 
-    return;
+
+    if (error) {
+
+      console.error(
+        "โหลดข้อมูลไม่สำเร็จ:",
+        error
+      );
+
+      return;
+    }
+
+
+    if (!data)
+      return;
+
+
+    const ids = {
+
+      price: data.price,
+
+      d1ma12: data.d1ma12,
+      d1atr: data.d1atr,
+      d1sd: data.d1sd,
+      d1ma247: data.d1ma247,
+
+      w1ma12: data.w1ma12,
+      w1atr: data.w1atr,
+      w1sd: data.w1sd
+
+    };
+
+
+    Object.entries(ids)
+      .forEach(([id,value]) => {
+
+        const element =
+          document.getElementById(id);
+
+        if (element)
+          element.value =
+            value ?? "";
+
+      });
+
+  } catch(error) {
+
+    console.error(error);
+
   }
-
-
-  if (!data)
-    return;
-
-
-  const ids = {
-
-    price: data.price,
-
-    d1ma12: data.d1ma12,
-    d1atr: data.d1atr,
-    d1sd: data.d1sd,
-    d1ma247: data.d1ma247,
-
-    w1ma12: data.w1ma12,
-    w1atr: data.w1atr,
-    w1sd: data.w1sd
-  };
-
-
-  Object.entries(ids)
-    .forEach(([id, value]) => {
-
-      const element =
-        document.getElementById(id);
-
-      if (element)
-        element.value =
-          value ?? "";
-
-    });
 }
 
 
@@ -596,54 +604,31 @@ document
 
       const price =
         Number(
-          document
-            .getElementById("price")
-            .value
+          document.getElementById("price").value
         );
 
 
       const d1ma12Value =
-        document
-          .getElementById("d1ma12")
-          .value
-          .trim();
+        document.getElementById("d1ma12").value.trim();
 
       const d1atrValue =
-        document
-          .getElementById("d1atr")
-          .value
-          .trim();
+        document.getElementById("d1atr").value.trim();
 
       const d1sdValue =
-        document
-          .getElementById("d1sd")
-          .value
-          .trim();
+        document.getElementById("d1sd").value.trim();
 
       const d1ma247Value =
-        document
-          .getElementById("d1ma247")
-          .value
-          .trim();
+        document.getElementById("d1ma247").value.trim();
 
 
       const w1ma12Value =
-        document
-          .getElementById("w1ma12")
-          .value
-          .trim();
+        document.getElementById("w1ma12").value.trim();
 
       const w1atrValue =
-        document
-          .getElementById("w1atr")
-          .value
-          .trim();
+        document.getElementById("w1atr").value.trim();
 
       const w1sdValue =
-        document
-          .getElementById("w1sd")
-          .value
-          .trim();
+        document.getElementById("w1sd").value.trim();
 
 
       const d1HasAny =
@@ -673,9 +658,7 @@ document
 
       if (!price) {
 
-        alert(
-          "กรุณากรอกราคาทอง"
-        );
+        alert("กรุณากรอกราคาทอง");
 
         return;
       }
@@ -683,9 +666,7 @@ document
 
       if (!d1HasAny && !w1HasAny) {
 
-        alert(
-          "กรุณากรอก D1 หรือ W1"
-        );
+        alert("กรุณากรอก D1 หรือ W1");
 
         return;
       }
@@ -747,7 +728,6 @@ document
         .upsert({
 
           id: 1,
-
           price,
 
           d1ma12,
@@ -826,6 +806,12 @@ document
       });
 
 
+      allZones.sort(
+        (a,b) =>
+          a.distance - b.distance
+      );
+
+
       const supports =
         allZones
           .filter(z => z.price < price)
@@ -893,9 +879,7 @@ document
 
 
       const results =
-        document.getElementById(
-          "results"
-        );
+        document.getElementById("results");
 
 
       results.innerHTML = "";
@@ -911,7 +895,6 @@ document
 
       const analysis =
         document.createElement("div");
-
 
       analysis.className =
         "market-analysis";
@@ -940,7 +923,9 @@ document
 
               <div class="nearest-info">
                 ${volatility.reason}
+
                 <br>
+
                 ${
                   volatility.ratio !== null
                     ? "SD / ATR = " +
@@ -972,8 +957,10 @@ document
           </div>
 
 
-          <div class="feature-card"
-               style="margin-top:10px">
+          <div
+            class="feature-card"
+            style="margin-top:10px"
+          >
 
             <div class="feature-label">
               📐 MARKET FEATURES
@@ -983,8 +970,10 @@ document
               marketFeatures
                 ? `
 
-                  <div class="analysis-grid"
-                       style="margin-top:10px">
+                  <div
+                    class="analysis-grid"
+                    style="margin-top:10px"
+                  >
 
                     <div>
                       ATR
@@ -1041,6 +1030,7 @@ document
           </div>
 
         </div>
+
       `;
 
 
@@ -1063,13 +1053,12 @@ document
           </h2>
 
           <div class="nearest-info">
-            ราคาอ้างอิง
-            ${price.toFixed(2)}
+            ราคาอ้างอิง ${price.toFixed(2)}
           </div>
 
         </div>
 
-        <div class="nearest-info">
+        <div class="result-count">
           ${mode}
         </div>
 
@@ -1191,7 +1180,7 @@ document
               Math.min(
                 d1.atr,
                 w1.atr
-              ) * 0.20;
+              ) * .20;
 
 
             const difference =
@@ -1202,7 +1191,8 @@ document
 
 
             if (
-              difference <= threshold
+              difference <=
+              threshold
             ) {
 
               confluences.push({
@@ -1309,11 +1299,6 @@ document
 
 
       allZones
-        .sort(
-          (a,b) =>
-            a.distance -
-            b.distance
-        )
         .slice(0,10)
         .forEach((zone,index) => {
 
@@ -1380,8 +1365,7 @@ document
                     zone.reasons
                       .slice(0,5)
                       .map(
-                        r =>
-                          `<li>${r}</li>`
+                        r => `<li>${r}</li>`
                       )
                       .join("")
                   }
@@ -1420,52 +1404,108 @@ document
 
 
 // ======================================================
-// CSV PARSER
+// CSV PARSER — รองรับหลายรูปแบบ
 // ======================================================
 
 function parseCSV(text) {
+
+  if (!text || !text.trim()) {
+
+    throw new Error(
+      "ไฟล์ CSV ว่างเปล่า"
+    );
+
+  }
+
 
   const lines =
     text
       .replace(/^\uFEFF/, "")
       .trim()
       .split(/\r?\n/)
-      .filter(Boolean);
+      .filter(line => line.trim());
 
 
-  if (lines.length < 2)
-    return [];
+  if (lines.length < 2) {
+
+    throw new Error(
+      "ไฟล์ CSV ต้องมี Header และข้อมูลอย่างน้อย 1 แถว"
+    );
+
+  }
+
+
+  /*
+    รองรับทั้ง
+
+    Date,Open,High,Low,Close
+
+    และ
+
+    Date,Time,Open,High,Low,Close
+
+    และ ;
+
+  */
+
+  const delimiter =
+    lines[0].includes(";")
+      ? ";"
+      : ",";
 
 
   const headers =
     lines[0]
-      .split(",")
-      .map(
-        h =>
-          h.trim()
-            .replace(/^"|"$/g,"")
-            .toLowerCase()
+      .split(delimiter)
+      .map(h =>
+        h
+          .trim()
+          .replace(/^"|"$/g,"")
+          .toLowerCase()
       );
 
 
+  const findColumn = names => {
+
+    for (const name of names) {
+
+      const index =
+        headers.indexOf(name);
+
+      if (index >= 0)
+        return index;
+
+    }
+
+    return -1;
+  };
+
+
   const dateIndex =
-    headers.indexOf("date");
+    findColumn([
+      "date",
+      "datetime",
+      "time"
+    ]);
+
 
   const openIndex =
-    headers.indexOf("open");
+    findColumn(["open"]);
+
 
   const highIndex =
-    headers.indexOf("high");
+    findColumn(["high"]);
+
 
   const lowIndex =
-    headers.indexOf("low");
+    findColumn(["low"]);
+
 
   const closeIndex =
-    headers.indexOf("close");
+    findColumn(["close"]);
 
 
   if (
-    dateIndex < 0 ||
     openIndex < 0 ||
     highIndex < 0 ||
     lowIndex < 0 ||
@@ -1473,64 +1513,96 @@ function parseCSV(text) {
   ) {
 
     throw new Error(
-      "CSV ต้องมีคอลัมน์ Date, Open, High, Low, Close"
+      "หา Open / High / Low / Close ไม่พบในไฟล์ CSV"
     );
+
   }
 
 
-  return lines
-    .slice(1)
-    .map(line => {
-
-      const parts =
-        line.split(",");
+  const candles = [];
 
 
-      return {
+  for (
+    let i = 1;
+    i < lines.length;
+    i++
+  ) {
 
-        date:
-          parts[dateIndex]
-            ?.trim()
-            .replace(/^"|"$/g,""),
+    const parts =
+      lines[i]
+        .split(delimiter)
+        .map(v =>
+          v
+            .trim()
+            .replace(/^"|"$/g,"")
+        );
 
-        open:
-          Number(
-            parts[openIndex]
-              ?.trim()
-              .replace(/"/g,"")
-          ),
 
-        high:
-          Number(
-            parts[highIndex]
-              ?.trim()
-              .replace(/"/g,"")
-          ),
+    const open =
+      Number(
+        String(parts[openIndex])
+          .replace(/,/g,"")
+      );
 
-        low:
-          Number(
-            parts[lowIndex]
-              ?.trim()
-              .replace(/"/g,"")
-          ),
 
-        close:
-          Number(
-            parts[closeIndex]
-              ?.trim()
-              .replace(/"/g,"")
-          )
+    const high =
+      Number(
+        String(parts[highIndex])
+          .replace(/,/g,"")
+      );
 
-      };
 
-    })
-    .filter(row =>
-      row.date &&
-      Number.isFinite(row.open) &&
-      Number.isFinite(row.high) &&
-      Number.isFinite(row.low) &&
-      Number.isFinite(row.close)
+    const low =
+      Number(
+        String(parts[lowIndex])
+          .replace(/,/g,"")
+      );
+
+
+    const close =
+      Number(
+        String(parts[closeIndex])
+          .replace(/,/g,"")
+      );
+
+
+    if (
+      !Number.isFinite(open) ||
+      !Number.isFinite(high) ||
+      !Number.isFinite(low) ||
+      !Number.isFinite(close)
+    ) {
+      continue;
+    }
+
+
+    candles.push({
+
+      date:
+        dateIndex >= 0
+          ? parts[dateIndex]
+          : String(i),
+
+      open,
+      high,
+      low,
+      close
+
+    });
+
+  }
+
+
+  if (!candles.length) {
+
+    throw new Error(
+      "ไม่สามารถอ่านข้อมูล OHLC จากไฟล์ได้"
     );
+
+  }
+
+
+  return candles;
 }
 
 
@@ -1550,9 +1622,12 @@ function runBacktest(
   if (
     !candles.length ||
     !Number.isFinite(ma12) ||
-    !Number.isFinite(atr)
+    !Number.isFinite(atr) ||
+    atr <= 0
   ) {
+
     return [];
+
   }
 
 
@@ -1570,7 +1645,7 @@ function runBacktest(
 
   for (
     let i = 0;
-    i < candles.length - 1;
+    i < candles.length;
     i++
   ) {
 
@@ -1592,7 +1667,7 @@ function runBacktest(
 
       if (
         distance <=
-        atr * 0.20
+        atr * .20
       ) {
 
         if (
@@ -1649,6 +1724,7 @@ function runBacktest(
     const risk =
       atr * riskR;
 
+
     const reward =
       atr * rewardR;
 
@@ -1693,6 +1769,12 @@ function runBacktest(
           next.high >= target;
 
 
+        /*
+          ถ้าแท่งเดียวชนทั้ง SL และ TP
+          ให้ถือว่า LOSS
+          เพื่อไม่ให้ Backtest หลอกตัวเอง
+        */
+
         if (
           hitStop &&
           hitTarget
@@ -1730,6 +1812,7 @@ function runBacktest(
 
           break;
         }
+
 
       } else {
 
@@ -1789,7 +1872,8 @@ function runBacktest(
 
     results.push({
 
-      date: candle.date,
+      date:
+        candle.date,
 
       direction,
 
@@ -1799,15 +1883,20 @@ function runBacktest(
 
       target,
 
-      zone: nearest.name,
+      zone:
+        nearest.name,
 
-      strength: strength.score,
+      strength:
+        strength.score,
 
-      result: outcome.result,
+      result:
+        outcome.result,
 
-      r: outcome.r,
+      r:
+        outcome.r,
 
-      exit: outcome.exit
+      exit:
+        outcome.exit
 
     });
 
@@ -1819,7 +1908,7 @@ function runBacktest(
 
 
 // ======================================================
-// BACKTEST STATISTICS
+// BACKTEST STATS
 // ======================================================
 
 function calculateBacktestStats(trades) {
@@ -1827,6 +1916,7 @@ function calculateBacktestStats(trades) {
   if (!trades.length) {
 
     return {
+
       total: 0,
       wins: 0,
       losses: 0,
@@ -1835,7 +1925,9 @@ function calculateBacktestStats(trades) {
       expectancy: 0,
       profitFactor: 0,
       maxDrawdown: 0
+
     };
+
   }
 
 
@@ -1890,8 +1982,7 @@ function calculateBacktestStats(trades) {
 
   const profitFactor =
     grossLoss > 0
-      ? grossProfit /
-        grossLoss
+      ? grossProfit / grossLoss
       : Infinity;
 
 
@@ -1910,8 +2001,10 @@ function calculateBacktestStats(trades) {
         equity
       );
 
+
     const drawdown =
       peak - equity;
+
 
     maxDrawdown =
       Math.max(
@@ -1924,17 +2017,21 @@ function calculateBacktestStats(trades) {
 
   return {
 
-    total: trades.length,
+    total:
+      trades.length,
 
-    wins: wins.length,
+    wins:
+      wins.length,
 
-    losses: losses.length,
+    losses:
+      losses.length,
 
     winRate,
 
     averageR,
 
-    expectancy: averageR,
+    expectancy:
+      averageR,
 
     profitFactor,
 
@@ -1945,73 +2042,84 @@ function calculateBacktestStats(trades) {
 
 
 // ======================================================
-// BACKTEST FILE INPUT
+// FILE SELECT
 // ======================================================
 
-const backtestFile =
-  document.getElementById(
-    "backtestFile"
-  );
+let selectedCSV = "";
 
 
-if (backtestFile) {
-
-  backtestFile.addEventListener(
+document
+  .getElementById("backtestFile")
+  .addEventListener(
     "change",
-    function() {
+    async function(event) {
 
       const file =
-        this.files?.[0];
+        event.target.files[0];
 
-      const name =
+
+      if (!file) {
+
+        selectedCSV = "";
+
         document.getElementById(
-          "backtestFileName"
-        );
+          "fileStatus"
+        ).textContent =
+          "ยังไม่ได้เลือกไฟล์";
 
-      if (name) {
+        return;
+      }
 
-        name.textContent =
-          file
-            ? `ไฟล์ที่เลือก: ${file.name}`
-            : "ยังไม่ได้เลือกไฟล์";
+
+      try {
+
+        selectedCSV =
+          await file.text();
+
+
+        /*
+          ตรวจทันทีว่าอ่านได้ไหม
+        */
+
+        const candles =
+          parseCSV(selectedCSV);
+
+
+        document.getElementById(
+          "fileStatus"
+        ).textContent =
+          `✅ ${file.name} • อ่านได้ ${candles.length.toLocaleString()} แท่ง`;
+
+
+      } catch(error) {
+
+        selectedCSV = "";
+
+        document.getElementById(
+          "fileStatus"
+        ).textContent =
+          "❌ อ่านไฟล์ไม่ได้: " +
+          error.message;
 
       }
 
     }
   );
 
-}
-
 
 // ======================================================
 // BACKTEST BUTTON
 // ======================================================
 
-const runBacktestBtn =
-  document.getElementById(
-    "runBacktestBtn"
-  );
-
-
-if (runBacktestBtn) {
-
-  runBacktestBtn.addEventListener(
+document
+  .getElementById("runBacktestBtn")
+  .addEventListener(
     "click",
-    async function() {
+    function() {
 
       try {
 
-        const fileInput =
-          document.getElementById(
-            "backtestFile"
-          );
-
-
-        if (
-          !fileInput ||
-          !fileInput.files ||
-          !fileInput.files.length
-        ) {
+        if (!selectedCSV) {
 
           alert(
             "กรุณาเลือกไฟล์ CSV ก่อนครับ"
@@ -2021,82 +2129,62 @@ if (runBacktestBtn) {
         }
 
 
-        const file =
-          fileInput.files[0];
-
-
-        const csv =
-          await file.text();
-
-
         const candles =
-          parseCSV(csv);
-
-
-        if (!candles.length) {
-
-          alert(
-            "ไม่พบข้อมูลแท่งเทียนในไฟล์ CSV"
-          );
-
-          return;
-        }
+          parseCSV(selectedCSV);
 
 
         const ma12 =
           Number(
-            document
-              .getElementById("d1ma12")
-              .value
+            document.getElementById(
+              "d1ma12"
+            ).value
           );
 
 
         const atr =
           Number(
-            document
-              .getElementById("d1atr")
-              .value
+            document.getElementById(
+              "d1atr"
+            ).value
           );
 
 
         const minStrength =
           Number(
-            document
-              .getElementById("minStrength")
-              .value
+            document.getElementById(
+              "minStrength"
+            ).value
           );
 
 
         const riskR =
           Number(
-            document
-              .getElementById("riskR")
-              .value
+            document.getElementById(
+              "riskR"
+            ).value
           );
 
 
         const rewardR =
           Number(
-            document
-              .getElementById("rewardR")
-              .value
+            document.getElementById(
+              "rewardR"
+            ).value
           );
 
 
         if (
           !Number.isFinite(ma12) ||
           !Number.isFinite(atr) ||
-          !Number.isFinite(minStrength) ||
-          !Number.isFinite(riskR) ||
-          !Number.isFinite(rewardR) ||
-          ma12 <= 0 ||
           atr <= 0 ||
+          !Number.isFinite(riskR) ||
           riskR <= 0 ||
+          !Number.isFinite(rewardR) ||
           rewardR <= 0
         ) {
 
           alert(
-            "กรุณากรอก D1 MA12, ATR, Minimum Strength, Risk และ Reward ให้ถูกต้อง"
+            "กรุณากรอก D1 MA12 + ATR14 + Risk + Reward ให้ถูกต้อง"
           );
 
           return;
@@ -2126,10 +2214,6 @@ if (runBacktestBtn) {
           );
 
 
-        if (!output)
-          return;
-
-
         output.innerHTML = `
 
           <div class="panel">
@@ -2138,13 +2222,13 @@ if (runBacktestBtn) {
               🧪 BACKTEST RESULTS
             </div>
 
+
             <div class="nearest-info">
-              ข้อมูลทั้งหมด:
+
+              Dataset:
               ${candles.length.toLocaleString()}
               candles
-              <br>
-              Trades:
-              ${stats.total}
+
             </div>
 
 
@@ -2268,80 +2352,80 @@ if (runBacktestBtn) {
               trades.length
                 ? `
 
-                  <div style="overflow-x:auto">
+                  <table class="backtest-table">
 
-                    <table class="backtest-table">
+                    <thead>
 
-                      <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Side</th>
+                        <th>Entry</th>
+                        <th>Zone</th>
+                        <th>Strength</th>
+                        <th>Result</th>
+                        <th>R</th>
+                      </tr>
 
-                        <tr>
-                          <th>Date</th>
-                          <th>Side</th>
-                          <th>Entry</th>
-                          <th>Zone</th>
-                          <th>Strength</th>
-                          <th>Result</th>
-                          <th>R</th>
-                        </tr>
+                    </thead>
 
-                      </thead>
+                    <tbody>
 
-                      <tbody>
+                      ${
+                        trades
+                          .slice(-100)
+                          .map(t => `
 
-                        ${
-                          trades
-                            .slice(-100)
-                            .map(t => `
+                            <tr>
 
-                              <tr>
+                              <td>
+                                ${t.date}
+                              </td>
 
-                                <td>
-                                  ${t.date}
-                                </td>
+                              <td>
+                                ${t.direction}
+                              </td>
 
-                                <td>
-                                  ${t.direction}
-                                </td>
+                              <td>
+                                ${t.entry.toFixed(2)}
+                              </td>
 
-                                <td>
-                                  ${t.entry.toFixed(2)}
-                                </td>
+                              <td>
+                                ${t.zone}
+                              </td>
 
-                                <td>
-                                  ${t.zone}
-                                </td>
+                              <td>
+                                ${t.strength}
+                              </td>
 
-                                <td>
-                                  ${t.strength}
-                                </td>
+                              <td class="${
+                                t.result === "WIN"
+                                  ? "win"
+                                  : "loss"
+                              }">
 
-                                <td class="${
-                                  t.result === "WIN"
-                                    ? "win"
-                                    : "loss"
-                                }">
-                                  ${t.result}
-                                </td>
+                                ${t.result}
 
-                                <td class="${
-                                  t.r > 0
-                                    ? "win"
-                                    : "loss"
-                                }">
-                                  ${t.r.toFixed(2)}
-                                </td>
+                              </td>
 
-                              </tr>
+                              <td class="${
+                                t.r > 0
+                                  ? "win"
+                                  : "loss"
+                              }">
 
-                            `)
-                            .join("")
-                        }
+                                ${t.r.toFixed(2)}
 
-                      </tbody>
+                              </td>
 
-                    </table>
+                            </tr>
 
-                  </div>
+                          `)
+                          .join("")
+                      }
+
+                    </tbody>
+
+                  </table>
 
                 `
                 : `
@@ -2352,7 +2436,7 @@ if (runBacktestBtn) {
                   >
 
                     ไม่พบ Trade ที่ผ่านเงื่อนไข
-                    Strength ที่กำหนด
+                    Strength ${minStrength}
 
                   </div>
 
@@ -2387,22 +2471,14 @@ if (runBacktestBtn) {
     }
   );
 
-}
-
 
 // ======================================================
 // CLEAR DATA
 // ======================================================
 
-const clearDataBtn =
-  document.getElementById(
-    "clearDataBtn"
-  );
-
-
-if (clearDataBtn) {
-
-  clearDataBtn.addEventListener(
+document
+  .getElementById("clearDataBtn")
+  .addEventListener(
     "click",
     async function() {
 
@@ -2411,7 +2487,9 @@ if (clearDataBtn) {
           "ต้องการล้างข้อมูลที่บันทึกไว้ใช่ไหม?"
         )
       ) {
+
         return;
+
       }
 
 
@@ -2456,41 +2534,9 @@ if (clearDataBtn) {
       });
 
 
-      const results =
-        document.getElementById(
-          "results"
-        );
-
-      if (results)
-        results.innerHTML = "";
-
-
-      const backtestResults =
-        document.getElementById(
-          "backtestResults"
-        );
-
-      if (backtestResults)
-        backtestResults.innerHTML = "";
-
-
-      const fileInput =
-        document.getElementById(
-          "backtestFile"
-        );
-
-      if (fileInput)
-        fileInput.value = "";
-
-
-      const fileName =
-        document.getElementById(
-          "backtestFileName"
-        );
-
-      if (fileName)
-        fileName.textContent =
-          "ยังไม่ได้เลือกไฟล์";
+      document.getElementById(
+        "results"
+      ).innerHTML = "";
 
 
       alert(
@@ -2499,8 +2545,6 @@ if (clearDataBtn) {
 
     }
   );
-
-}
 
 
 // ======================================================
