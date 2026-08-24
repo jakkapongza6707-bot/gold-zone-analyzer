@@ -103,8 +103,7 @@
       margin-bottom: 7px;
     }
 
-    input,
-    select {
+    input {
       width: 100%;
       padding: 13px 12px;
       border-radius: 10px;
@@ -115,14 +114,16 @@
       outline: none;
     }
 
-    input:focus,
-    select:focus {
+    input:focus {
       border-color: #d6a928;
       box-shadow: 0 0 0 3px rgba(214,169,40,.12);
     }
 
-    .analyze-btn,
-    #runBacktestBtn {
+    button {
+      cursor: pointer;
+    }
+
+    .analyze-btn {
       width: 100%;
       padding: 16px;
       border: none;
@@ -131,7 +132,6 @@
       color: #111;
       font-size: 17px;
       font-weight: 800;
-      cursor: pointer;
       margin-top: 5px;
     }
 
@@ -144,29 +144,46 @@
       background: #151515;
       color: #999;
       font-size: 14px;
-      cursor: pointer;
     }
 
-    .file-box {
+    .backtest-file {
+      display: block;
+      width: 100%;
+      padding: 15px;
       border: 1px dashed #555;
-      border-radius: 14px;
-      padding: 18px;
-      text-align: center;
+      border-radius: 12px;
       background: #111;
+      color: #ddd;
       margin-bottom: 15px;
     }
 
-    #backtestFile {
-      display: block;
-      width: 100%;
-      margin-bottom: 10px;
-      padding: 10px;
-      background: #181818;
-      border-radius: 10px;
+    .backtest-file input {
+      border: none;
+      padding: 0;
+      background: transparent;
+      margin-top: 8px;
     }
 
-    .file-name {
-      color: #aaa;
+    .backtest-settings {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .backtest-btn {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid #80651d;
+      border-radius: 12px;
+      background: #201b0c;
+      color: #f2c94c;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .file-status {
+      color: #888;
       font-size: 12px;
       margin-top: 8px;
     }
@@ -175,39 +192,39 @@
       margin-top: 20px;
     }
 
-    .stats-grid,
-    .analysis-grid {
+    .nearest-panel {
       display: grid;
-      grid-template-columns: repeat(2,1fr);
-      gap: 10px;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
-    .stat-card,
-    .feature-card {
+    .nearest-card {
       background: #151515;
       border: 1px solid #292929;
-      border-radius: 12px;
-      padding: 14px;
+      border-radius: 14px;
+      padding: 16px;
     }
 
-    .feature-label {
-      color: #888;
-      font-size: 10px;
+    .nearest-card:first-child {
+      border-left: 4px solid #43d17a;
+    }
+
+    .nearest-card:last-child {
+      border-left: 4px solid #ff5b5b;
+    }
+
+    .nearest-label {
+      font-size: 12px;
       font-weight: 800;
+      color: #aaa;
+      margin-bottom: 8px;
     }
 
-    .feature-value {
-      font-size: 18px;
+    .nearest-price {
+      font-size: 25px;
       font-weight: 800;
-      margin-top: 5px;
-    }
-
-    .win {
-      color: #43d17a;
-    }
-
-    .loss {
-      color: #ff5b5b;
+      color: #f2c94c;
     }
 
     .nearest-info {
@@ -217,22 +234,172 @@
       margin-top: 6px;
     }
 
+    .confluence-box {
+      background: linear-gradient(
+        135deg,
+        rgba(214,169,40,.10),
+        rgba(155,124,255,.08)
+      );
+      border: 1px solid #62521f;
+      border-radius: 15px;
+      padding: 16px;
+      margin-bottom: 10px;
+    }
+
+    .confluence-title {
+      color: #f2c94c;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .confluence-price {
+      color: #fff;
+      font-size: 23px;
+      font-weight: 800;
+      margin-top: 7px;
+    }
+
+    .zone {
+      padding: 16px;
+      margin: 9px 0;
+      border-radius: 14px;
+      background: #151515;
+      border: 1px solid #292929;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .zone-main {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .zone-name {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .zone-price {
+      color: #f2c94c;
+      font-size: 21px;
+      font-weight: 800;
+      margin-top: 4px;
+    }
+
+    .zone-distance {
+      text-align: right;
+      font-size: 12px;
+      color: #999;
+      white-space: nowrap;
+    }
+
+    .above {
+      border-left: 4px solid #3fa7ff;
+    }
+
+    .below {
+      border-left: 4px solid #ff5b5b;
+    }
+
+    .strength-box {
+      margin-top: 13px;
+      padding: 12px;
+      border-radius: 11px;
+      background: #101010;
+      border: 1px solid #262626;
+    }
+
+    .strength-title,
+    .feature-label {
+      color: #aaa;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .strength-score,
+    .feature-value {
+      color: #f2c94c;
+      font-size: 18px;
+      font-weight: 800;
+      margin-top: 3px;
+    }
+
+    .strength-bar {
+      width: 100%;
+      height: 7px;
+      background: #292929;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .strength-fill {
+      height: 100%;
+      background: linear-gradient(90deg,#8f701e,#f2c94c);
+      border-radius: 10px;
+    }
+
+    .why-title {
+      color: #888;
+      font-size: 10px;
+      font-weight: 800;
+      margin-top: 12px;
+    }
+
+    .why-list {
+      margin: 5px 0 0;
+      padding-left: 17px;
+      color: #aaa;
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    .analysis-grid,
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 10px;
+    }
+
+    .feature-card,
+    .stat-card {
+      background: #111;
+      border: 1px solid #292929;
+      border-radius: 12px;
+      padding: 13px;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(4,1fr);
+    }
+
     .backtest-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 15px;
+      margin-top: 18px;
       font-size: 11px;
     }
 
     .backtest-table th,
     .backtest-table td {
       border-bottom: 1px solid #292929;
-      padding: 8px 5px;
-      text-align: left;
+      padding: 9px 5px;
+      text-align: center;
     }
 
     .backtest-table th {
-      color: #888;
+      color: #f2c94c;
+    }
+
+    .win {
+      color: #43d17a;
+      font-weight: 800;
+    }
+
+    .loss {
+      color: #ff5b5b;
+      font-weight: 800;
     }
 
     .footer {
@@ -243,6 +410,7 @@
     }
 
     @media(max-width:650px) {
+
       .container {
         padding: 18px 12px 40px;
       }
@@ -252,9 +420,17 @@
       }
 
       .grid,
-      .stats-grid,
-      .analysis-grid {
+      .backtest-settings,
+      .nearest-panel {
         grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2,1fr);
+      }
+
+      .zone-price {
+        font-size: 18px;
       }
 
       .price-input {
@@ -262,9 +438,7 @@
       }
 
       .backtest-table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
+        font-size: 9px;
       }
     }
   </style>
@@ -278,13 +452,16 @@
 
   <div class="header">
     <div class="logo">🥇</div>
+
     <h1>Gold Zone Analyzer Pro</h1>
+
     <div class="subtitle">
       XAUUSD • Statistical Volatility Analysis
     </div>
   </div>
 
-  <!-- CURRENT PRICE -->
+
+  <!-- PRICE -->
 
   <div class="price-box">
 
@@ -297,9 +474,11 @@
       type="number"
       id="price"
       placeholder="4616"
+      step="0.01"
     >
 
   </div>
+
 
   <!-- D1 -->
 
@@ -317,6 +496,7 @@
           type="number"
           id="d1ma12"
           placeholder="4418.6869"
+          step="0.0001"
         >
       </div>
 
@@ -326,6 +506,7 @@
           type="number"
           id="d1atr"
           placeholder="91.657"
+          step="0.001"
         >
       </div>
 
@@ -335,6 +516,7 @@
           type="number"
           id="d1sd"
           placeholder="160.7930"
+          step="0.0001"
         >
       </div>
 
@@ -344,12 +526,13 @@
           type="number"
           id="d1ma247"
           placeholder="Optional"
+          step="0.0001"
         >
       </div>
 
     </div>
-
   </div>
+
 
   <!-- W1 -->
 
@@ -367,6 +550,7 @@
           type="number"
           id="w1ma12"
           placeholder="4210.2075"
+          step="0.0001"
         >
       </div>
 
@@ -376,6 +560,7 @@
           type="number"
           id="w1atr"
           placeholder="226.111"
+          step="0.001"
         >
       </div>
 
@@ -385,14 +570,13 @@
           type="number"
           id="w1sd"
           placeholder="260.7582"
+          step="0.0001"
         >
       </div>
 
     </div>
-
   </div>
 
-  <!-- ANALYZE -->
 
   <button class="analyze-btn">
     🔍 วิเคราะห์ Gold Zones
@@ -408,14 +592,12 @@
   <div class="panel">
 
     <div class="panel-title">
-      🧪 Backtest
+      🧪 Backtest ระบบ Gold Zone
     </div>
 
-    <div class="file-box">
+    <label class="backtest-file">
 
-      <strong>
-        📁 เลือกไฟล์ข้อมูลย้อนหลัง
-      </strong>
+      📁 เลือกไฟล์ข้อมูลย้อนหลัง CSV
 
       <input
         type="file"
@@ -424,23 +606,19 @@
       >
 
       <div
-        id="backtestFileName"
-        class="file-name"
+        id="fileStatus"
+        class="file-status"
       >
         ยังไม่ได้เลือกไฟล์
       </div>
 
-    </div>
+    </label>
 
 
-    <div class="grid">
+    <div class="backtest-settings">
 
       <div class="field">
-
-        <label>
-          Minimum Strength
-        </label>
-
+        <label>Minimum Strength</label>
         <input
           type="number"
           id="minStrength"
@@ -448,16 +626,10 @@
           min="0"
           max="100"
         >
-
       </div>
 
-
       <div class="field">
-
-        <label>
-          Risk (R)
-        </label>
-
+        <label>Risk (R)</label>
         <input
           type="number"
           id="riskR"
@@ -465,16 +637,10 @@
           step="0.1"
           min="0.1"
         >
-
       </div>
 
-
       <div class="field">
-
-        <label>
-          Reward (R)
-        </label>
-
+        <label>Reward (R)</label>
         <input
           type="number"
           id="rewardR"
@@ -482,29 +648,26 @@
           step="0.1"
           min="0.1"
         >
-
       </div>
 
     </div>
 
 
-    <button id="runBacktestBtn">
+    <button
+      id="runBacktestBtn"
+      class="backtest-btn"
+    >
       🚀 เริ่ม Backtest
     </button>
-
-
-    <div id="backtestResults"></div>
 
   </div>
 
 
   <!-- RESULTS -->
 
-  <div id="results">
+  <div id="results"></div>
 
-    <div id="marketAnalysis"></div>
-
-  </div>
+  <div id="backtestResults"></div>
 
 
   <div class="footer">
@@ -515,118 +678,6 @@
 
 
 <script src="script.js?v=6"></script>
-
-<script>
-
-  const fileInput =
-    document.getElementById("backtestFile");
-
-  const fileName =
-    document.getElementById("backtestFileName");
-
-
-  fileInput.addEventListener(
-    "change",
-    function() {
-
-      if (!this.files.length) {
-
-        fileName.textContent =
-          "ยังไม่ได้เลือกไฟล์";
-
-        return;
-
-      }
-
-      fileName.textContent =
-        "ไฟล์ที่เลือก: " +
-        this.files[0].name;
-
-    }
-  );
-
-
-  document
-    .getElementById("runBacktestBtn")
-    .addEventListener(
-      "click",
-      async function() {
-
-        const file =
-          fileInput.files[0];
-
-        if (!file) {
-
-          alert(
-            "กรุณาเลือกไฟล์ CSV ก่อนครับ"
-          );
-
-          return;
-
-        }
-
-        try {
-
-          const text =
-            await file.text();
-
-
-          /*
-           * ส่งข้อมูล CSV เข้า textarea
-           * ที่ script.js เดิมต้องการ
-           */
-
-          let textarea =
-            document.getElementById(
-              "backtestData"
-            );
-
-
-          if (!textarea) {
-
-            textarea =
-              document.createElement(
-                "textarea"
-              );
-
-            textarea.id =
-              "backtestData";
-
-            textarea.style.display =
-              "none";
-
-            document.body.appendChild(
-              textarea
-            );
-
-          }
-
-
-          textarea.value =
-            text;
-
-
-          /*
-           * ให้ script.js เดิมทำงาน
-           */
-
-          textarea.dispatchEvent(
-            new Event("change")
-          );
-
-        } catch(error) {
-
-          alert(
-            "อ่านไฟล์ไม่สำเร็จ\n\n" +
-            error.message
-          );
-
-        }
-
-      }
-    );
-
-</script>
 
 </body>
 </html>
