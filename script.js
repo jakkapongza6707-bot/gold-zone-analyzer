@@ -8,7 +8,7 @@ const supabaseClient = window.supabase.createClient(
 
 
 // ======================================================
-// โหลดข้อมูลที่บันทึกไว้
+// โหลดข้อมูลเก่า
 // ======================================================
 
 async function loadSavedData() {
@@ -30,6 +30,7 @@ async function loadSavedData() {
   }
 
   document.getElementById("price").value = data.price ?? "";
+
   document.getElementById("d1ma12").value = data.d1ma12 ?? "";
   document.getElementById("d1atr").value = data.d1atr ?? "";
   document.getElementById("d1sd").value = data.d1sd ?? "";
@@ -47,82 +48,166 @@ async function loadSavedData() {
 // วิเคราะห์ Gold Zones
 // ======================================================
 
-document.querySelector(".analyze-btn").addEventListener(
-  "click",
-  async function () {
+document
+  .querySelector(".analyze-btn")
+  .addEventListener("click", async function () {
 
     const price = Number(
       document.getElementById("price").value
     );
 
-    const d1ma12 = Number(
-      document.getElementById("d1ma12").value
-    );
 
-    const d1atr = Number(
-      document.getElementById("d1atr").value
-    );
+    // ==================================================
+    // อ่านค่า D1
+    // ==================================================
 
-    const d1sd = Number(
-      document.getElementById("d1sd").value
-    );
+    const d1ma12Value =
+      document.getElementById("d1ma12").value.trim();
+
+    const d1atrValue =
+      document.getElementById("d1atr").value.trim();
+
+    const d1sdValue =
+      document.getElementById("d1sd").value.trim();
 
     const d1ma247Value =
-      document.getElementById("d1ma247").value;
+      document.getElementById("d1ma247").value.trim();
 
-    const d1ma247 =
-      d1ma247Value === ""
-        ? null
-        : Number(d1ma247Value);
+
+    const d1HasAny =
+      d1ma12Value !== "" ||
+      d1atrValue !== "" ||
+      d1sdValue !== "" ||
+      d1ma247Value !== "";
+
+
+    const d1Complete =
+      d1ma12Value !== "" &&
+      d1atrValue !== "" &&
+      d1sdValue !== "";
 
 
     // ==================================================
-    // W1
+    // อ่านค่า W1
     // ==================================================
 
     const w1ma12Value =
-      document.getElementById("w1ma12").value;
+      document.getElementById("w1ma12").value.trim();
 
     const w1atrValue =
-      document.getElementById("w1atr").value;
+      document.getElementById("w1atr").value.trim();
 
     const w1sdValue =
-      document.getElementById("w1sd").value;
+      document.getElementById("w1sd").value.trim();
 
 
-    const hasW1 =
+    const w1HasAny =
+      w1ma12Value !== "" ||
+      w1atrValue !== "" ||
+      w1sdValue !== "";
+
+
+    const w1Complete =
       w1ma12Value !== "" &&
       w1atrValue !== "" &&
       w1sdValue !== "";
 
 
-    const w1ma12 =
-      hasW1 ? Number(w1ma12Value) : null;
+    // ==================================================
+    // ตรวจราคา
+    // ==================================================
 
-    const w1atr =
-      hasW1 ? Number(w1atrValue) : null;
+    if (!price) {
 
-    const w1sd =
-      hasW1 ? Number(w1sdValue) : null;
+      alert("กรุณากรอกราคาทอง");
+
+      return;
+    }
 
 
     // ==================================================
-    // ตรวจ D1
+    // ต้องมีอย่างน้อย 1 TF
     // ==================================================
 
-    if (
-      !price ||
-      !d1ma12 ||
-      !d1atr ||
-      !d1sd
-    ) {
+    if (!d1HasAny && !w1HasAny) {
 
       alert(
-        "กรุณากรอก ราคา + D1 MA12 + D1 ATR14 + D1 SD20"
+        "กรุณากรอกข้อมูล D1 หรือ W1 อย่างน้อย 1 ชุด"
       );
 
       return;
     }
+
+
+    // ==================================================
+    // ถ้าเริ่มกรอก D1 ต้องกรอก D1 ให้ครบ
+    // ==================================================
+
+    if (d1HasAny && !d1Complete) {
+
+      alert(
+        "ข้อมูล D1 ยังไม่ครบ\n\n" +
+        "ต้องมี MA12 + ATR14 + SD20"
+      );
+
+      return;
+    }
+
+
+    // ==================================================
+    // ถ้าเริ่มกรอก W1 ต้องกรอก W1 ให้ครบ
+    // ==================================================
+
+    if (w1HasAny && !w1Complete) {
+
+      alert(
+        "ข้อมูล W1 ยังไม่ครบ\n\n" +
+        "ต้องมี MA12 + ATR14 + SD20"
+      );
+
+      return;
+    }
+
+
+    // ==================================================
+    // แปลงตัวเลข
+    // ==================================================
+
+    const d1ma12 =
+      d1Complete
+        ? Number(d1ma12Value)
+        : null;
+
+    const d1atr =
+      d1Complete
+        ? Number(d1atrValue)
+        : null;
+
+    const d1sd =
+      d1Complete
+        ? Number(d1sdValue)
+        : null;
+
+    const d1ma247 =
+      d1ma247Value !== ""
+        ? Number(d1ma247Value)
+        : null;
+
+
+    const w1ma12 =
+      w1Complete
+        ? Number(w1ma12Value)
+        : null;
+
+    const w1atr =
+      w1Complete
+        ? Number(w1atrValue)
+        : null;
+
+    const w1sd =
+      w1Complete
+        ? Number(w1sdValue)
+        : null;
 
 
     // ==================================================
@@ -133,6 +218,7 @@ document.querySelector(".analyze-btn").addEventListener(
       await supabaseClient
         .from("gold_settings")
         .upsert({
+
           id: 1,
 
           price: price,
@@ -150,6 +236,7 @@ document.querySelector(".analyze-btn").addEventListener(
           w1atr: w1atr,
 
           w1sd: w1sd
+
         });
 
 
@@ -180,99 +267,105 @@ document.querySelector(".analyze-btn").addEventListener(
 
 
     // ==================================================
-    // D1 ZONES
+    // สร้าง D1 Zones
     // ==================================================
 
-    const d1Zones = [
+    let d1Zones = [];
 
-      {
-        name: "D1 +1 ATR",
-        price: d1ma12 + d1atr,
-        type: "D1"
-      },
 
-      {
-        name: "D1 +0.75 ATR",
-        price: d1ma12 + d1atr * 0.75,
-        type: "D1"
-      },
+    if (d1Complete) {
 
-      {
-        name: "D1 +0.50 ATR",
-        price: d1ma12 + d1atr * 0.50,
-        type: "D1"
-      },
+      d1Zones = [
 
-      {
-        name: "D1 +0.25 ATR",
-        price: d1ma12 + d1atr * 0.25,
-        type: "D1"
-      },
+        {
+          name: "D1 +1 ATR",
+          price: d1ma12 + d1atr,
+          type: "D1"
+        },
 
-      {
-        name: "D1 MA12",
-        price: d1ma12,
-        type: "D1"
-      },
+        {
+          name: "D1 +0.75 ATR",
+          price: d1ma12 + d1atr * 0.75,
+          type: "D1"
+        },
 
-      {
-        name: "D1 -0.25 ATR",
-        price: d1ma12 - d1atr * 0.25,
-        type: "D1"
-      },
+        {
+          name: "D1 +0.50 ATR",
+          price: d1ma12 + d1atr * 0.50,
+          type: "D1"
+        },
 
-      {
-        name: "D1 -0.50 ATR",
-        price: d1ma12 - d1atr * 0.50,
-        type: "D1"
-      },
+        {
+          name: "D1 +0.25 ATR",
+          price: d1ma12 + d1atr * 0.25,
+          type: "D1"
+        },
 
-      {
-        name: "D1 -0.75 ATR",
-        price: d1ma12 - d1atr * 0.75,
-        type: "D1"
-      },
+        {
+          name: "D1 MA12",
+          price: d1ma12,
+          type: "D1"
+        },
 
-      {
-        name: "D1 -1 ATR",
-        price: d1ma12 - d1atr,
-        type: "D1"
-      },
+        {
+          name: "D1 -0.25 ATR",
+          price: d1ma12 - d1atr * 0.25,
+          type: "D1"
+        },
 
-      {
-        name: "D1 +1 SD",
-        price: d1ma12 + d1sd,
-        type: "D1"
-      },
+        {
+          name: "D1 -0.50 ATR",
+          price: d1ma12 - d1atr * 0.50,
+          type: "D1"
+        },
 
-      {
-        name: "D1 +2 SD",
-        price: d1ma12 + d1sd * 2,
-        type: "D1"
-      },
+        {
+          name: "D1 -0.75 ATR",
+          price: d1ma12 - d1atr * 0.75,
+          type: "D1"
+        },
 
-      {
-        name: "D1 -1 SD",
-        price: d1ma12 - d1sd,
-        type: "D1"
-      },
+        {
+          name: "D1 -1 ATR",
+          price: d1ma12 - d1atr,
+          type: "D1"
+        },
 
-      {
-        name: "D1 -2 SD",
-        price: d1ma12 - d1sd * 2,
-        type: "D1"
-      }
-    ];
+        {
+          name: "D1 +1 SD",
+          price: d1ma12 + d1sd,
+          type: "D1"
+        },
+
+        {
+          name: "D1 +2 SD",
+          price: d1ma12 + d1sd * 2,
+          type: "D1"
+        },
+
+        {
+          name: "D1 -1 SD",
+          price: d1ma12 - d1sd,
+          type: "D1"
+        },
+
+        {
+          name: "D1 -2 SD",
+          price: d1ma12 - d1sd * 2,
+          type: "D1"
+        }
+      ];
+    }
 
 
     // ==================================================
-    // W1 ZONES
+    // สร้าง W1 Zones
     // ==================================================
 
     let w1Zones = [];
 
 
-    if (hasW1) {
+    if (w1Complete) {
 
       w1Zones = [
 
@@ -368,7 +461,7 @@ document.querySelector(".analyze-btn").addEventListener(
 
 
     // ==================================================
-    // คำนวณระยะห่าง
+    // ระยะห่าง
     // ==================================================
 
     allZones.forEach(zone => {
@@ -383,7 +476,7 @@ document.querySelector(".analyze-btn").addEventListener(
 
 
     // ==================================================
-    // เรียงจากใกล้ที่สุด
+    // เรียงจากใกล้สุด
     // ==================================================
 
     allZones.sort(
@@ -399,40 +492,63 @@ document.querySelector(".analyze-btn").addEventListener(
     const results =
       document.getElementById("results");
 
-
     results.innerHTML = "";
 
 
-    const title =
+    let mode = "";
+
+    if (d1Complete && w1Complete) {
+
+      mode = "D1 + W1";
+
+    } else if (d1Complete) {
+
+      mode = "D1 Only";
+
+    } else {
+
+      mode = "W1 Only";
+
+    }
+
+
+    const header =
       document.createElement("div");
 
-    title.className =
+    header.className =
       "result-header";
 
 
-    title.innerHTML = `
+    header.innerHTML = `
+
       <div>
-        <h2 style="margin:0;">
+
+        <h2 style="
+          margin:0;
+          font-size:22px;
+        ">
           🎯 Gold Zones
         </h2>
 
         <div style="
           color:#888;
           font-size:12px;
-          margin-top:4px;
+          margin-top:5px;
         ">
           ราคาอ้างอิง
           ${price.toFixed(2)}
         </div>
+
       </div>
 
       <div class="result-count">
-        ${hasW1 ? "D1 + W1" : "D1 Only"}
+        ${mode}
       </div>
+
     `;
 
 
-    results.appendChild(title);
+    results.appendChild(header);
 
 
     // ==================================================
@@ -498,32 +614,23 @@ document.querySelector(".analyze-btn").addEventListener(
 
             </div>
 
-
             <div class="zone-price">
-
               ${zone.price.toFixed(2)}
-
             </div>
 
           </div>
 
-
           <div class="zone-distance">
 
             <div class="${directionClass}">
-
               ${direction}
-
             </div>
 
             <div style="
               margin-top:4px;
               font-size:11px;
             ">
-
-              ห่าง
-              ${zone.distance.toFixed(2)}
-
+              ห่าง ${zone.distance.toFixed(2)}
             </div>
 
           </div>
@@ -537,7 +644,7 @@ document.querySelector(".analyze-btn").addEventListener(
 
 
     // ==================================================
-    // สถานะ
+    // Status
     // ==================================================
 
     const status =
@@ -557,21 +664,27 @@ document.querySelector(".analyze-btn").addEventListener(
 
 
     status.textContent =
-      hasW1
-        ? "☁️ บันทึกข้อมูลแล้ว • วิเคราะห์ D1 + W1"
-        : "☁️ บันทึกข้อมูลแล้ว • วิเคราะห์ D1";
+      "☁️ บันทึกข้อมูลแล้ว • " + mode;
 
 
     results.appendChild(status);
 
 
+    // ==================================================
+    // เลื่อนลงไปดูผล
+    // ==================================================
+
     window.scrollTo({
-      top: results.offsetTop - 15,
-      behavior: "smooth"
+
+      top:
+        results.offsetTop - 15,
+
+      behavior:
+        "smooth"
+
     });
 
-  }
-);
+  });
 
 
 // ======================================================
@@ -634,7 +747,6 @@ document
 
       document.getElementById("w1sd").value = "";
 
-
       document.getElementById("results").innerHTML = "";
 
 
@@ -647,7 +759,7 @@ document
 
 
 // ======================================================
-// โหลดข้อมูลเมื่อเปิดเว็บ
+// เริ่มต้น
 // ======================================================
 
 loadSavedData();
