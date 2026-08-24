@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Gold Zone Analyzer Pro V3.3</title>
+  <title>Gold Zone Analyzer Pro</title>
 
   <style>
     * {
@@ -34,6 +34,7 @@
 
     .logo {
       font-size: 38px;
+      margin-bottom: 5px;
     }
 
     h1 {
@@ -77,6 +78,7 @@
     .price-label {
       color: #999;
       font-size: 13px;
+      margin-bottom: 5px;
     }
 
     .price-input {
@@ -113,17 +115,18 @@
       outline: none;
     }
 
-    input:focus,
-    textarea:focus {
-      border-color: #d6a928;
-      box-shadow: 0 0 0 3px rgba(214,169,40,.12);
-    }
-
     textarea {
       min-height: 180px;
       resize: vertical;
       font-family: monospace;
       font-size: 12px;
+      line-height: 1.5;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: #d6a928;
+      box-shadow: 0 0 0 3px rgba(214,169,40,.12);
     }
 
     .analyze-btn,
@@ -138,6 +141,10 @@
       font-weight: 800;
       cursor: pointer;
       margin-top: 5px;
+    }
+
+    .backtest-btn {
+      margin-top: 12px;
     }
 
     #clearDataBtn {
@@ -192,17 +199,18 @@
       border-left: 4px solid #ff5b5b;
     }
 
-    .nearest-label {
+    .nearest-label,
+    .feature-label {
       font-size: 12px;
       font-weight: 800;
       color: #aaa;
+      margin-bottom: 8px;
     }
 
     .nearest-price {
       font-size: 25px;
       font-weight: 800;
       color: #f2c94c;
-      margin-top: 7px;
     }
 
     .nearest-info {
@@ -212,26 +220,33 @@
       margin-top: 6px;
     }
 
-    .market-analysis {
-      margin-bottom: 18px;
+    .feature-value {
+      font-size: 18px;
+      font-weight: 800;
+      color: #f2c94c;
     }
 
     .analysis-grid,
     .stats-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2,1fr);
       gap: 10px;
     }
 
-    .feature-value {
-      font-size: 17px;
-      font-weight: 800;
-      margin-top: 5px;
+    .stats-grid {
+      grid-template-columns: repeat(4,1fr);
     }
 
-    .feature-label {
-      color: #888;
-      font-size: 10px;
+    .stat-card {
+      text-align: center;
+    }
+
+    .win {
+      color: #43d17a !important;
+    }
+
+    .loss {
+      color: #ff5b5b !important;
     }
 
     .confluence-box {
@@ -267,6 +282,7 @@
       border: 1px solid #292929;
       display: flex;
       justify-content: space-between;
+      align-items: flex-start;
       gap: 12px;
     }
 
@@ -335,6 +351,7 @@
     .strength-fill {
       height: 100%;
       background: linear-gradient(90deg,#8f701e,#f2c94c);
+      border-radius: 10px;
     }
 
     .why-title {
@@ -352,31 +369,28 @@
       line-height: 1.7;
     }
 
+    .backtest-table-wrap {
+      overflow-x: auto;
+      margin-top: 15px;
+    }
+
     .backtest-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 12px;
       font-size: 11px;
+      min-width: 700px;
     }
 
     .backtest-table th,
     .backtest-table td {
-      padding: 9px 6px;
       border-bottom: 1px solid #292929;
-      text-align: right;
+      padding: 9px 7px;
+      text-align: center;
     }
 
-    .backtest-table th:first-child,
-    .backtest-table td:first-child {
-      text-align: left;
-    }
-
-    .win {
-      color: #43d17a;
-    }
-
-    .loss {
-      color: #ff6868;
+    .backtest-table th {
+      color: #f2c94c;
+      background: #111;
     }
 
     .footer {
@@ -387,6 +401,7 @@
     }
 
     @media(max-width:650px) {
+
       .container {
         padding: 18px 12px 40px;
       }
@@ -397,9 +412,20 @@
 
       .grid,
       .nearest-panel,
-      .analysis-grid,
-      .stats-grid {
+      .analysis-grid {
         grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2,1fr);
+      }
+
+      .zone {
+        padding: 13px;
+      }
+
+      .zone-price {
+        font-size: 18px;
       }
 
       .price-input {
@@ -419,19 +445,29 @@
     <div class="logo">🥇</div>
     <h1>Gold Zone Analyzer Pro</h1>
     <div class="subtitle">
-      XAUUSD • Statistical Volatility Analysis • V3.3
+      XAUUSD • Statistical Volatility Analysis
     </div>
   </div>
 
+  <!-- CURRENT PRICE -->
+
   <div class="price-box">
-    <div class="price-label">CURRENT GOLD PRICE</div>
+
+    <div class="price-label">
+      CURRENT GOLD PRICE
+    </div>
+
     <input
       class="price-input"
       type="number"
       id="price"
       placeholder="4616"
+      step="0.01"
     >
+
   </div>
+
+  <!-- D1 -->
 
   <div class="panel">
 
@@ -443,26 +479,29 @@
 
       <div class="field">
         <label>MA12</label>
-        <input type="number" id="d1ma12">
+        <input type="number" id="d1ma12" placeholder="4418.6869">
       </div>
 
       <div class="field">
         <label>ATR14</label>
-        <input type="number" id="d1atr">
+        <input type="number" id="d1atr" placeholder="91.657">
       </div>
 
       <div class="field">
         <label>SD20</label>
-        <input type="number" id="d1sd">
+        <input type="number" id="d1sd" placeholder="160.7930">
       </div>
 
       <div class="field">
         <label>MA247</label>
-        <input type="number" id="d1ma247">
+        <input type="number" id="d1ma247" placeholder="Optional">
       </div>
 
     </div>
+
   </div>
+
+  <!-- W1 -->
 
   <div class="panel">
 
@@ -474,20 +513,21 @@
 
       <div class="field">
         <label>MA12</label>
-        <input type="number" id="w1ma12">
+        <input type="number" id="w1ma12" placeholder="4210.2075">
       </div>
 
       <div class="field">
         <label>ATR14</label>
-        <input type="number" id="w1atr">
+        <input type="number" id="w1atr" placeholder="226.111">
       </div>
 
       <div class="field">
         <label>SD20</label>
-        <input type="number" id="w1sd">
+        <input type="number" id="w1sd" placeholder="260.7582">
       </div>
 
     </div>
+
   </div>
 
   <button class="analyze-btn">
@@ -498,56 +538,32 @@
     🧹 ล้างข้อมูลที่บันทึกไว้
   </button>
 
+  <!-- ANALYSIS -->
+
+  <div id="results"></div>
+
   <!-- BACKTEST -->
 
-  <div class="panel" style="margin-top:25px">
+  <div class="panel">
 
     <div class="panel-title">
-      📊 V3.3 Historical Backtest
+      🧪 Backtest ระบบ
     </div>
 
-    <div style="
-      color:#888;
-      font-size:12px;
-      line-height:1.7;
-      margin-bottom:12px;
-    ">
-      วางข้อมูล OHLC ย้อนหลังในรูปแบบ CSV
-      <br>
-      รองรับ:
-      <b>Date,Open,High,Low,Close</b>
+    <div class="nearest-info">
+      วางข้อมูลย้อนหลังแบบ CSV ในช่องด้านล่าง
+      โดยต้องมี Date, Open, High, Low, Close
     </div>
 
     <textarea
       id="backtestData"
       placeholder="Date,Open,High,Low,Close
-2026-08-01,4610,4630,4590,4620
-2026-08-02,4620,4650,4600,4640"
+2026-08-01,4520,4550,4500,4535
+2026-08-02,4535,4580,4520,4570
+2026-08-03,4570,4600,4540,4585"
     ></textarea>
 
     <div class="grid" style="margin-top:12px">
-
-      <div class="field">
-        <label>Risk (R)</label>
-        <input
-          type="number"
-          id="riskR"
-          value="1"
-          min="0.1"
-          step="0.1"
-        >
-      </div>
-
-      <div class="field">
-        <label>Reward (R)</label>
-        <input
-          type="number"
-          id="rewardR"
-          value="2"
-          min="0.1"
-          step="0.1"
-        >
-      </div>
 
       <div class="field">
         <label>Minimum Strength</label>
@@ -560,28 +576,48 @@
         >
       </div>
 
+      <div class="field">
+        <label>Risk (R)</label>
+        <input
+          type="number"
+          id="riskR"
+          value="1"
+          step="0.1"
+          min="0.1"
+        >
+      </div>
+
+      <div class="field">
+        <label>Reward (R)</label>
+        <input
+          type="number"
+          id="rewardR"
+          value="2"
+          step="0.1"
+          min="0.1"
+        >
+      </div>
+
     </div>
 
     <button
       class="backtest-btn"
       id="runBacktestBtn"
     >
-      🧪 Run Backtest
+      🧪 เริ่ม Backtest
     </button>
 
   </div>
 
-  <div id="results"></div>
-
   <div id="backtestResults"></div>
 
   <div class="footer">
-    Gold Zone Analyzer Pro • XAUUSD Quantitative Tool • V3.3
+    Gold Zone Analyzer Pro • XAUUSD Quantitative Tool
   </div>
 
 </div>
 
-<script src="script.js?v=33"></script>
+<script src="script.js?v=6"></script>
 
 </body>
 </html>
