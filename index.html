@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Gold Zone Analyzer Pro</title>
+  <title>Gold Zone Analyzer Pro V3.3</title>
 
   <style>
     * {
@@ -34,13 +34,11 @@
 
     .logo {
       font-size: 38px;
-      margin-bottom: 5px;
     }
 
     h1 {
       margin: 0;
       font-size: 30px;
-      letter-spacing: -0.5px;
     }
 
     .subtitle {
@@ -50,12 +48,12 @@
     }
 
     .panel {
-      background: rgba(25, 25, 25, 0.88);
+      background: rgba(25,25,25,.88);
       border: 1px solid #303030;
       border-radius: 18px;
       padding: 20px;
       margin-bottom: 18px;
-      box-shadow: 0 10px 35px rgba(0,0,0,0.25);
+      box-shadow: 0 10px 35px rgba(0,0,0,.25);
     }
 
     .panel-title {
@@ -68,7 +66,7 @@
     }
 
     .price-box {
-      background: linear-gradient(135deg, #171717, #242424);
+      background: linear-gradient(135deg,#171717,#242424);
       border: 1px solid #8f701e;
       border-radius: 16px;
       padding: 20px;
@@ -79,7 +77,6 @@
     .price-label {
       color: #999;
       font-size: 13px;
-      margin-bottom: 5px;
     }
 
     .price-input {
@@ -93,7 +90,7 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3,1fr);
       gap: 12px;
     }
 
@@ -104,7 +101,8 @@
       margin-bottom: 7px;
     }
 
-    input {
+    input,
+    textarea {
       width: 100%;
       padding: 13px 12px;
       border-radius: 10px;
@@ -113,32 +111,33 @@
       color: #fff;
       font-size: 15px;
       outline: none;
-      transition: 0.2s;
     }
 
-    input:focus {
+    input:focus,
+    textarea:focus {
       border-color: #d6a928;
-      box-shadow: 0 0 0 3px rgba(214,169,40,0.12);
+      box-shadow: 0 0 0 3px rgba(214,169,40,.12);
     }
 
-    .analyze-btn {
+    textarea {
+      min-height: 180px;
+      resize: vertical;
+      font-family: monospace;
+      font-size: 12px;
+    }
+
+    .analyze-btn,
+    .backtest-btn {
       width: 100%;
       padding: 16px;
       border: none;
       border-radius: 13px;
-      background: linear-gradient(135deg, #f2c94c, #b8860b);
+      background: linear-gradient(135deg,#f2c94c,#b8860b);
       color: #111;
       font-size: 17px;
       font-weight: 800;
       cursor: pointer;
       margin-top: 5px;
-      box-shadow: 0 8px 25px rgba(214,169,40,0.18);
-      transition: 0.2s;
-    }
-
-    .analyze-btn:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.08);
     }
 
     #clearDataBtn {
@@ -151,11 +150,6 @@
       color: #999;
       font-size: 14px;
       cursor: pointer;
-    }
-
-    #clearDataBtn:hover {
-      border-color: #555;
-      color: #ddd;
     }
 
     .results {
@@ -174,10 +168,6 @@
       font-size: 12px;
     }
 
-    /* =====================================================
-       NEAREST SUPPORT / RESISTANCE
-       ===================================================== */
-
     .nearest-panel {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -185,7 +175,9 @@
       margin-bottom: 18px;
     }
 
-    .nearest-card {
+    .nearest-card,
+    .feature-card,
+    .stat-card {
       background: #151515;
       border: 1px solid #292929;
       border-radius: 14px;
@@ -204,13 +196,13 @@
       font-size: 12px;
       font-weight: 800;
       color: #aaa;
-      margin-bottom: 8px;
     }
 
     .nearest-price {
       font-size: 25px;
       font-weight: 800;
       color: #f2c94c;
+      margin-top: 7px;
     }
 
     .nearest-info {
@@ -220,17 +212,34 @@
       margin-top: 6px;
     }
 
-    /* =====================================================
-       CONFLUENCE
-       ===================================================== */
+    .market-analysis {
+      margin-bottom: 18px;
+    }
+
+    .analysis-grid,
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .feature-value {
+      font-size: 17px;
+      font-weight: 800;
+      margin-top: 5px;
+    }
+
+    .feature-label {
+      color: #888;
+      font-size: 10px;
+    }
 
     .confluence-box {
-      background:
-        linear-gradient(
-          135deg,
-          rgba(214,169,40,0.10),
-          rgba(155,124,255,0.08)
-        );
+      background: linear-gradient(
+        135deg,
+        rgba(214,169,40,.10),
+        rgba(155,124,255,.08)
+      );
       border: 1px solid #62521f;
       border-radius: 15px;
       padding: 16px;
@@ -250,10 +259,6 @@
       margin-top: 7px;
     }
 
-    /* =====================================================
-       ZONE CARD
-       ===================================================== */
-
     .zone {
       padding: 16px;
       margin: 9px 0;
@@ -262,7 +267,6 @@
       border: 1px solid #292929;
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
       gap: 12px;
     }
 
@@ -298,18 +302,6 @@
       border-left: 4px solid #ff5b5b;
     }
 
-    .direction-above {
-      color: #55b8ff;
-    }
-
-    .direction-below {
-      color: #ff6868;
-    }
-
-    /* =====================================================
-       STRENGTH
-       ===================================================== */
-
     .strength-box {
       margin-top: 13px;
       padding: 12px;
@@ -342,13 +334,7 @@
 
     .strength-fill {
       height: 100%;
-      background: linear-gradient(
-        90deg,
-        #8f701e,
-        #f2c94c
-      );
-      border-radius: 10px;
-      transition: width 0.5s ease;
+      background: linear-gradient(90deg,#8f701e,#f2c94c);
     }
 
     .why-title {
@@ -356,7 +342,6 @@
       font-size: 10px;
       font-weight: 800;
       margin-top: 12px;
-      letter-spacing: 0.5px;
     }
 
     .why-list {
@@ -367,8 +352,31 @@
       line-height: 1.7;
     }
 
-    .why-list li {
-      margin: 2px 0;
+    .backtest-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 11px;
+    }
+
+    .backtest-table th,
+    .backtest-table td {
+      padding: 9px 6px;
+      border-bottom: 1px solid #292929;
+      text-align: right;
+    }
+
+    .backtest-table th:first-child,
+    .backtest-table td:first-child {
+      text-align: left;
+    }
+
+    .win {
+      color: #43d17a;
+    }
+
+    .loss {
+      color: #ff6868;
     }
 
     .footer {
@@ -378,12 +386,7 @@
       margin-top: 30px;
     }
 
-    /* =====================================================
-       MOBILE
-       ===================================================== */
-
-    @media (max-width: 650px) {
-
+    @media(max-width:650px) {
       .container {
         padding: 18px 12px 40px;
       }
@@ -392,249 +395,193 @@
         font-size: 25px;
       }
 
-      .grid {
+      .grid,
+      .nearest-panel,
+      .analysis-grid,
+      .stats-grid {
         grid-template-columns: 1fr;
-      }
-
-      .nearest-panel {
-        grid-template-columns: 1fr;
-      }
-
-      .zone {
-        padding: 13px;
-      }
-
-      .zone-price {
-        font-size: 18px;
       }
 
       .price-input {
         font-size: 30px !important;
       }
-
-      .strength-box {
-        margin-top: 11px;
-      }
     }
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 </head>
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <!-- HEADER -->
+  <div class="header">
+    <div class="logo">🥇</div>
+    <h1>Gold Zone Analyzer Pro</h1>
+    <div class="subtitle">
+      XAUUSD • Statistical Volatility Analysis • V3.3
+    </div>
+  </div>
 
-    <div class="header">
+  <div class="price-box">
+    <div class="price-label">CURRENT GOLD PRICE</div>
+    <input
+      class="price-input"
+      type="number"
+      id="price"
+      placeholder="4616"
+    >
+  </div>
 
-      <div class="logo">
-        🥇
+  <div class="panel">
+
+    <div class="panel-title">
+      📅 D1 Market Data
+    </div>
+
+    <div class="grid">
+
+      <div class="field">
+        <label>MA12</label>
+        <input type="number" id="d1ma12">
       </div>
 
-      <h1>
-        Gold Zone Analyzer Pro
-      </h1>
+      <div class="field">
+        <label>ATR14</label>
+        <input type="number" id="d1atr">
+      </div>
 
-      <div class="subtitle">
-        XAUUSD • Statistical Volatility Analysis
+      <div class="field">
+        <label>SD20</label>
+        <input type="number" id="d1sd">
+      </div>
+
+      <div class="field">
+        <label>MA247</label>
+        <input type="number" id="d1ma247">
+      </div>
+
+    </div>
+  </div>
+
+  <div class="panel">
+
+    <div class="panel-title">
+      📊 W1 Market Data
+    </div>
+
+    <div class="grid">
+
+      <div class="field">
+        <label>MA12</label>
+        <input type="number" id="w1ma12">
+      </div>
+
+      <div class="field">
+        <label>ATR14</label>
+        <input type="number" id="w1atr">
+      </div>
+
+      <div class="field">
+        <label>SD20</label>
+        <input type="number" id="w1sd">
+      </div>
+
+    </div>
+  </div>
+
+  <button class="analyze-btn">
+    🔍 วิเคราะห์ Gold Zones
+  </button>
+
+  <button id="clearDataBtn">
+    🧹 ล้างข้อมูลที่บันทึกไว้
+  </button>
+
+  <!-- BACKTEST -->
+
+  <div class="panel" style="margin-top:25px">
+
+    <div class="panel-title">
+      📊 V3.3 Historical Backtest
+    </div>
+
+    <div style="
+      color:#888;
+      font-size:12px;
+      line-height:1.7;
+      margin-bottom:12px;
+    ">
+      วางข้อมูล OHLC ย้อนหลังในรูปแบบ CSV
+      <br>
+      รองรับ:
+      <b>Date,Open,High,Low,Close</b>
+    </div>
+
+    <textarea
+      id="backtestData"
+      placeholder="Date,Open,High,Low,Close
+2026-08-01,4610,4630,4590,4620
+2026-08-02,4620,4650,4600,4640"
+    ></textarea>
+
+    <div class="grid" style="margin-top:12px">
+
+      <div class="field">
+        <label>Risk (R)</label>
+        <input
+          type="number"
+          id="riskR"
+          value="1"
+          min="0.1"
+          step="0.1"
+        >
+      </div>
+
+      <div class="field">
+        <label>Reward (R)</label>
+        <input
+          type="number"
+          id="rewardR"
+          value="2"
+          min="0.1"
+          step="0.1"
+        >
+      </div>
+
+      <div class="field">
+        <label>Minimum Strength</label>
+        <input
+          type="number"
+          id="minStrength"
+          value="60"
+          min="0"
+          max="100"
+        >
       </div>
 
     </div>
 
-
-    <!-- CURRENT PRICE -->
-
-    <div class="price-box">
-
-      <div class="price-label">
-        CURRENT GOLD PRICE
-      </div>
-
-      <input
-        class="price-input"
-        type="number"
-        id="price"
-        placeholder="4616"
-      >
-
-    </div>
-
-
-    <!-- D1 -->
-
-    <div class="panel">
-
-      <div class="panel-title">
-        📅 D1 Market Data
-      </div>
-
-      <div class="grid">
-
-        <div class="field">
-
-          <label>
-            MA12
-          </label>
-
-          <input
-            type="number"
-            id="d1ma12"
-            placeholder="4418.6869"
-          >
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            ATR14
-          </label>
-
-          <input
-            type="number"
-            id="d1atr"
-            placeholder="91.657"
-          >
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            SD20
-          </label>
-
-          <input
-            type="number"
-            id="d1sd"
-            placeholder="160.7930"
-          >
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            MA247
-          </label>
-
-          <input
-            type="number"
-            id="d1ma247"
-            placeholder="Optional"
-          >
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- W1 -->
-
-    <div class="panel">
-
-      <div class="panel-title">
-        📊 W1 Market Data
-      </div>
-
-      <div class="grid">
-
-        <div class="field">
-
-          <label>
-            MA12
-          </label>
-
-          <input
-            type="number"
-            id="w1ma12"
-            placeholder="4210.2075"
-          >
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            ATR14
-          </label>
-
-          <input
-            type="number"
-            id="w1atr"
-            placeholder="226.111"
-          >
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            SD20
-          </label>
-
-          <input
-            type="number"
-            id="w1sd"
-            placeholder="260.7582"
-          >
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- BUTTON -->
-
-    <button class="analyze-btn">
-
-      🔍 วิเคราะห์ Gold Zones
-
+    <button
+      class="backtest-btn"
+      id="runBacktestBtn"
+    >
+      🧪 Run Backtest
     </button>
-
-
-    <button id="clearDataBtn">
-
-      🧹 ล้างข้อมูลที่บันทึกไว้
-
-    </button>
-
-
-    <!-- RESULTS -->
-
-    <div id="results">
-
-  <div id="marketAnalysis"></div>
-
-</div>
-
-
-    <!-- FOOTER -->
-
-    <div class="footer">
-
-      Gold Zone Analyzer Pro • XAUUSD Quantitative Tool
-
-    </div>
 
   </div>
 
+  <div id="results"></div>
 
-  <!-- JS -->
+  <div id="backtestResults"></div>
 
-  <script src="script.js?v=6"></script>
+  <div class="footer">
+    Gold Zone Analyzer Pro • XAUUSD Quantitative Tool • V3.3
+  </div>
+
+</div>
+
+<script src="script.js?v=33"></script>
 
 </body>
 </html>
