@@ -382,3 +382,38 @@ document.querySelector("button").addEventListener("click", function () {
     });
 
 });
+
+// ================================
+// CLEAR SAVED DATA
+// ================================
+
+document
+  .getElementById("clearDataBtn")
+  .addEventListener("click", function () {
+
+    const confirmClear = confirm(
+      "ต้องการล้างข้อมูลที่บันทึกไว้ทั้งหมดหรือไม่?"
+    );
+
+    if (!confirmClear) return;
+
+    inputIds.forEach(function (id) {
+
+      localStorage.removeItem(
+        "gold_" + id
+      );
+
+      const input =
+        document.getElementById(id);
+
+      if (input) {
+        input.value = "";
+      }
+
+    });
+
+    document.getElementById("results").innerHTML = "";
+
+    alert("ล้างข้อมูลเรียบร้อยแล้ว");
+
+  });
