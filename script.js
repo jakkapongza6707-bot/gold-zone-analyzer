@@ -1147,7 +1147,180 @@ document
       // ==================================================
       // Header
       // ==================================================
+  // ==================================================
+// V3.2 — MARKET ANALYSIS
+// ==================================================
 
+const marketAnalysis =
+  document.createElement("div");
+
+marketAnalysis.className = "market-analysis";
+
+
+// --------------------------------------------------
+// เลือกข้อมูลสำหรับ Market Analysis
+// --------------------------------------------------
+
+const analysisMA12 =
+  d1Complete
+    ? d1ma12
+    : w1ma12;
+
+const analysisATR =
+  d1Complete
+    ? d1atr
+    : w1atr;
+
+const analysisSD =
+  d1Complete
+    ? d1sd
+    : w1sd;
+
+
+// --------------------------------------------------
+// คำนวณ Volatility
+// --------------------------------------------------
+
+const volatility =
+  calculateVolatilityRegime(
+    analysisATR,
+    analysisSD
+  );
+
+
+// --------------------------------------------------
+// คำนวณ Market Position
+// --------------------------------------------------
+
+const marketPosition =
+  calculateMarketPosition(
+    price,
+    analysisMA12,
+    analysisATR,
+    analysisSD
+  );
+
+
+// --------------------------------------------------
+// แสดงผล
+// --------------------------------------------------
+
+marketAnalysis.innerHTML = `
+
+  <div style="
+    background:#151515;
+    border:1px solid #292929;
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:14px;
+  ">
+
+    <div style="
+      font-size:16px;
+      font-weight:800;
+      margin-bottom:12px;
+    ">
+      📊 MARKET ANALYSIS
+    </div>
+
+
+    <div style="
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    ">
+
+
+      <div style="
+        background:#101010;
+        border:1px solid #292929;
+        border-radius:11px;
+        padding:13px;
+      ">
+
+        <div style="
+          color:#888;
+          font-size:11px;
+          margin-bottom:6px;
+        ">
+          VOLATILITY REGIME
+        </div>
+
+        <div style="
+          font-size:16px;
+          font-weight:800;
+        ">
+          ${volatility.icon}
+          ${volatility.level}
+        </div>
+
+        ${
+          volatility.ratio !== null
+            ? `
+              <div style="
+                color:#777;
+                font-size:10px;
+                margin-top:6px;
+              ">
+                SD / ATR =
+                ${volatility.ratio.toFixed(2)}
+              </div>
+            `
+            : ""
+        }
+
+        <div style="
+          color:#888;
+          font-size:10px;
+          margin-top:6px;
+          line-height:1.5;
+        ">
+          ${volatility.reason}
+        </div>
+
+      </div>
+
+
+      <div style="
+        background:#101010;
+        border:1px solid #292929;
+        border-radius:11px;
+        padding:13px;
+      ">
+
+        <div style="
+          color:#888;
+          font-size:11px;
+          margin-bottom:6px;
+        ">
+          MARKET POSITION
+        </div>
+
+        <div style="
+          font-size:16px;
+          font-weight:800;
+        ">
+          ${marketPosition.icon}
+          ${marketPosition.level}
+        </div>
+
+        <div style="
+          color:#777;
+          font-size:10px;
+          margin-top:6px;
+        ">
+          ${marketPosition.reason}
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+`;
+
+results.appendChild(marketAnalysis);
       const header =
         document.createElement(
           "div"
