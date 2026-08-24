@@ -101,7 +101,7 @@ function calculateMarketPosition(
   const sdPosition = distance / sd;
 
   if (
-    atrPosition >= .75 ||
+    atrPosition >= 0.75 ||
     sdPosition >= 1
   ) {
     return {
@@ -114,7 +114,7 @@ function calculateMarketPosition(
   }
 
   if (
-    atrPosition <= -.75 ||
+    atrPosition <= -0.75 ||
     sdPosition <= -1
   ) {
     return {
@@ -161,7 +161,6 @@ function calculateMarketFeatures(
   const distance = price - ma12;
 
   return {
-
     atr,
     sd,
 
@@ -184,28 +183,31 @@ function calculateMarketFeatures(
 
 
 // ======================================================
-// STRENGTH
+// STRENGTH LABEL
 // ======================================================
 
 function getStrengthLabel(score) {
 
-  if (score >= 80)
+  if (score >= 80) {
     return {
       label: "Strong",
       icon: "🔥"
     };
+  }
 
-  if (score >= 60)
+  if (score >= 60) {
     return {
       label: "Moderate",
       icon: "🟡"
     };
+  }
 
-  if (score >= 40)
+  if (score >= 40) {
     return {
       label: "Weak",
       icon: "🟠"
     };
+  }
 
   return {
     label: "Low",
@@ -213,6 +215,10 @@ function getStrengthLabel(score) {
   };
 }
 
+
+// ======================================================
+// STRENGTH
+// ======================================================
 
 function calculateStrength(
   zone,
@@ -223,6 +229,11 @@ function calculateStrength(
   let score = 20;
 
   const reasons = [];
+
+
+  // ----------------------------------------------------
+  // TYPE
+  // ----------------------------------------------------
 
   if (zone.type === "W1") {
 
@@ -242,16 +253,22 @@ function calculateStrength(
   }
 
 
+  // ----------------------------------------------------
+  // DISTANCE
+  // ----------------------------------------------------
+
   const distance =
     Math.abs(
-      zone.price - currentPrice
+      zone.price -
+      currentPrice
     );
 
   const distanceATR =
-    distance / zone.atr;
+    distance /
+    zone.atr;
 
 
-  if (distanceATR <= .25) {
+  if (distanceATR <= 0.25) {
 
     score += 20;
 
@@ -259,7 +276,7 @@ function calculateStrength(
       "อยู่ใกล้ราคาปัจจุบันมาก"
     );
 
-  } else if (distanceATR <= .50) {
+  } else if (distanceATR <= 0.50) {
 
     score += 15;
 
@@ -283,7 +300,13 @@ function calculateStrength(
   }
 
 
-  if (zone.name.includes("MA12")) {
+  // ----------------------------------------------------
+  // MA12
+  // ----------------------------------------------------
+
+  if (
+    zone.name.includes("MA12")
+  ) {
 
     score += 8;
 
@@ -293,7 +316,13 @@ function calculateStrength(
   }
 
 
-  if (zone.name.includes("ATR")) {
+  // ----------------------------------------------------
+  // ATR
+  // ----------------------------------------------------
+
+  if (
+    zone.name.includes("ATR")
+  ) {
 
     const match =
       zone.name.match(
@@ -308,7 +337,7 @@ function calculateStrength(
         );
 
       if (
-        multiple === .5 ||
+        multiple === 0.5 ||
         multiple === 1
       ) {
 
@@ -322,7 +351,13 @@ function calculateStrength(
   }
 
 
-  if (zone.name.includes("SD")) {
+  // ----------------------------------------------------
+  // SD
+  // ----------------------------------------------------
+
+  if (
+    zone.name.includes("SD")
+  ) {
 
     const match =
       zone.name.match(
@@ -348,13 +383,19 @@ function calculateStrength(
   }
 
 
+  // ----------------------------------------------------
+  // CONFLUENCE
+  // ----------------------------------------------------
+
   const confluence =
     allZones.some(other => {
 
       if (other === zone)
         return false;
 
-      if (other.type === zone.type)
+      if (
+        other.type === zone.type
+      )
         return false;
 
       const referenceATR =
@@ -365,9 +406,10 @@ function calculateStrength(
 
       return (
         Math.abs(
-          zone.price - other.price
+          zone.price -
+          other.price
         ) <=
-        referenceATR * .20
+        referenceATR * 0.20
       );
     });
 
@@ -424,7 +466,7 @@ function createZones(
 
     {
       name: `${type} +0.75 ATR`,
-      price: ma12 + atr * .75,
+      price: ma12 + atr * 0.75,
       type,
       atr,
       sd
@@ -432,7 +474,7 @@ function createZones(
 
     {
       name: `${type} +0.50 ATR`,
-      price: ma12 + atr * .50,
+      price: ma12 + atr * 0.50,
       type,
       atr,
       sd
@@ -440,7 +482,7 @@ function createZones(
 
     {
       name: `${type} +0.25 ATR`,
-      price: ma12 + atr * .25,
+      price: ma12 + atr * 0.25,
       type,
       atr,
       sd
@@ -456,7 +498,7 @@ function createZones(
 
     {
       name: `${type} -0.25 ATR`,
-      price: ma12 - atr * .25,
+      price: ma12 - atr * 0.25,
       type,
       atr,
       sd
@@ -464,7 +506,7 @@ function createZones(
 
     {
       name: `${type} -0.50 ATR`,
-      price: ma12 - atr * .50,
+      price: ma12 - atr * 0.50,
       type,
       atr,
       sd
@@ -472,7 +514,7 @@ function createZones(
 
     {
       name: `${type} -0.75 ATR`,
-      price: ma12 - atr * .75,
+      price: ma12 - atr * 0.75,
       type,
       atr,
       sd
@@ -537,7 +579,7 @@ async function loadSavedData() {
       await supabaseClient
         .from("gold_settings")
         .select("*")
-        .eq("id",1)
+        .eq("id", 1)
         .maybeSingle();
 
 
@@ -573,7 +615,7 @@ async function loadSavedData() {
 
 
     Object.entries(ids)
-      .forEach(([id,value]) => {
+      .forEach(([id, value]) => {
 
         const element =
           document.getElementById(id);
@@ -584,7 +626,7 @@ async function loadSavedData() {
 
       });
 
-  } catch(error) {
+  } catch (error) {
 
     console.error(error);
 
@@ -593,42 +635,64 @@ async function loadSavedData() {
 
 
 // ======================================================
-// ANALYZE
+// ANALYZE BUTTON
 // ======================================================
 
-document
-  .querySelector(".analyze-btn")
-  .addEventListener(
+const analyzeButton =
+  document.querySelector(
+    ".analyze-btn"
+  );
+
+
+if (analyzeButton) {
+
+  analyzeButton.addEventListener(
     "click",
     async function() {
 
       const price =
         Number(
-          document.getElementById("price").value
+          document.getElementById(
+            "price"
+          ).value
         );
 
 
       const d1ma12Value =
-        document.getElementById("d1ma12").value.trim();
+        document.getElementById(
+          "d1ma12"
+        ).value.trim();
 
       const d1atrValue =
-        document.getElementById("d1atr").value.trim();
+        document.getElementById(
+          "d1atr"
+        ).value.trim();
 
       const d1sdValue =
-        document.getElementById("d1sd").value.trim();
+        document.getElementById(
+          "d1sd"
+        ).value.trim();
 
       const d1ma247Value =
-        document.getElementById("d1ma247").value.trim();
+        document.getElementById(
+          "d1ma247"
+        ).value.trim();
 
 
       const w1ma12Value =
-        document.getElementById("w1ma12").value.trim();
+        document.getElementById(
+          "w1ma12"
+        ).value.trim();
 
       const w1atrValue =
-        document.getElementById("w1atr").value.trim();
+        document.getElementById(
+          "w1atr"
+        ).value.trim();
 
       const w1sdValue =
-        document.getElementById("w1sd").value.trim();
+        document.getElementById(
+          "w1sd"
+        ).value.trim();
 
 
       const d1HasAny =
@@ -658,21 +722,31 @@ document
 
       if (!price) {
 
-        alert("กรุณากรอกราคาทอง");
+        alert(
+          "กรุณากรอกราคาทอง"
+        );
 
         return;
       }
 
 
-      if (!d1HasAny && !w1HasAny) {
+      if (
+        !d1HasAny &&
+        !w1HasAny
+      ) {
 
-        alert("กรุณากรอก D1 หรือ W1");
+        alert(
+          "กรุณากรอก D1 หรือ W1"
+        );
 
         return;
       }
 
 
-      if (d1HasAny && !d1Complete) {
+      if (
+        d1HasAny &&
+        !d1Complete
+      ) {
 
         alert(
           "ข้อมูล D1 ต้องมี MA12 + ATR14 + SD20"
@@ -682,7 +756,10 @@ document
       }
 
 
-      if (w1HasAny && !w1Complete) {
+      if (
+        w1HasAny &&
+        !w1Complete
+      ) {
 
         alert(
           "ข้อมูล W1 ต้องมี MA12 + ATR14 + SD20"
@@ -774,11 +851,13 @@ document
 
         zone.distance =
           Math.abs(
-            zone.price - price
+            zone.price -
+            price
           );
 
         zone.above =
-          zone.price > price;
+          zone.price >
+          price;
 
       });
 
@@ -807,34 +886,45 @@ document
 
 
       allZones.sort(
-        (a,b) =>
-          a.distance - b.distance
+        (a, b) =>
+          a.distance -
+          b.distance
       );
 
 
       const supports =
         allZones
-          .filter(z => z.price < price)
+          .filter(
+            z =>
+              z.price < price
+          )
           .sort(
-            (a,b) =>
-              b.price - a.price
+            (a, b) =>
+              b.price -
+              a.price
           );
 
 
       const resistances =
         allZones
-          .filter(z => z.price > price)
+          .filter(
+            z =>
+              z.price > price
+          )
           .sort(
-            (a,b) =>
-              a.price - b.price
+            (a, b) =>
+              a.price -
+              b.price
           );
 
 
       const nearestSupport =
-        supports[0] || null;
+        supports[0] ||
+        null;
 
       const nearestResistance =
-        resistances[0] || null;
+        resistances[0] ||
+        null;
 
 
       const analysisMA12 =
@@ -879,14 +969,17 @@ document
 
 
       const results =
-        document.getElementById("results");
+        document.getElementById(
+          "results"
+        );
 
 
       results.innerHTML = "";
 
 
       const mode =
-        d1Complete && w1Complete
+        d1Complete &&
+        w1Complete
           ? "D1 + W1"
           : d1Complete
             ? "D1 Only"
@@ -894,7 +987,9 @@ document
 
 
       const analysis =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       analysis.className =
         "market-analysis";
@@ -922,6 +1017,7 @@ document
               </div>
 
               <div class="nearest-info">
+
                 ${volatility.reason}
 
                 <br>
@@ -932,6 +1028,7 @@ document
                       volatility.ratio.toFixed(2)
                     : ""
                 }
+
               </div>
 
             </div>
@@ -1021,9 +1118,11 @@ document
 
                 `
                 : `
+
                   <div class="nearest-info">
                     ข้อมูลไม่เพียงพอ
                   </div>
+
                 `
             }
 
@@ -1034,11 +1133,15 @@ document
       `;
 
 
-      results.appendChild(analysis);
+      results.appendChild(
+        analysis
+      );
 
 
       const header =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       header.className =
         "result-header";
@@ -1053,7 +1156,8 @@ document
           </h2>
 
           <div class="nearest-info">
-            ราคาอ้างอิง ${price.toFixed(2)}
+            ราคาอ้างอิง
+            ${price.toFixed(2)}
           </div>
 
         </div>
@@ -1065,11 +1169,15 @@ document
       `;
 
 
-      results.appendChild(header);
+      results.appendChild(
+        header
+      );
 
 
       const nearest =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       nearest.className =
         "nearest-panel";
@@ -1109,9 +1217,11 @@ document
 
               `
               : `
+
                 <div class="nearest-info">
                   ไม่พบ Support
                 </div>
+
               `
           }
 
@@ -1150,9 +1260,11 @@ document
 
               `
               : `
+
                 <div class="nearest-info">
                   ไม่พบ Resistance
                 </div>
+
               `
           }
 
@@ -1161,8 +1273,14 @@ document
       `;
 
 
-      results.appendChild(nearest);
+      results.appendChild(
+        nearest
+      );
 
+
+      // --------------------------------------------------
+      // CONFLUENCE
+      // --------------------------------------------------
 
       const confluences = [];
 
@@ -1180,7 +1298,7 @@ document
               Math.min(
                 d1.atr,
                 w1.atr
-              ) * .20;
+              ) * 0.20;
 
 
             const difference =
@@ -1209,23 +1327,31 @@ document
       }
 
 
-      if (confluences.length) {
+      if (
+        confluences.length
+      ) {
 
         const title =
-          document.createElement("h3");
+          document.createElement(
+            "h3"
+          );
 
         title.textContent =
           "🔗 Zone Confluence";
 
-        results.appendChild(title);
+        results.appendChild(
+          title
+        );
 
 
         confluences
-          .slice(0,5)
+          .slice(0, 5)
           .forEach(group => {
 
             const box =
-              document.createElement("div");
+              document.createElement(
+                "div"
+              );
 
             box.className =
               "confluence-box";
@@ -1282,7 +1408,9 @@ document
             `;
 
 
-            results.appendChild(box);
+            results.appendChild(
+              box
+            );
 
           });
 
@@ -1290,126 +1418,142 @@ document
 
 
       const title =
-        document.createElement("h3");
+        document.createElement(
+          "h3"
+        );
 
       title.textContent =
         "📍 Zone Analysis";
 
-      results.appendChild(title);
+      results.appendChild(
+        title
+      );
 
 
       allZones
-        .slice(0,10)
-        .forEach((zone,index) => {
+        .slice(0, 10)
+        .forEach(
+          (zone, index) => {
 
-          const card =
-            document.createElement("div");
+            const card =
+              document.createElement(
+                "div"
+              );
 
-          card.className =
-            "zone " +
-            (
-              zone.above
-                ? "above"
-                : "below"
-            );
+            card.className =
+              "zone " +
+              (
+                zone.above
+                  ? "above"
+                  : "below"
+              );
 
 
-          card.innerHTML = `
+            card.innerHTML = `
 
-            <div class="zone-main">
+              <div class="zone-main">
 
-              <div class="zone-name">
-
-                ${
-                  index === 0
-                    ? "⭐ "
-                    : ""
-                }
-
-                ${zone.name}
-
-              </div>
-
-              <div class="zone-price">
-                ${zone.price.toFixed(2)}
-              </div>
-
-              <div class="strength-box">
-
-                <div class="strength-title">
-                  ${zone.strengthLabel.icon}
-                  Strength
-                </div>
-
-                <div class="strength-score">
-                  ${zone.strength}/100
-                  ${zone.strengthLabel.label}
-                </div>
-
-                <div class="strength-bar">
-
-                  <div
-                    class="strength-fill"
-                    style="width:${zone.strength}%"
-                  ></div>
-
-                </div>
-
-                <div class="why-title">
-                  WHY THIS ZONE?
-                </div>
-
-                <ul class="why-list">
+                <div class="zone-name">
 
                   ${
-                    zone.reasons
-                      .slice(0,5)
-                      .map(
-                        r => `<li>${r}</li>`
-                      )
-                      .join("")
+                    index === 0
+                      ? "⭐ "
+                      : ""
                   }
 
-                </ul>
+                  ${zone.name}
+
+                </div>
+
+                <div class="zone-price">
+                  ${zone.price.toFixed(2)}
+                </div>
+
+                <div class="strength-box">
+
+                  <div class="strength-title">
+                    ${zone.strengthLabel.icon}
+                    Strength
+                  </div>
+
+                  <div class="strength-score">
+                    ${zone.strength}/100
+                    ${zone.strengthLabel.label}
+                  </div>
+
+                  <div class="strength-bar">
+
+                    <div
+                      class="strength-fill"
+                      style="width:${zone.strength}%"
+                    ></div>
+
+                  </div>
+
+                  <div class="why-title">
+                    WHY THIS ZONE?
+                  </div>
+
+                  <ul class="why-list">
+
+                    ${
+                      zone.reasons
+                        .slice(0, 5)
+                        .map(
+                          r =>
+                            `<li>${r}</li>`
+                        )
+                        .join("")
+                    }
+
+                  </ul>
+
+                </div>
 
               </div>
 
-            </div>
+
+              <div class="zone-distance">
+
+                ${
+                  zone.above
+                    ? "⬆️ ด้านบน"
+                    : "⬇️ ด้านล่าง"
+                }
+
+                <br>
+
+                ห่าง
+                ${zone.distance.toFixed(2)}
+
+              </div>
+
+            `;
 
 
-            <div class="zone-distance">
+            results.appendChild(
+              card
+            );
 
-              ${
-                zone.above
-                  ? "⬆️ ด้านบน"
-                  : "⬇️ ด้านล่าง"
-              }
-
-              <br>
-
-              ห่าง
-              ${zone.distance.toFixed(2)}
-
-            </div>
-
-          `;
-
-
-          results.appendChild(card);
-
-        });
+          }
+        );
 
     }
   );
 
+}
+
 
 // ======================================================
-// CSV PARSER — รองรับหลายรูปแบบ
+// CSV PARSER
 // ======================================================
 
 function parseCSV(text) {
 
-  if (!text || !text.trim()) {
+  if (
+    !text ||
+    !text.trim()
+  ) {
 
     throw new Error(
       "ไฟล์ CSV ว่างเปล่า"
@@ -1423,10 +1567,15 @@ function parseCSV(text) {
       .replace(/^\uFEFF/, "")
       .trim()
       .split(/\r?\n/)
-      .filter(line => line.trim());
+      .filter(
+        line =>
+          line.trim()
+      );
 
 
-  if (lines.length < 2) {
+  if (
+    lines.length < 2
+  ) {
 
     throw new Error(
       "ไฟล์ CSV ต้องมี Header และข้อมูลอย่างน้อย 1 แถว"
@@ -1434,19 +1583,6 @@ function parseCSV(text) {
 
   }
 
-
-  /*
-    รองรับทั้ง
-
-    Date,Open,High,Low,Close
-
-    และ
-
-    Date,Time,Open,High,Low,Close
-
-    และ ;
-
-  */
 
   const delimiter =
     lines[0].includes(";")
@@ -1457,28 +1593,34 @@ function parseCSV(text) {
   const headers =
     lines[0]
       .split(delimiter)
-      .map(h =>
-        h
-          .trim()
-          .replace(/^"|"$/g,"")
-          .toLowerCase()
+      .map(
+        h =>
+          h
+            .trim()
+            .replace(/^"|"$/g, "")
+            .toLowerCase()
       );
 
 
-  const findColumn = names => {
+  const findColumn =
+    names => {
 
-    for (const name of names) {
+      for (
+        const name of names
+      ) {
 
-      const index =
-        headers.indexOf(name);
+        const index =
+          headers.indexOf(
+            name
+          );
 
-      if (index >= 0)
-        return index;
+        if (index >= 0)
+          return index;
 
-    }
+      }
 
-    return -1;
-  };
+      return -1;
+    };
 
 
   const dateIndex =
@@ -1490,19 +1632,27 @@ function parseCSV(text) {
 
 
   const openIndex =
-    findColumn(["open"]);
+    findColumn([
+      "open"
+    ]);
 
 
   const highIndex =
-    findColumn(["high"]);
+    findColumn([
+      "high"
+    ]);
 
 
   const lowIndex =
-    findColumn(["low"]);
+    findColumn([
+      "low"
+    ]);
 
 
   const closeIndex =
-    findColumn(["close"]);
+    findColumn([
+      "close"
+    ]);
 
 
   if (
@@ -1513,7 +1663,7 @@ function parseCSV(text) {
   ) {
 
     throw new Error(
-      "หา Open / High / Low / Close ไม่พบในไฟล์ CSV"
+      "CSV ต้องมี Date, Open, High, Low, Close"
     );
 
   }
@@ -1531,38 +1681,47 @@ function parseCSV(text) {
     const parts =
       lines[i]
         .split(delimiter)
-        .map(v =>
-          v
-            .trim()
-            .replace(/^"|"$/g,"")
+        .map(
+          v =>
+            v
+              .trim()
+              .replace(/^"|"$/g, "")
         );
 
 
     const open =
       Number(
-        String(parts[openIndex])
-          .replace(/,/g,"")
+        String(
+          parts[openIndex]
+        )
+        .replace(/,/g, "")
       );
 
 
     const high =
       Number(
-        String(parts[highIndex])
-          .replace(/,/g,"")
+        String(
+          parts[highIndex]
+        )
+        .replace(/,/g, "")
       );
 
 
     const low =
       Number(
-        String(parts[lowIndex])
-          .replace(/,/g,"")
+        String(
+          parts[lowIndex]
+        )
+        .replace(/,/g, "")
       );
 
 
     const close =
       Number(
-        String(parts[closeIndex])
-          .replace(/,/g,"")
+        String(
+          parts[closeIndex]
+        )
+        .replace(/,/g, "")
       );
 
 
@@ -1572,7 +1731,9 @@ function parseCSV(text) {
       !Number.isFinite(low) ||
       !Number.isFinite(close)
     ) {
+
       continue;
+
     }
 
 
@@ -1593,7 +1754,9 @@ function parseCSV(text) {
   }
 
 
-  if (!candles.length) {
+  if (
+    !candles.length
+  ) {
 
     throw new Error(
       "ไม่สามารถอ่านข้อมูล OHLC จากไฟล์ได้"
@@ -1607,56 +1770,357 @@ function parseCSV(text) {
 
 
 // ======================================================
-// BACKTEST ENGINE
+// ROLLING MA
+// ======================================================
+
+function calculateMA(
+  candles,
+  index,
+  period
+) {
+
+  if (
+    index <
+    period - 1
+  ) {
+
+    return null;
+
+  }
+
+
+  let sum = 0;
+
+
+  for (
+    let i =
+      index - period + 1;
+    i <= index;
+    i++
+  ) {
+
+    sum +=
+      candles[i].close;
+
+  }
+
+
+  return sum / period;
+}
+
+
+// ======================================================
+// ROLLING SD
+// ======================================================
+
+function calculateSD(
+  candles,
+  index,
+  period
+) {
+
+  if (
+    index <
+    period - 1
+  ) {
+
+    return null;
+
+  }
+
+
+  const values = [];
+
+
+  for (
+    let i =
+      index - period + 1;
+    i <= index;
+    i++
+  ) {
+
+    values.push(
+      candles[i].close
+    );
+
+  }
+
+
+  const mean =
+    values.reduce(
+      (sum, value) =>
+        sum + value,
+      0
+    ) /
+    period;
+
+
+  const variance =
+    values.reduce(
+      (sum, value) =>
+        sum +
+        Math.pow(
+          value - mean,
+          2
+        ),
+      0
+    ) /
+    period;
+
+
+  return Math.sqrt(
+    variance
+  );
+}
+
+
+// ======================================================
+// ROLLING ATR
+// ======================================================
+
+function calculateATR(
+  candles,
+  index,
+  period
+) {
+
+  if (
+    index <
+    period
+  ) {
+
+    return null;
+
+  }
+
+
+  const trueRanges = [];
+
+
+  for (
+    let i =
+      index - period + 1;
+    i <= index;
+    i++
+  ) {
+
+    const current =
+      candles[i];
+
+    const previous =
+      candles[i - 1];
+
+
+    const tr =
+      Math.max(
+
+        current.high -
+          current.low,
+
+        Math.abs(
+          current.high -
+          previous.close
+        ),
+
+        Math.abs(
+          current.low -
+          previous.close
+        )
+
+      );
+
+
+    trueRanges.push(
+      tr
+    );
+
+  }
+
+
+  return (
+    trueRanges.reduce(
+      (sum, value) =>
+        sum + value,
+      0
+    ) /
+    trueRanges.length
+  );
+}
+
+
+// ======================================================
+// BACKTEST ZONES
+// ======================================================
+
+function createBacktestZones(
+  ma12,
+  atr,
+  sd
+) {
+
+  return [
+
+    {
+      name: "D1 +1 ATR",
+      price: ma12 + atr,
+      atr,
+      sd
+    },
+
+    {
+      name: "D1 +0.50 ATR",
+      price: ma12 + atr * 0.50,
+      atr,
+      sd
+    },
+
+    {
+      name: "D1 MA12",
+      price: ma12,
+      atr,
+      sd
+    },
+
+    {
+      name: "D1 -0.50 ATR",
+      price: ma12 - atr * 0.50,
+      atr,
+      sd
+    },
+
+    {
+      name: "D1 -1 ATR",
+      price: ma12 - atr,
+      atr,
+      sd
+    },
+
+    {
+      name: "D1 +1 SD",
+      price: ma12 + sd,
+      atr,
+      sd
+    },
+
+    {
+      name: "D1 +2 SD",
+      price: ma12 + sd * 2,
+      atr,
+      sd
+    },
+
+    {
+      name: "D1 -1 SD",
+      price: ma12 - sd,
+      atr,
+      sd
+    },
+
+    {
+      name: "D1 -2 SD",
+      price: ma12 - sd * 2,
+      atr,
+      sd
+    }
+
+  ];
+}
+
+
+// ======================================================
+// BACKTEST ENGINE — IMPROVED
 // ======================================================
 
 function runBacktest(
   candles,
-  ma12,
-  atr,
   minStrength,
   riskR,
   rewardR
 ) {
 
+  const results = [];
+
+
   if (
-    !candles.length ||
-    !Number.isFinite(ma12) ||
-    !Number.isFinite(atr) ||
-    atr <= 0
+    !candles ||
+    candles.length < 30
   ) {
 
-    return [];
+    return results;
 
   }
 
 
-  const zones =
-    createZones(
-      ma12,
-      atr,
-      atr,
-      "D1"
-    );
-
-
-  const results = [];
+  let lastTradeIndex =
+    -999;
 
 
   for (
-    let i = 0;
-    i < candles.length;
+    let i = 20;
+    i < candles.length - 1;
     i++
   ) {
+
+    /*
+      ใช้ข้อมูลที่ "ปิดแล้ว" ถึงแท่ง i เท่านั้น
+    */
+
+    const ma12 =
+      calculateMA(
+        candles,
+        i,
+        12
+      );
+
+
+    const atr =
+      calculateATR(
+        candles,
+        i,
+        14
+      );
+
+
+    const sd =
+      calculateSD(
+        candles,
+        i,
+        20
+      );
+
+
+    if (
+      !Number.isFinite(ma12) ||
+      !Number.isFinite(atr) ||
+      !Number.isFinite(sd) ||
+      atr <= 0 ||
+      sd <= 0
+    ) {
+
+      continue;
+
+    }
+
 
     const candle =
       candles[i];
 
 
-    let nearest = null;
+    const zones =
+      createBacktestZones(
+        ma12,
+        atr,
+        sd
+      );
 
 
-    for (const zone of zones) {
+    let nearest =
+      null;
+
+
+    for (
+      const zone of zones
+    ) {
 
       const distance =
         Math.abs(
@@ -1665,9 +2129,14 @@ function runBacktest(
         );
 
 
+      /*
+        ต้องอยู่ใกล้ Zone
+        ไม่เกิน 20% ATR
+      */
+
       if (
         distance <=
-        atr * .20
+        atr * 0.20
       ) {
 
         if (
@@ -1677,8 +2146,11 @@ function runBacktest(
         ) {
 
           nearest = {
+
             ...zone,
+
             distance
+
           };
 
         }
@@ -1692,17 +2164,32 @@ function runBacktest(
       continue;
 
 
-    const fakeZones =
-      zones.map(z => ({
-        ...z
-      }));
+    /*
+      กันการเปิด Trade
+      ซ้ำติดกันเกินไป
+    */
 
+    if (
+      i -
+      lastTradeIndex <
+      3
+    ) {
+
+      continue;
+
+    }
+
+
+    /*
+      คำนวณ Strength
+      เฉพาะข้อมูล ณ จุดนั้น
+    */
 
     const strength =
       calculateStrength(
         nearest,
         candle.close,
-        fakeZones
+        zones
       );
 
 
@@ -1710,9 +2197,15 @@ function runBacktest(
       strength.score <
       minStrength
     ) {
+
       continue;
+
     }
 
+
+    /*
+      Direction
+    */
 
     const direction =
       nearest.price <
@@ -1745,8 +2238,13 @@ function runBacktest(
         : entry - reward;
 
 
-    let outcome = null;
+    let outcome =
+      null;
 
+
+    /*
+      ตรวจแท่งถัดไป
+    */
 
     for (
       let j = i + 1;
@@ -1763,16 +2261,18 @@ function runBacktest(
       ) {
 
         const hitStop =
-          next.low <= stop;
+          next.low <=
+          stop;
+
 
         const hitTarget =
-          next.high >= target;
+          next.high >=
+          target;
 
 
         /*
-          ถ้าแท่งเดียวชนทั้ง SL และ TP
-          ให้ถือว่า LOSS
-          เพื่อไม่ให้ Backtest หลอกตัวเอง
+          ถ้าชนทั้งคู่
+          ถือ LOSS
         */
 
         if (
@@ -1781,46 +2281,67 @@ function runBacktest(
         ) {
 
           outcome = {
+
             result: "LOSS",
+
             r: -riskR,
+
             exit: stop
+
           };
 
           break;
+
         }
 
 
-        if (hitTarget) {
+        if (
+          hitTarget
+        ) {
 
           outcome = {
+
             result: "WIN",
+
             r: rewardR,
+
             exit: target
+
           };
 
           break;
+
         }
 
 
-        if (hitStop) {
+        if (
+          hitStop
+        ) {
 
           outcome = {
+
             result: "LOSS",
+
             r: -riskR,
+
             exit: stop
+
           };
 
           break;
-        }
 
+        }
 
       } else {
 
         const hitStop =
-          next.high >= stop;
+          next.high >=
+          stop;
+
 
         const hitTarget =
-          next.low <= target;
+          next.low <=
+          target;
 
 
         if (
@@ -1829,36 +2350,55 @@ function runBacktest(
         ) {
 
           outcome = {
+
             result: "LOSS",
+
             r: -riskR,
+
             exit: stop
+
           };
 
           break;
+
         }
 
 
-        if (hitTarget) {
+        if (
+          hitTarget
+        ) {
 
           outcome = {
+
             result: "WIN",
+
             r: rewardR,
+
             exit: target
+
           };
 
           break;
+
         }
 
 
-        if (hitStop) {
+        if (
+          hitStop
+        ) {
 
           outcome = {
+
             result: "LOSS",
+
             r: -riskR,
+
             exit: stop
+
           };
 
           break;
+
         }
 
       }
@@ -1868,6 +2408,10 @@ function runBacktest(
 
     if (!outcome)
       continue;
+
+
+    lastTradeIndex =
+      i;
 
 
     results.push({
@@ -1888,6 +2432,12 @@ function runBacktest(
 
       strength:
         strength.score,
+
+      atr,
+
+      sd,
+
+      ma12,
 
       result:
         outcome.result,
@@ -1911,9 +2461,13 @@ function runBacktest(
 // BACKTEST STATS
 // ======================================================
 
-function calculateBacktestStats(trades) {
+function calculateBacktestStats(
+  trades
+) {
 
-  if (!trades.length) {
+  if (
+    !trades.length
+  ) {
 
     return {
 
@@ -1924,7 +2478,8 @@ function calculateBacktestStats(trades) {
       averageR: 0,
       expectancy: 0,
       profitFactor: 0,
-      maxDrawdown: 0
+      maxDrawdown: 0,
+      totalR: 0
 
     };
 
@@ -1933,19 +2488,21 @@ function calculateBacktestStats(trades) {
 
   const wins =
     trades.filter(
-      t => t.result === "WIN"
+      t =>
+        t.result === "WIN"
     );
 
 
   const losses =
     trades.filter(
-      t => t.result === "LOSS"
+      t =>
+        t.result === "LOSS"
     );
 
 
   const totalR =
     trades.reduce(
-      (sum,t) =>
+      (sum, t) =>
         sum + t.r,
       0
     );
@@ -1964,7 +2521,7 @@ function calculateBacktestStats(trades) {
 
   const grossProfit =
     wins.reduce(
-      (sum,t) =>
+      (sum, t) =>
         sum + t.r,
       0
     );
@@ -1973,7 +2530,7 @@ function calculateBacktestStats(trades) {
   const grossLoss =
     Math.abs(
       losses.reduce(
-        (sum,t) =>
+        (sum, t) =>
           sum + t.r,
         0
       )
@@ -1982,7 +2539,8 @@ function calculateBacktestStats(trades) {
 
   const profitFactor =
     grossLoss > 0
-      ? grossProfit / grossLoss
+      ? grossProfit /
+        grossLoss
       : Infinity;
 
 
@@ -1991,28 +2549,33 @@ function calculateBacktestStats(trades) {
   let maxDrawdown = 0;
 
 
-  trades.forEach(t => {
+  trades.forEach(
+    trade => {
 
-    equity += t.r;
-
-    peak =
-      Math.max(
-        peak,
-        equity
-      );
+      equity +=
+        trade.r;
 
 
-    const drawdown =
-      peak - equity;
+      peak =
+        Math.max(
+          peak,
+          equity
+        );
 
 
-    maxDrawdown =
-      Math.max(
-        maxDrawdown,
-        drawdown
-      );
+      const drawdown =
+        peak -
+        equity;
 
-  });
+
+      maxDrawdown =
+        Math.max(
+          maxDrawdown,
+          drawdown
+        );
+
+    }
+  );
 
 
   return {
@@ -2035,7 +2598,9 @@ function calculateBacktestStats(trades) {
 
     profitFactor,
 
-    maxDrawdown
+    maxDrawdown,
+
+    totalR
 
   };
 }
@@ -2048,9 +2613,15 @@ function calculateBacktestStats(trades) {
 let selectedCSV = "";
 
 
-document
-  .getElementById("backtestFile")
-  .addEventListener(
+const backtestFile =
+  document.getElementById(
+    "backtestFile"
+  );
+
+
+if (backtestFile) {
+
+  backtestFile.addEventListener(
     "change",
     async function(event) {
 
@@ -2062,12 +2633,22 @@ document
 
         selectedCSV = "";
 
-        document.getElementById(
-          "fileStatus"
-        ).textContent =
-          "ยังไม่ได้เลือกไฟล์";
+
+        const status =
+          document.getElementById(
+            "fileStatus"
+          );
+
+
+        if (status) {
+
+          status.textContent =
+            "ยังไม่ได้เลือกไฟล์";
+
+        }
 
         return;
+
       }
 
 
@@ -2077,43 +2658,65 @@ document
           await file.text();
 
 
-        /*
-          ตรวจทันทีว่าอ่านได้ไหม
-        */
-
         const candles =
-          parseCSV(selectedCSV);
+          parseCSV(
+            selectedCSV
+          );
 
 
-        document.getElementById(
-          "fileStatus"
-        ).textContent =
-          `✅ ${file.name} • อ่านได้ ${candles.length.toLocaleString()} แท่ง`;
+        const status =
+          document.getElementById(
+            "fileStatus"
+          );
 
 
-      } catch(error) {
+        if (status) {
+
+          status.textContent =
+            `✅ ${file.name} • อ่านได้ ${candles.length.toLocaleString()} แท่ง`;
+
+        }
+
+      } catch (error) {
 
         selectedCSV = "";
 
-        document.getElementById(
-          "fileStatus"
-        ).textContent =
-          "❌ อ่านไฟล์ไม่ได้: " +
-          error.message;
+
+        const status =
+          document.getElementById(
+            "fileStatus"
+          );
+
+
+        if (status) {
+
+          status.textContent =
+            "❌ อ่านไฟล์ไม่ได้: " +
+            error.message;
+
+        }
 
       }
 
     }
   );
 
+}
+
 
 // ======================================================
 // BACKTEST BUTTON
 // ======================================================
 
-document
-  .getElementById("runBacktestBtn")
-  .addEventListener(
+const runBacktestButton =
+  document.getElementById(
+    "runBacktestBtn"
+  );
+
+
+if (runBacktestButton) {
+
+  runBacktestButton.addEventListener(
     "click",
     function() {
 
@@ -2126,28 +2729,19 @@ document
           );
 
           return;
+
         }
 
 
         const candles =
-          parseCSV(selectedCSV);
-
-
-        const ma12 =
-          Number(
-            document.getElementById(
-              "d1ma12"
-            ).value
+          parseCSV(
+            selectedCSV
           );
 
 
-        const atr =
-          Number(
-            document.getElementById(
-              "d1atr"
-            ).value
-          );
-
+        /*
+          Minimum Strength
+        */
 
         const minStrength =
           Number(
@@ -2173,29 +2767,66 @@ document
           );
 
 
+        /*
+          Validate
+        */
+
         if (
-          !Number.isFinite(ma12) ||
-          !Number.isFinite(atr) ||
-          atr <= 0 ||
-          !Number.isFinite(riskR) ||
-          riskR <= 0 ||
-          !Number.isFinite(rewardR) ||
+          !Number.isFinite(
+            minStrength
+          ) ||
+          minStrength < 0 ||
+          minStrength > 100
+        ) {
+
+          alert(
+            "Minimum Strength ต้องอยู่ระหว่าง 0 - 100"
+          );
+
+          return;
+
+        }
+
+
+        if (
+          !Number.isFinite(
+            riskR
+          ) ||
+          riskR <= 0
+        ) {
+
+          alert(
+            "Risk R ต้องมากกว่า 0"
+          );
+
+          return;
+
+        }
+
+
+        if (
+          !Number.isFinite(
+            rewardR
+          ) ||
           rewardR <= 0
         ) {
 
           alert(
-            "กรุณากรอก D1 MA12 + ATR14 + Risk + Reward ให้ถูกต้อง"
+            "Reward R ต้องมากกว่า 0"
           );
 
           return;
+
         }
 
+
+        /*
+          RUN
+        */
 
         const trades =
           runBacktest(
             candles,
-            ma12,
-            atr,
             minStrength,
             riskR,
             rewardR
@@ -2214,6 +2845,10 @@ document
           );
 
 
+        if (!output)
+          return;
+
+
         output.innerHTML = `
 
           <div class="panel">
@@ -2229,10 +2864,26 @@ document
               ${candles.length.toLocaleString()}
               candles
 
+              <br>
+
+              Minimum Strength:
+              ${minStrength}
+
+              <br>
+
+              Risk:
+              ${riskR}R
+
+              <br>
+
+              Reward:
+              ${rewardR}R
+
             </div>
 
 
             <div class="stats-grid">
+
 
               <div class="stat-card">
 
@@ -2289,11 +2940,28 @@ document
               <div class="stat-card">
 
                 <div class="feature-label">
+                  TOTAL R
+                </div>
+
+                <div class="feature-value">
+
+                  ${stats.totalR.toFixed(2)}R
+
+                </div>
+
+              </div>
+
+
+              <div class="stat-card">
+
+                <div class="feature-label">
                   AVERAGE R
                 </div>
 
                 <div class="feature-value">
+
                   ${stats.averageR.toFixed(2)}R
+
                 </div>
 
               </div>
@@ -2306,7 +2974,9 @@ document
                 </div>
 
                 <div class="feature-value">
+
                   ${stats.expectancy.toFixed(2)}R
+
                 </div>
 
               </div>
@@ -2340,16 +3010,20 @@ document
                 </div>
 
                 <div class="feature-value">
+
                   ${stats.maxDrawdown.toFixed(2)}R
+
                 </div>
 
               </div>
+
 
             </div>
 
 
             ${
               trades.length
+
                 ? `
 
                   <table class="backtest-table">
@@ -2357,69 +3031,87 @@ document
                     <thead>
 
                       <tr>
+
                         <th>Date</th>
+
                         <th>Side</th>
+
                         <th>Entry</th>
+
                         <th>Zone</th>
+
                         <th>Strength</th>
+
+                        <th>ATR</th>
+
                         <th>Result</th>
+
                         <th>R</th>
+
                       </tr>
 
                     </thead>
+
 
                     <tbody>
 
                       ${
                         trades
                           .slice(-100)
-                          .map(t => `
+                          .map(
+                            t => `
 
-                            <tr>
+                              <tr>
 
-                              <td>
-                                ${t.date}
-                              </td>
+                                <td>
+                                  ${t.date}
+                                </td>
 
-                              <td>
-                                ${t.direction}
-                              </td>
+                                <td>
+                                  ${t.direction}
+                                </td>
 
-                              <td>
-                                ${t.entry.toFixed(2)}
-                              </td>
+                                <td>
+                                  ${t.entry.toFixed(2)}
+                                </td>
 
-                              <td>
-                                ${t.zone}
-                              </td>
+                                <td>
+                                  ${t.zone}
+                                </td>
 
-                              <td>
-                                ${t.strength}
-                              </td>
+                                <td>
+                                  ${t.strength}
+                                </td>
 
-                              <td class="${
-                                t.result === "WIN"
-                                  ? "win"
-                                  : "loss"
-                              }">
+                                <td>
+                                  ${t.atr.toFixed(2)}
+                                </td>
 
-                                ${t.result}
+                                <td class="${
+                                  t.result ===
+                                  "WIN"
+                                    ? "win"
+                                    : "loss"
+                                }">
 
-                              </td>
+                                  ${t.result}
 
-                              <td class="${
-                                t.r > 0
-                                  ? "win"
-                                  : "loss"
-                              }">
+                                </td>
 
-                                ${t.r.toFixed(2)}
+                                <td class="${
+                                  t.r > 0
+                                    ? "win"
+                                    : "loss"
+                                }">
 
-                              </td>
+                                  ${t.r.toFixed(2)}
 
-                            </tr>
+                                </td>
 
-                          `)
+                              </tr>
+
+                            `
+                          )
                           .join("")
                       }
 
@@ -2428,6 +3120,7 @@ document
                   </table>
 
                 `
+
                 : `
 
                   <div
@@ -2436,7 +3129,11 @@ document
                   >
 
                     ไม่พบ Trade ที่ผ่านเงื่อนไข
-                    Strength ${minStrength}
+
+                    <br>
+
+                    Minimum Strength:
+                    ${minStrength}
 
                   </div>
 
@@ -2453,7 +3150,7 @@ document
         });
 
 
-      } catch(error) {
+      } catch (error) {
 
         console.error(
           "Backtest Error:",
@@ -2471,14 +3168,22 @@ document
     }
   );
 
+}
+
 
 // ======================================================
 // CLEAR DATA
 // ======================================================
 
-document
-  .getElementById("clearDataBtn")
-  .addEventListener(
+const clearDataButton =
+  document.getElementById(
+    "clearDataBtn"
+  );
+
+
+if (clearDataButton) {
+
+  clearDataButton.addEventListener(
     "click",
     async function() {
 
@@ -2497,9 +3202,14 @@ document
         error
       } =
         await supabaseClient
-          .from("gold_settings")
+          .from(
+            "gold_settings"
+          )
           .delete()
-          .eq("id",1);
+          .eq(
+            "id",
+            1
+          );
 
 
       if (error) {
@@ -2510,6 +3220,7 @@ document
         );
 
         return;
+
       }
 
 
@@ -2523,20 +3234,29 @@ document
         "w1atr",
         "w1sd"
       ]
-      .forEach(id => {
+      .forEach(
+        id => {
 
-        const el =
-          document.getElementById(id);
+          const el =
+            document.getElementById(
+              id
+            );
 
-        if (el)
-          el.value = "";
+          if (el)
+            el.value = "";
 
-      });
+        }
+      );
 
 
-      document.getElementById(
-        "results"
-      ).innerHTML = "";
+      const results =
+        document.getElementById(
+          "results"
+        );
+
+
+      if (results)
+        results.innerHTML = "";
 
 
       alert(
@@ -2545,6 +3265,8 @@ document
 
     }
   );
+
+}
 
 
 // ======================================================
