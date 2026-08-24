@@ -8,8 +8,10 @@ const supabaseClient = window.supabase.createClient(
 
 
 // ======================================================
-// GOLD ZONE ANALYZER PRO V3.1
+// GOLD ZONE ANALYZER PRO V3.2
 // ======================================================
+
+
 // ======================================================
 // V3.2 — VOLATILITY REGIME
 // ======================================================
@@ -17,42 +19,54 @@ const supabaseClient = window.supabase.createClient(
 function calculateVolatilityRegime(atr, sd) {
 
   if (!atr || !sd || atr <= 0 || sd <= 0) {
+
     return {
       level: "Unknown",
       icon: "⚪",
       ratio: null,
       reason: "ข้อมูล ATR / SD ไม่เพียงพอ"
     };
+
   }
 
   const ratio = sd / atr;
 
+
   if (ratio >= 2.0) {
+
     return {
       level: "Extreme Volatility",
       icon: "🔥",
       ratio,
       reason: "SD สูงมากเมื่อเทียบกับ ATR"
     };
+
   }
 
+
   if (ratio >= 1.5) {
+
     return {
       level: "High Volatility",
       icon: "🔴",
       ratio,
       reason: "SD สูงเมื่อเทียบกับ ATR"
     };
+
   }
 
+
   if (ratio >= 1.0) {
+
     return {
       level: "Normal Volatility",
       icon: "🟡",
       ratio,
       reason: "ความผันผวนอยู่ในระดับปกติ"
     };
+
   }
+
 
   return {
     level: "Low Volatility",
@@ -60,6 +74,7 @@ function calculateVolatilityRegime(atr, sd) {
     ratio,
     reason: "SD ต่ำเมื่อเทียบกับ ATR"
   };
+
 }
 
 
@@ -67,31 +82,45 @@ function calculateVolatilityRegime(atr, sd) {
 // V3.2 — MARKET POSITION
 // ======================================================
 
-function calculateMarketPosition(price, ma12, atr, sd) {
+function calculateMarketPosition(
+  price,
+  ma12,
+  atr,
+  sd
+) {
 
   if (
-    !price ||
-    !ma12 ||
-    !atr ||
-    !sd ||
+    !Number.isFinite(price) ||
+    !Number.isFinite(ma12) ||
+    !Number.isFinite(atr) ||
+    !Number.isFinite(sd) ||
     atr <= 0 ||
     sd <= 0
   ) {
+
     return {
       level: "Unknown",
       icon: "⚪",
       reason: "ข้อมูลไม่เพียงพอ"
     };
+
   }
 
+
   const distance = price - ma12;
-  const atrPosition = distance / atr;
-  const sdPosition = distance / sd;
+
+  const atrPosition =
+    distance / atr;
+
+  const sdPosition =
+    distance / sd;
+
 
   if (
     atrPosition >= 0.75 ||
     sdPosition >= 1
   ) {
+
     return {
       level: "Upper Range",
       icon: "🔴",
@@ -100,12 +129,15 @@ function calculateMarketPosition(price, ma12, atr, sd) {
       atrPosition,
       sdPosition
     };
+
   }
+
 
   if (
     atrPosition <= -0.75 ||
     sdPosition <= -1
   ) {
+
     return {
       level: "Lower Range",
       icon: "🟢",
@@ -114,7 +146,9 @@ function calculateMarketPosition(price, ma12, atr, sd) {
       atrPosition,
       sdPosition
     };
+
   }
+
 
   return {
     level: "Middle Range",
@@ -124,7 +158,65 @@ function calculateMarketPosition(price, ma12, atr, sd) {
     atrPosition,
     sdPosition
   };
+
 }
+
+
+// ======================================================
+// V3.2.1 — MARKET FEATURES
+// ======================================================
+
+function calculateMarketFeatures(
+  price,
+  ma12,
+  atr,
+  sd
+) {
+
+  if (
+    !Number.isFinite(price) ||
+    !Number.isFinite(ma12) ||
+    !Number.isFinite(atr) ||
+    !Number.isFinite(sd) ||
+    atr <= 0 ||
+    sd <= 0
+  ) {
+
+    return null;
+
+  }
+
+
+  const priceDistance =
+    price - ma12;
+
+  const absoluteDistance =
+    Math.abs(priceDistance);
+
+
+  return {
+
+    atr,
+
+    sd,
+
+    sdAtrRatio:
+      sd / atr,
+
+    priceDistance,
+
+    absoluteDistance,
+
+    distanceATR:
+      absoluteDistance / atr,
+
+    distanceSD:
+      absoluteDistance / sd
+
+  };
+
+}
+
 
 // ======================================================
 // โหลดข้อมูลเก่า
@@ -132,90 +224,129 @@ function calculateMarketPosition(price, ma12, atr, sd) {
 
 async function loadSavedData() {
 
-  const { data, error } = await supabaseClient
-    .from("gold_settings")
-    .select("*")
-    .eq("id", 1)
-    .maybeSingle();
+  const { data, error } =
+    await supabaseClient
+      .from("gold_settings")
+      .select("*")
+      .eq("id", 1)
+      .maybeSingle();
+
 
   if (error) {
-    console.error("โหลดข้อมูลไม่สำเร็จ:", error);
+
+    console.error(
+      "โหลดข้อมูลไม่สำเร็จ:",
+      error
+    );
+
     return;
+
   }
+
 
   if (!data) {
-    console.log("ยังไม่มีข้อมูลที่บันทึกไว้");
+
+    console.log(
+      "ยังไม่มีข้อมูลที่บันทึกไว้"
+    );
+
     return;
+
   }
 
-  document.getElementById("price").value = data.price ?? "";
 
-  document.getElementById("d1ma12").value = data.d1ma12 ?? "";
-  document.getElementById("d1atr").value = data.d1atr ?? "";
-  document.getElementById("d1sd").value = data.d1sd ?? "";
-  document.getElementById("d1ma247").value = data.d1ma247 ?? "";
+  document.getElementById("price").value =
+    data.price ?? "";
 
-  document.getElementById("w1ma12").value = data.w1ma12 ?? "";
-  document.getElementById("w1atr").value = data.w1atr ?? "";
-  document.getElementById("w1sd").value = data.w1sd ?? "";
 
-  console.log("โหลดข้อมูลเก่าเรียบร้อย");
+  document.getElementById("d1ma12").value =
+    data.d1ma12 ?? "";
+
+  document.getElementById("d1atr").value =
+    data.d1atr ?? "";
+
+  document.getElementById("d1sd").value =
+    data.d1sd ?? "";
+
+  document.getElementById("d1ma247").value =
+    data.d1ma247 ?? "";
+
+
+  document.getElementById("w1ma12").value =
+    data.w1ma12 ?? "";
+
+  document.getElementById("w1atr").value =
+    data.w1atr ?? "";
+
+  document.getElementById("w1sd").value =
+    data.w1sd ?? "";
+
+
+  console.log(
+    "โหลดข้อมูลเก่าเรียบร้อย"
+  );
+
 }
 
 
 // ======================================================
-// ฟังก์ชันกำหนดระดับ Strength
+// Strength Label
 // ======================================================
 
 function getStrengthLabel(score) {
 
   if (score >= 80) {
+
     return {
       label: "Strong",
       icon: "🔥"
     };
+
   }
 
+
   if (score >= 60) {
+
     return {
       label: "Moderate",
       icon: "🟡"
     };
+
   }
 
+
   if (score >= 40) {
+
     return {
       label: "Weak",
       icon: "🟠"
     };
+
   }
+
 
   return {
     label: "Low",
     icon: "⚪"
   };
+
 }
 
 
 // ======================================================
-// คำนวณ Zone Strength
-// ======================================================
-//
-// หลักคิด:
-// 1. Base Score
-// 2. Timeframe
-// 3. Distance
-// 4. ATR / SD significance
-// 5. Confluence
-//
-// คะแนนถูกจำกัด 0-100
+// Zone Strength
 // ======================================================
 
-function calculateStrength(zone, currentPrice, allZones) {
+function calculateStrength(
+  zone,
+  currentPrice,
+  allZones
+) {
 
   let score = 20;
 
   const reasons = [];
+
 
   // ----------------------------------------------------
   // Timeframe
@@ -236,6 +367,7 @@ function calculateStrength(zone, currentPrice, allZones) {
     reasons.push(
       "D1 Zone"
     );
+
   }
 
 
@@ -243,20 +375,22 @@ function calculateStrength(zone, currentPrice, allZones) {
   // Distance
   // ----------------------------------------------------
 
-  const distance = Math.abs(
-    zone.price - currentPrice
-  );
+  const distance =
+    Math.abs(
+      zone.price -
+      currentPrice
+    );
+
 
   const referenceATR =
-    zone.type === "W1"
-      ? zone.atr
-      : zone.atr;
+    zone.atr;
 
 
   if (referenceATR > 0) {
 
     const distanceATR =
-      distance / referenceATR;
+      distance /
+      referenceATR;
 
 
     if (distanceATR <= 0.25) {
@@ -301,10 +435,12 @@ function calculateStrength(zone, currentPrice, allZones) {
 
 
   // ----------------------------------------------------
-  // Zone Type
+  // MA12
   // ----------------------------------------------------
 
-  if (zone.name.includes("MA12")) {
+  if (
+    zone.name.includes("MA12")
+  ) {
 
     score += 8;
 
@@ -315,12 +451,19 @@ function calculateStrength(zone, currentPrice, allZones) {
   }
 
 
-  if (zone.name.includes("ATR")) {
+  // ----------------------------------------------------
+  // ATR
+  // ----------------------------------------------------
+
+  if (
+    zone.name.includes("ATR")
+  ) {
 
     const match =
       zone.name.match(
         /([+-]?[0-9.]+) ATR/
       );
+
 
     if (match) {
 
@@ -328,6 +471,7 @@ function calculateStrength(zone, currentPrice, allZones) {
         Math.abs(
           Number(match[1])
         );
+
 
       if (
         multiple === 0.5 ||
@@ -351,12 +495,15 @@ function calculateStrength(zone, currentPrice, allZones) {
   // Standard Deviation
   // ----------------------------------------------------
 
-  if (zone.name.includes("SD")) {
+  if (
+    zone.name.includes("SD")
+  ) {
 
     const match =
       zone.name.match(
         /([+-]?[0-9.]+) SD/
       );
+
 
     if (match) {
 
@@ -364,6 +511,7 @@ function calculateStrength(zone, currentPrice, allZones) {
         Math.abs(
           Number(match[1])
         );
+
 
       if (multiple >= 1) {
 
@@ -385,40 +533,60 @@ function calculateStrength(zone, currentPrice, allZones) {
   // ----------------------------------------------------
 
   const confluence =
-    allZones.some(other => {
+    allZones.some(
+      other => {
 
-      if (other === zone) {
-        return false;
-      }
+        if (other === zone) {
+          return false;
+        }
 
-      if (other.type === zone.type) {
-        return false;
-      }
 
-      const referenceATR =
-        Math.min(
-          zone.atr || Infinity,
-          other.atr || Infinity
+        if (
+          other.type === zone.type
+        ) {
+
+          return false;
+
+        }
+
+
+        const referenceATR =
+          Math.min(
+            zone.atr || Infinity,
+            other.atr || Infinity
+          );
+
+
+        if (
+          !isFinite(
+            referenceATR
+          ) ||
+          referenceATR <= 0
+        ) {
+
+          return false;
+
+        }
+
+
+        return (
+          Math.abs(
+            zone.price -
+            other.price
+          ) <=
+          referenceATR * 0.20
         );
 
-      if (!isFinite(referenceATR) || referenceATR <= 0) {
-        return false;
       }
-
-      return (
-        Math.abs(
-          zone.price - other.price
-        ) <= referenceATR * 0.20
-      );
-
-    });
+    );
 
 
   if (confluence) {
 
     score += 17;
 
-    zone.hasConfluence = true;
+    zone.hasConfluence =
+      true;
 
     reasons.push(
       "มี D1 + W1 Confluence"
@@ -445,6 +613,7 @@ function calculateStrength(zone, currentPrice, allZones) {
     score,
     reasons
   };
+
 }
 
 
@@ -459,6 +628,10 @@ document
     async function () {
 
 
+      // ==================================================
+      // ราคา
+      // ==================================================
+
       const price =
         Number(
           document
@@ -468,7 +641,7 @@ document
 
 
       // ==================================================
-      // อ่าน D1
+      // D1
       // ==================================================
 
       const d1ma12Value =
@@ -477,17 +650,20 @@ document
           .value
           .trim();
 
+
       const d1atrValue =
         document
           .getElementById("d1atr")
           .value
           .trim();
 
+
       const d1sdValue =
         document
           .getElementById("d1sd")
           .value
           .trim();
+
 
       const d1ma247Value =
         document
@@ -510,7 +686,7 @@ document
 
 
       // ==================================================
-      // อ่าน W1
+      // W1
       // ==================================================
 
       const w1ma12Value =
@@ -519,11 +695,13 @@ document
           .value
           .trim();
 
+
       const w1atrValue =
         document
           .getElementById("w1atr")
           .value
           .trim();
+
 
       const w1sdValue =
         document
@@ -555,6 +733,7 @@ document
         );
 
         return;
+
       }
 
 
@@ -572,6 +751,7 @@ document
         );
 
         return;
+
       }
 
 
@@ -590,6 +770,7 @@ document
         );
 
         return;
+
       }
 
 
@@ -608,6 +789,7 @@ document
         );
 
         return;
+
       }
 
 
@@ -620,15 +802,18 @@ document
           ? Number(d1ma12Value)
           : null;
 
+
       const d1atr =
         d1Complete
           ? Number(d1atrValue)
           : null;
 
+
       const d1sd =
         d1Complete
           ? Number(d1sdValue)
           : null;
+
 
       const d1ma247 =
         d1ma247Value !== ""
@@ -641,10 +826,12 @@ document
           ? Number(w1ma12Value)
           : null;
 
+
       const w1atr =
         w1Complete
           ? Number(w1atrValue)
           : null;
+
 
       const w1sd =
         w1Complete
@@ -668,17 +855,12 @@ document
             price,
 
             d1ma12,
-
             d1atr,
-
             d1sd,
-
             d1ma247,
 
             w1ma12,
-
             w1atr,
-
             w1sd
 
           });
@@ -697,6 +879,7 @@ document
         );
 
         return;
+
       }
 
 
@@ -816,6 +999,7 @@ document
           }
 
         ];
+
       }
 
 
@@ -935,6 +1119,7 @@ document
           }
 
         ];
+
       }
 
 
@@ -952,113 +1137,130 @@ document
       // Distance
       // ==================================================
 
-      allZones.forEach(zone => {
+      allZones.forEach(
+        zone => {
 
-        zone.distance =
-          Math.abs(
-            zone.price - price
-          );
-
-        zone.above =
-          zone.price > price;
-
-      });
+          zone.distance =
+            Math.abs(
+              zone.price -
+              price
+            );
 
 
-      // ==================================================
-      // คำนวณ Strength
-      // ==================================================
+          zone.above =
+            zone.price > price;
 
-      allZones.forEach(zone => {
-
-        const strength =
-          calculateStrength(
-            zone,
-            price,
-            allZones
-          );
-
-        zone.strength =
-          strength.score;
-
-        zone.reasons =
-          strength.reasons;
-
-        zone.strengthLabel =
-          getStrengthLabel(
-            zone.strength
-          );
-
-      });
+        }
+      );
 
 
       // ==================================================
-      // สร้าง Confluence Groups
-      // ======================================================
+      // Strength
+      // ==================================================
+
+      allZones.forEach(
+        zone => {
+
+          const strength =
+            calculateStrength(
+              zone,
+              price,
+              allZones
+            );
+
+
+          zone.strength =
+            strength.score;
+
+
+          zone.reasons =
+            strength.reasons;
+
+
+          zone.strengthLabel =
+            getStrengthLabel(
+              zone.strength
+            );
+
+        }
+      );
+
+
+      // ==================================================
+      // Confluence Groups
+      // ==================================================
 
       const confluenceGroups = [];
+
 
       if (
         d1Complete &&
         w1Complete
       ) {
 
-        d1Zones.forEach(d1 => {
+        d1Zones.forEach(
+          d1 => {
 
-          w1Zones.forEach(w1 => {
+            w1Zones.forEach(
+              w1 => {
 
-            const threshold =
-              Math.min(
-                d1.atr,
-                w1.atr
-              ) * 0.20;
-
-            const difference =
-              Math.abs(
-                d1.price -
-                w1.price
-              );
-
-            if (
-              difference <= threshold
-            ) {
-
-              confluenceGroups.push({
-
-                d1,
-                w1,
-
-                low:
+                const threshold =
                   Math.min(
-                    d1.price,
+                    d1.atr,
+                    w1.atr
+                  ) * 0.20;
+
+
+                const difference =
+                  Math.abs(
+                    d1.price -
                     w1.price
-                  ),
+                  );
 
-                high:
-                  Math.max(
-                    d1.price,
-                    w1.price
-                  ),
 
-                midpoint:
-                  (
-                    d1.price +
-                    w1.price
-                  ) / 2
+                if (
+                  difference <=
+                  threshold
+                ) {
 
-              });
+                  confluenceGroups.push({
 
-            }
+                    d1,
+                    w1,
 
-          });
+                    low:
+                      Math.min(
+                        d1.price,
+                        w1.price
+                      ),
 
-        });
+                    high:
+                      Math.max(
+                        d1.price,
+                        w1.price
+                      ),
+
+                    midpoint:
+                      (
+                        d1.price +
+                        w1.price
+                      ) / 2
+
+                  });
+
+                }
+
+              }
+            );
+
+          }
+        );
 
       }
 
 
       // ==================================================
-      // เรียง Zone ตามระยะห่าง
+      // เรียง Zone
       // ==================================================
 
       allZones.sort(
@@ -1069,7 +1271,7 @@ document
 
 
       // ==================================================
-      // หา Support / Resistance
+      // Support
       // ==================================================
 
       const supports =
@@ -1083,6 +1285,11 @@ document
               b.price -
               a.price
           );
+
+
+      // ==================================================
+      // Resistance
+      // ==================================================
 
       const resistances =
         allZones
@@ -1100,8 +1307,41 @@ document
       const nearestSupport =
         supports[0] || null;
 
+
       const nearestResistance =
         resistances[0] || null;
+
+
+      // ==================================================
+      // Mode
+      // ==================================================
+
+      let mode = "";
+
+
+      if (
+        d1Complete &&
+        w1Complete
+      ) {
+
+        mode =
+          "D1 + W1";
+
+      }
+
+      else if (d1Complete) {
+
+        mode =
+          "D1 Only";
+
+      }
+
+      else {
+
+        mode =
+          "W1 Only";
+
+      }
 
 
       // ==================================================
@@ -1113,350 +1353,322 @@ document
           "results"
         );
 
+
       results.innerHTML = "";
 
 
       // ==================================================
-      // Mode
+      // MARKET ANALYSIS
       // ==================================================
 
-      let mode = "";
-
-      if (
-        d1Complete &&
-        w1Complete
-      ) {
-
-        mode = "D1 + W1";
-
-      }
-
-      else if (d1Complete) {
-
-        mode = "D1 Only";
-
-      }
-
-      else {
-
-        mode = "W1 Only";
-
-      }
+      const marketAnalysis =
+        document.createElement(
+          "div"
+        );
 
 
-      // ==================================================
-      // Header
-      // ==================================================
-  // ==================================================
-// V3.2 — MARKET ANALYSIS
-// ==================================================
-
-const marketAnalysis =
-  document.createElement("div");
-
-marketAnalysis.className = "market-analysis";
+      marketAnalysis.className =
+        "market-analysis";
 
 
-// --------------------------------------------------
-// เลือกข้อมูลสำหรับ Market Analysis
-// --------------------------------------------------
+      // --------------------------------------------------
+      // เลือกข้อมูล
+      // --------------------------------------------------
 
-const analysisMA12 =
-  d1Complete
-    ? d1ma12
-    : w1ma12;
-
-const analysisATR =
-  d1Complete
-    ? d1atr
-    : w1atr;
-
-const analysisSD =
-  d1Complete
-    ? d1sd
-    : w1sd;
+      const analysisMA12 =
+        d1Complete
+          ? d1ma12
+          : w1ma12;
 
 
-// --------------------------------------------------
-// คำนวณ  VOLATILITY REGIME
-// --------------------------------------------------
-
-const volatility =
-  calculateVolatilityRegime(
-    analysisATR,
-    analysisSD
-  );
-
-// ======================================================
-// V3.2.1 — MARKET FEATURES
-// ======================================================
-
-function calculateMarketFeatures(
-  price,
-  ma12,
-  atr,
-  sd
-) {
-
-  if (
-    !Number.isFinite(price) ||
-    !Number.isFinite(ma12) ||
-    !Number.isFinite(atr) ||
-    !Number.isFinite(sd) ||
-    atr <= 0 ||
-    sd <= 0
-  ) {
-
-    return null;
-  }
-
-  const priceDistance =
-    price - ma12;
-
-  const absoluteDistance =
-    Math.abs(priceDistance);
-
-  return {
-
-    atr,
-
-    sd,
-
-    sdAtrRatio:
-      sd / atr,
-
-    priceDistance,
-
-    absoluteDistance,
-
-    distanceATR:
-      absoluteDistance / atr,
-
-    distanceSD:
-      absoluteDistance / sd
-
-  };
-}
-
-// --------------------------------------------------
-// คำนวณ Market Position
-// --------------------------------------------------
-
-const marketPosition =
-  calculateMarketPosition(
-    price,
-    analysisMA12,
-    analysisATR,
-    analysisSD
-  );
+      const analysisATR =
+        d1Complete
+          ? d1atr
+          : w1atr;
 
 
-// --------------------------------------------------
-// แสดงผล
-// --------------------------------------------------
-
-marketAnalysis.innerHTML = `
-
-  <div style="
-    background:#151515;
-    border:1px solid #292929;
-    border-radius:14px;
-    padding:16px;
-    margin-bottom:14px;
-  ">
-
-    <div style="
-      font-size:16px;
-      font-weight:800;
-      margin-bottom:12px;
-    ">
-      📊 MARKET ANALYSIS
-    </div>
+      const analysisSD =
+        d1Complete
+          ? d1sd
+          : w1sd;
 
 
-    <div style="
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    ">
+      // --------------------------------------------------
+      // Volatility
+      // --------------------------------------------------
+
+      const volatility =
+        calculateVolatilityRegime(
+          analysisATR,
+          analysisSD
+        );
 
 
-      <div style="
-        background:#101010;
-        border:1px solid #292929;
-        border-radius:11px;
-        padding:13px;
-      ">
+      // --------------------------------------------------
+      // Market Position
+      // --------------------------------------------------
+
+      const marketPosition =
+        calculateMarketPosition(
+          price,
+          analysisMA12,
+          analysisATR,
+          analysisSD
+        );
+
+
+      // --------------------------------------------------
+      // Market Features
+      // --------------------------------------------------
+
+      const marketFeatures =
+        calculateMarketFeatures(
+          price,
+          analysisMA12,
+          analysisATR,
+          analysisSD
+        );
+
+
+      // --------------------------------------------------
+      // แสดง MARKET ANALYSIS
+      // --------------------------------------------------
+
+      marketAnalysis.innerHTML = `
 
         <div style="
-          color:#888;
-          font-size:11px;
-          margin-bottom:6px;
-        ">
-          VOLATILITY REGIME
-        </div> 
-
-        <div style="
-  background:#101010;
-  border:1px solid #292929;
-  border-radius:11px;
-  padding:13px;
-  margin-top:10px;
-">
-
-  <div style="
-    color:#888;
-    font-size:11px;
-    margin-bottom:8px;
-  ">
-    📐 MARKET FEATURES
-  </div>
-
-  ${
-    marketFeatures
-      ? `
-        <div style="
-          display:grid;
-          grid-template-columns:1fr 1fr;
-          gap:8px;
-          font-size:11px;
+          background:#151515;
+          border:1px solid #292929;
+          border-radius:14px;
+          padding:16px;
+          margin-bottom:14px;
         ">
 
-          <div>
-            ATR
-            <strong>
-              ${marketFeatures.atr.toFixed(2)}
-            </strong>
+          <div style="
+            font-size:16px;
+            font-weight:800;
+            margin-bottom:12px;
+          ">
+            📊 MARKET ANALYSIS
           </div>
 
-          <div>
-            SD
-            <strong>
-              ${marketFeatures.sd.toFixed(2)}
-            </strong>
-          </div>
 
-          <div>
-            SD / ATR
-            <strong>
-              ${marketFeatures.sdAtrRatio.toFixed(2)}
-            </strong>
-          </div>
+          <div style="
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:10px;
+          ">
 
-          <div>
-            Distance / ATR
-            <strong>
-              ${marketFeatures.distanceATR.toFixed(2)}
-            </strong>
-          </div>
 
-          <div>
-            Distance / SD
-            <strong>
-              ${marketFeatures.distanceSD.toFixed(2)}
-            </strong>
-          </div>
+            <!-- VOLATILITY -->
 
-          <div>
-            Price − MA12
-            <strong>
-              ${marketFeatures.priceDistance.toFixed(2)}
-            </strong>
-          </div>
+            <div style="
+              background:#101010;
+              border:1px solid #292929;
+              border-radius:11px;
+              padding:13px;
+            ">
 
-        </div>
-      `
-      : `
-        <div style="color:#777;font-size:11px;">
-          ข้อมูลไม่เพียงพอ
-        </div>
-      `
-  }
+              <div style="
+                color:#888;
+                font-size:11px;
+                margin-bottom:6px;
+              ">
+                VOLATILITY REGIME
+              </div>
 
-</div>
 
-        <div style="
-          font-size:16px;
-          font-weight:800;
-        ">
-          ${volatility.icon}
-          ${volatility.level}
-        </div>
+              <div style="
+                font-size:16px;
+                font-weight:800;
+              ">
+                ${volatility.icon}
+                ${volatility.level}
+              </div>
 
-        ${
-          volatility.ratio !== null
-            ? `
+
+              ${
+                volatility.ratio !== null
+                  ? `
+                    <div style="
+                      color:#777;
+                      font-size:10px;
+                      margin-top:6px;
+                    ">
+                      SD / ATR =
+                      ${volatility.ratio.toFixed(2)}
+                    </div>
+                  `
+                  : ""
+              }
+
+
+              <div style="
+                color:#888;
+                font-size:10px;
+                margin-top:6px;
+                line-height:1.5;
+              ">
+                ${volatility.reason}
+              </div>
+
+            </div>
+
+
+            <!-- MARKET POSITION -->
+
+            <div style="
+              background:#101010;
+              border:1px solid #292929;
+              border-radius:11px;
+              padding:13px;
+            ">
+
+              <div style="
+                color:#888;
+                font-size:11px;
+                margin-bottom:6px;
+              ">
+                MARKET POSITION
+              </div>
+
+
+              <div style="
+                font-size:16px;
+                font-weight:800;
+              ">
+                ${marketPosition.icon}
+                ${marketPosition.level}
+              </div>
+
+
               <div style="
                 color:#777;
                 font-size:10px;
                 margin-top:6px;
+                line-height:1.5;
               ">
-                SD / ATR =
-                ${volatility.ratio.toFixed(2)}
+                ${marketPosition.reason}
               </div>
-            `
-            : ""
-        }
 
-        <div style="
-          color:#888;
-          font-size:10px;
-          margin-top:6px;
-          line-height:1.5;
-        ">
-          ${volatility.reason}
+            </div>
+
+          </div>
+
+
+          <!-- MARKET FEATURES -->
+
+          <div style="
+            background:#101010;
+            border:1px solid #292929;
+            border-radius:11px;
+            padding:13px;
+            margin-top:10px;
+          ">
+
+            <div style="
+              color:#888;
+              font-size:11px;
+              margin-bottom:8px;
+            ">
+              📐 MARKET FEATURES
+            </div>
+
+
+            ${
+              marketFeatures
+                ? `
+                  <div style="
+                    display:grid;
+                    grid-template-columns:1fr 1fr;
+                    gap:8px;
+                    font-size:11px;
+                  ">
+
+                    <div>
+                      ATR
+                      <strong>
+                        ${marketFeatures.atr.toFixed(2)}
+                      </strong>
+                    </div>
+
+
+                    <div>
+                      SD
+                      <strong>
+                        ${marketFeatures.sd.toFixed(2)}
+                      </strong>
+                    </div>
+
+
+                    <div>
+                      SD / ATR
+                      <strong>
+                        ${marketFeatures.sdAtrRatio.toFixed(2)}
+                      </strong>
+                    </div>
+
+
+                    <div>
+                      Distance / ATR
+                      <strong>
+                        ${marketFeatures.distanceATR.toFixed(2)}
+                      </strong>
+                    </div>
+
+
+                    <div>
+                      Distance / SD
+                      <strong>
+                        ${marketFeatures.distanceSD.toFixed(2)}
+                      </strong>
+                    </div>
+
+
+                    <div>
+                      Price − MA12
+                      <strong>
+                        ${marketFeatures.priceDistance.toFixed(2)}
+                      </strong>
+                    </div>
+
+                  </div>
+                `
+                : `
+                  <div style="
+                    color:#777;
+                    font-size:11px;
+                  ">
+                    ข้อมูลไม่เพียงพอ
+                  </div>
+                `
+            }
+
+          </div>
+
         </div>
 
-      </div>
+      `;
 
 
-      <div style="
-        background:#101010;
-        border:1px solid #292929;
-        border-radius:11px;
-        padding:13px;
-      ">
+      results.appendChild(
+        marketAnalysis
+      );
 
-        <div style="
-          color:#888;
-          font-size:11px;
-          margin-bottom:6px;
-        ">
-          MARKET POSITION
-        </div>
 
-        <div style="
-          font-size:16px;
-          font-weight:800;
-        ">
-          ${marketPosition.icon}
-          ${marketPosition.level}
-        </div>
+      // ==================================================
+      // HEADER
+      // ==================================================
 
-        <div style="
-          color:#777;
-          font-size:10px;
-          margin-top:6px;
-        ">
-          ${marketPosition.reason}
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-`;
-
-results.appendChild(marketAnalysis);
       const header =
         document.createElement(
           "div"
         );
 
+
       header.className =
         "result-header";
+
 
       header.innerHTML = `
 
@@ -1469,6 +1681,7 @@ results.appendChild(marketAnalysis);
             🎯 Gold Zones
           </h2>
 
+
           <div style="
             color:#888;
             font-size:12px;
@@ -1480,11 +1693,13 @@ results.appendChild(marketAnalysis);
 
         </div>
 
+
         <div class="result-count">
           ${mode}
         </div>
 
       `;
+
 
       results.appendChild(
         header
@@ -1492,13 +1707,14 @@ results.appendChild(marketAnalysis);
 
 
       // ==================================================
-      // Nearest Support / Resistance
+      // NEAREST SUPPORT / RESISTANCE
       // ==================================================
 
       const nearestPanel =
         document.createElement(
           "div"
         );
+
 
       nearestPanel.className =
         "nearest-panel";
@@ -1512,12 +1728,14 @@ results.appendChild(marketAnalysis);
             🟢 NEAREST SUPPORT
           </div>
 
+
           ${
             nearestSupport
               ? `
                 <div class="nearest-price">
                   ${nearestSupport.price.toFixed(2)}
                 </div>
+
 
                 <div class="nearest-info">
 
@@ -1552,12 +1770,14 @@ results.appendChild(marketAnalysis);
             🔴 NEAREST RESISTANCE
           </div>
 
+
           ${
             nearestResistance
               ? `
                 <div class="nearest-price">
                   ${nearestResistance.price.toFixed(2)}
                 </div>
+
 
                 <div class="nearest-info">
 
@@ -1587,13 +1807,14 @@ results.appendChild(marketAnalysis);
 
       `;
 
+
       results.appendChild(
         nearestPanel
       );
 
 
       // ==================================================
-      // Confluence
+      // CONFLUENCE
       // ==================================================
 
       if (
@@ -1605,14 +1826,18 @@ results.appendChild(marketAnalysis);
             "div"
           );
 
+
         title.innerHTML = `
+
           <h3 style="
             margin:14px 0 8px;
             font-size:17px;
           ">
             🔗 Zone Confluence
           </h3>
+
         `;
+
 
         results.appendChild(
           title
@@ -1621,77 +1846,83 @@ results.appendChild(marketAnalysis);
 
         confluenceGroups
           .slice(0, 5)
-          .forEach(group => {
+          .forEach(
+            group => {
 
-            const box =
-              document.createElement(
-                "div"
+              const box =
+                document.createElement(
+                  "div"
+                );
+
+
+              box.className =
+                "confluence-box";
+
+
+              const combinedStrength =
+                Math.round(
+                  (
+                    group.d1.strength +
+                    group.w1.strength
+                  ) / 2
+                );
+
+
+              box.innerHTML = `
+
+                <div class="confluence-title">
+                  🔥 D1 + W1 CONFLUENCE
+                </div>
+
+
+                <div class="confluence-price">
+
+                  ${group.low.toFixed(2)}
+                  —
+                  ${group.high.toFixed(2)}
+
+                </div>
+
+
+                <div style="
+                  color:#999;
+                  font-size:11px;
+                  margin-top:7px;
+                  line-height:1.6;
+                ">
+
+                  D1:
+                  ${group.d1.name}
+                  (${group.d1.price.toFixed(2)})
+
+                  <br>
+
+                  W1:
+                  ${group.w1.name}
+                  (${group.w1.price.toFixed(2)})
+
+                  <br>
+
+                  Combined Strength:
+                  ${combinedStrength}/100
+
+                </div>
+
+              `;
+
+
+              results.appendChild(
+                box
               );
 
-            box.className =
-              "confluence-box";
-
-
-            const combinedStrength =
-              Math.round(
-                (
-                  group.d1.strength +
-                  group.w1.strength
-                ) / 2
-              );
-
-
-            box.innerHTML = `
-
-              <div class="confluence-title">
-                🔥 D1 + W1 CONFLUENCE
-              </div>
-
-              <div class="confluence-price">
-
-                ${group.low.toFixed(2)}
-                —
-                ${group.high.toFixed(2)}
-
-              </div>
-
-              <div style="
-                color:#999;
-                font-size:11px;
-                margin-top:7px;
-                line-height:1.6;
-              ">
-
-                D1:
-                ${group.d1.name}
-                (${group.d1.price.toFixed(2)})
-
-                <br>
-
-                W1:
-                ${group.w1.name}
-                (${group.w1.price.toFixed(2)})
-
-                <br>
-
-                Combined Strength:
-                ${combinedStrength}/100
-
-              </div>
-
-            `;
-
-            results.appendChild(
-              box
-            );
-
-          });
+            }
+          );
 
       }
 
 
       // ==================================================
-      // Zone Cards
+      // ZONE ANALYSIS
       // ==================================================
 
       const zoneTitle =
@@ -1699,14 +1930,17 @@ results.appendChild(marketAnalysis);
           "h3"
         );
 
+
       zoneTitle.style.cssText =
         `
           margin:18px 0 8px;
           font-size:17px;
         `;
 
+
       zoneTitle.textContent =
         "📍 Zone Analysis";
+
 
       results.appendChild(
         zoneTitle
@@ -1765,6 +1999,7 @@ results.appendChild(marketAnalysis);
 
                   ${zone.name}
 
+
                   <span style="
                     display:inline-block;
                     margin-left:7px;
@@ -1794,6 +2029,7 @@ results.appendChild(marketAnalysis);
                     Strength
 
                   </div>
+
 
                   <div class="strength-score">
 
@@ -1854,6 +2090,7 @@ results.appendChild(marketAnalysis);
                   ${direction}
                 </div>
 
+
                 <div style="
                   margin-top:4px;
                   font-size:11px;
@@ -1878,7 +2115,7 @@ results.appendChild(marketAnalysis);
 
 
       // ==================================================
-      // Status
+      // STATUS
       // ==================================================
 
       const status =
@@ -1902,7 +2139,7 @@ results.appendChild(marketAnalysis);
       status.textContent =
         "☁️ บันทึกข้อมูลแล้ว • " +
         mode +
-        " • V3.1";
+        " • V3.2";
 
 
       results.appendChild(
@@ -1938,6 +2175,7 @@ document
     "click",
     async function () {
 
+
       const confirmClear =
         confirm(
           "ต้องการล้างข้อมูลที่บันทึกไว้ใช่ไหม?"
@@ -1963,12 +2201,15 @@ document
           error
         );
 
+
         alert(
           "ล้างข้อมูลไม่สำเร็จ\n\n" +
           error.message
         );
 
+
         return;
+
       }
 
 
@@ -1976,33 +2217,41 @@ document
         "price"
       ).value = "";
 
+
       document.getElementById(
         "d1ma12"
       ).value = "";
+
 
       document.getElementById(
         "d1atr"
       ).value = "";
 
+
       document.getElementById(
         "d1sd"
       ).value = "";
+
 
       document.getElementById(
         "d1ma247"
       ).value = "";
 
+
       document.getElementById(
         "w1ma12"
       ).value = "";
+
 
       document.getElementById(
         "w1atr"
       ).value = "";
 
+
       document.getElementById(
         "w1sd"
       ).value = "";
+
 
       document.getElementById(
         "results"
