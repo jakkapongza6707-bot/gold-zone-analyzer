@@ -1178,7 +1178,7 @@ const analysisSD =
 
 
 // --------------------------------------------------
-// คำนวณ Volatility
+// คำนวณ  VOLATILITY REGIME
 // --------------------------------------------------
 
 const volatility =
@@ -1187,6 +1187,56 @@ const volatility =
     analysisSD
   );
 
+// ======================================================
+// V3.2.1 — MARKET FEATURES
+// ======================================================
+
+function calculateMarketFeatures(
+  price,
+  ma12,
+  atr,
+  sd
+) {
+
+  if (
+    !Number.isFinite(price) ||
+    !Number.isFinite(ma12) ||
+    !Number.isFinite(atr) ||
+    !Number.isFinite(sd) ||
+    atr <= 0 ||
+    sd <= 0
+  ) {
+
+    return null;
+  }
+
+  const priceDistance =
+    price - ma12;
+
+  const absoluteDistance =
+    Math.abs(priceDistance);
+
+  return {
+
+    atr,
+
+    sd,
+
+    sdAtrRatio:
+      sd / atr,
+
+    priceDistance,
+
+    absoluteDistance,
+
+    distanceATR:
+      absoluteDistance / atr,
+
+    distanceSD:
+      absoluteDistance / sd
+
+  };
+}
 
 // --------------------------------------------------
 // คำนวณ Market Position
