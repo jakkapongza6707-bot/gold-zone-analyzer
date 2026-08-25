@@ -1998,6 +1998,288 @@ document
 })();
 
 </script>
+
+<!-- =====================================================
+     ZONE GLOW ANIMATION
+===================================================== -->
+
+<style>
+
+/* ===============================
+   SUPPORT
+=============================== */
+
+.zone-support-glow {
+
+  animation:
+    supportGlow
+    2.2s
+    ease-in-out
+    infinite;
+
+  transform-origin:
+    center;
+
+}
+
+
+@keyframes supportGlow {
+
+  0%,
+  100% {
+
+    filter:
+      brightness(1);
+
+    box-shadow:
+      0 0 0
+      rgba(0, 230, 118, 0);
+
+  }
+
+  50% {
+
+    filter:
+      brightness(1.15);
+
+    box-shadow:
+      0 0 18px
+      rgba(0, 230, 118, 0.35);
+
+  }
+
+}
+
+
+/* ===============================
+   RESISTANCE
+=============================== */
+
+.zone-resistance-glow {
+
+  animation:
+    resistanceGlow
+    2.2s
+    ease-in-out
+    infinite;
+
+  transform-origin:
+    center;
+
+}
+
+
+@keyframes resistanceGlow {
+
+  0%,
+  100% {
+
+    filter:
+      brightness(1);
+
+    box-shadow:
+      0 0 0
+      rgba(255, 70, 70, 0);
+
+  }
+
+  50% {
+
+    filter:
+      brightness(1.15);
+
+    box-shadow:
+      0 0 18px
+      rgba(255, 70, 70, 0.35);
+
+  }
+
+}
+
+
+/* ===============================
+   STRONG ZONE
+=============================== */
+
+.zone-strong-glow {
+
+  animation:
+    strongZoneGlow
+    1.8s
+    ease-in-out
+    infinite;
+
+}
+
+
+@keyframes strongZoneGlow {
+
+  0%,
+  100% {
+
+    transform:
+      scale(1);
+
+    filter:
+      brightness(1);
+
+  }
+
+  50% {
+
+    transform:
+      scale(1.015);
+
+    filter:
+      brightness(1.2);
+
+  }
+
+}
+
+</style>
+
+
+<script>
+
+(function () {
+
+
+  /* ===================================================
+     ตรวจ Zone จากข้อความ
+  =================================================== */
+
+  function animateZones() {
+
+    const elements =
+      document.querySelectorAll(
+        "div, section, article, span"
+      );
+
+
+    elements.forEach(
+      function (element) {
+
+        if (
+          element.children.length > 6
+        ) {
+          return;
+        }
+
+
+        const text =
+          element.textContent
+            .trim()
+            .toLowerCase();
+
+
+        if (!text) {
+          return;
+        }
+
+
+        /* ==========================
+           SUPPORT
+        ========================== */
+
+        if (
+          text.includes("support")
+        ) {
+
+          element.classList.add(
+            "zone-support-glow"
+          );
+
+        }
+
+
+        /* ==========================
+           RESISTANCE
+        ========================== */
+
+        if (
+          text.includes("resistance")
+        ) {
+
+          element.classList.add(
+            "zone-resistance-glow"
+          );
+
+        }
+
+
+        /* ==========================
+           STRONG ZONE
+        ========================== */
+
+        if (
+
+          text.includes("strong zone")
+
+          ||
+
+          text.includes("very strong")
+
+          ||
+
+          text.includes("strength")
+
+        ) {
+
+          element.classList.add(
+            "zone-strong-glow"
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* ===================================================
+     ตรวจครั้งแรก
+  =================================================== */
+
+  setTimeout(
+    animateZones,
+    500
+  );
+
+
+  /* ===================================================
+     ตรวจเมื่อผล Analysis เปลี่ยน
+  =================================================== */
+
+  const observer =
+    new MutationObserver(
+      function () {
+
+        setTimeout(
+          animateZones,
+          150
+        );
+
+      }
+    );
+
+
+  observer.observe(
+    document.body,
+    {
+
+      childList: true,
+
+      subtree: true
+
+    }
+  );
+
+
+})();
+
+</script>  
   
 </body>
 </html>
