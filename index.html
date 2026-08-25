@@ -1539,7 +1539,245 @@ document
   );
 
 </script>
-  
+
+<script>
+(function () {
+
+  const scanner =
+    document.getElementById("marketScanner");
+
+  if (!scanner) return;
+
+  const progressBar =
+    document.getElementById("scannerProgressBar");
+
+  const percent =
+    document.getElementById("scannerPercent");
+
+  const complete =
+    document.getElementById("scannerComplete");
+
+  const stepContainer =
+    document.querySelector(".scanner-steps");
+
+
+  /* ===============================
+     สร้างขั้นตอนการวิเคราะห์
+  =============================== */
+
+  const steps = [
+
+    "PRICE",
+    "D1 DATA",
+    "D1 ATR / SD",
+    "W1 DATA",
+    "W1 ATR / SD",
+    "ZONES",
+    "ZONE STRENGTH",
+    "VOLATILITY",
+    "MARKET POSITION",
+    "FINAL ANALYSIS"
+
+  ];
+
+
+  /* ===============================
+     สร้างรายการ Step
+  =============================== */
+
+  if (stepContainer) {
+
+    stepContainer.innerHTML =
+      steps.map(
+        (name, index) => `
+
+          <div
+            class="scanner-step"
+            data-step="${index}"
+          >
+
+            <span>○</span>
+            ${name}
+
+          </div>
+
+        `
+      ).join("");
+
+  }
+
+
+  /* ===============================
+     กด Analyze
+  =============================== */
+
+  document.addEventListener(
+    "click",
+    function (event) {
+
+      const button =
+        event.target.closest("button");
+
+      if (!button) return;
+
+
+      const text =
+        button.textContent
+          .trim()
+          .toLowerCase();
+
+
+      if (
+        text.includes("analyze") ||
+        text.includes("วิเคราะห์")
+      ) {
+
+        startScanner();
+
+      }
+
+    }
+  );
+
+
+  /* ===============================
+     Scanner
+  =============================== */
+
+  function startScanner() {
+
+    scanner.style.display = "flex";
+
+    if (progressBar)
+      progressBar.style.width = "0%";
+
+    if (percent)
+      percent.textContent = "0%";
+
+    if (complete)
+      complete.style.display = "none";
+
+
+    const stepElements =
+      document.querySelectorAll(
+        ".scanner-step"
+      );
+
+
+    stepElements.forEach(
+      step => {
+
+        step.style.opacity = "0.35";
+
+        step.style.transform =
+          "translateX(-8px)";
+
+        const icon =
+          step.querySelector("span");
+
+        if (icon)
+          icon.textContent = "○";
+
+      }
+    );
+
+
+    let current = 0;
+
+
+    const timer =
+      setInterval(
+        function () {
+
+          if (
+            current >=
+            stepElements.length
+          ) {
+
+            clearInterval(timer);
+
+            finishScanner();
+
+            return;
+
+          }
+
+
+          const step =
+            stepElements[current];
+
+
+          step.style.opacity = "1";
+
+          step.style.transform =
+            "translateX(0)";
+
+
+          const icon =
+            step.querySelector("span");
+
+          if (icon)
+            icon.textContent = "✓";
+
+
+          const progress =
+            Math.round(
+              (
+                (current + 1) /
+                stepElements.length
+              ) * 100
+            );
+
+
+          if (progressBar)
+            progressBar.style.width =
+              progress + "%";
+
+
+          if (percent)
+            percent.textContent =
+              progress + "%";
+
+
+          current++;
+
+        },
+
+        180
+
+      );
+
+  }
+
+
+  /* ===============================
+     เสร็จแล้ว
+  =============================== */
+
+  function finishScanner() {
+
+    if (complete)
+      complete.style.display = "block";
+
+
+    setTimeout(
+      function () {
+
+        scanner.style.display =
+          "none";
+
+      },
+
+      650
+
+    );
+
+  }
+
+
+})();
+</script>  
+
 </body>
 </html>
 
