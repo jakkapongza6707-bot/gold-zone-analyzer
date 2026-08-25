@@ -821,8 +821,132 @@
 <script src="script.js?v=6"></script>
 <script src="history.js?v=3"></script>
 
+  <!-- =========================================
+     QUICK SCROLL BUTTONS
+========================================= -->
+
+<div id="quickScrollButtons">
+
+  <button
+    type="button"
+    id="scrollTopBtn"
+    title="ขึ้นบนสุด"
+  >
+    ⬆️
+  </button>
+
+  <button
+    type="button"
+    id="scrollBottomBtn"
+    title="ลงล่างสุด"
+  >
+    ⬇️
+  </button>
+
+</div>
+
+
+<style>
+
+#quickScrollButtons {
+
+  position: fixed;
+
+  right: 15px;
+
+  bottom: 20px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  z-index: 99999;
+
+}
+
+
+#quickScrollButtons button {
+
+  width: 48px;
+
+  height: 48px;
+
+  border-radius: 50%;
+
+  border: none;
+
+  background: #222;
+
+  color: white;
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 12px
+    rgba(0,0,0,0.35);
+
+  transition:
+    transform 0.15s,
+    opacity 0.15s;
+
+}
+
+
+#quickScrollButtons button:active {
+
+  transform: scale(0.88);
+
+}
+
+
+</style>
+
+
+<script>
+
+document
+  .getElementById("scrollTopBtn")
+  .addEventListener(
+    "click",
+    function() {
+
+      window.scrollTo({
+
+        top: 0,
+
+        behavior: "smooth"
+
+      });
+
+    }
+  );
+
+
+document
+  .getElementById("scrollBottomBtn")
+  .addEventListener(
+    "click",
+    function() {
+
+      window.scrollTo({
+
+        top:
+          document.documentElement
+            .scrollHeight,
+
+        behavior: "smooth"
+
+      });
+
+    }
+  );
+
+</script>
+  
 </body>
 </html>
 
-</body>
-</html>
