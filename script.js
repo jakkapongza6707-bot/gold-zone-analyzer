@@ -2750,37 +2750,114 @@ if (
               )
             : null;
 
-        // ======================================================
-// SAVE ANALYSIS HISTORY
-// PREVENT DUPLICATE ANALYSIS
+// ======================================================
+// ASK BEFORE SAVE ANALYSIS HISTORY
 // ======================================================
 
 if (window.GoldZoneHistory) {
 
-  const historyResult =
-    window.GoldZoneHistory.add({
+  const saveAnalysis =
+    confirm(
+      "💾 บันทึกการวิเคราะห์?\n\n" +
 
-      price,
+      "ราคา: " +
+      price.toFixed(2) +
+      "\n\n" +
 
-      d1ma12,
-      d1atr,
-      d1sd,
-      d1ma247,
+      "D1 MA12: " +
+      d1ma12 +
+      "\n" +
 
-      w1ma12,
-      w1atr,
-      w1sd
+      "D1 ATR14: " +
+      d1atr +
+      "\n" +
 
-    });
+      "D1 SD20: " +
+      d1sd +
+      "\n" +
+
+      "D1 MA247: " +
+      (
+        d1ma247 !== null
+          ? d1ma247
+          : "-"
+      ) +
+      "\n\n" +
+
+      "W1 MA12: " +
+      (
+        w1ma12 !== null
+          ? w1ma12
+          : "-"
+      ) +
+      "\n" +
+
+      "W1 ATR14: " +
+      (
+        w1atr !== null
+          ? w1atr
+          : "-"
+      ) +
+      "\n" +
+
+      "W1 SD20: " +
+      (
+        w1sd !== null
+          ? w1sd
+          : "-"
+      ) +
+
+      "\n\n" +
+
+      "ต้องการบันทึกลง Analysis History ไหม?"
+    );
 
 
-  if (
-    historyResult &&
-    historyResult.duplicate
-  ) {
+  if (saveAnalysis) {
+
+    const historyResult =
+      window.GoldZoneHistory.add({
+
+        price,
+
+        d1ma12,
+        d1atr,
+        d1sd,
+        d1ma247,
+
+        w1ma12,
+        w1atr,
+        w1sd
+
+      });
+
+
+    if (
+      historyResult &&
+      historyResult.duplicate
+    ) {
+
+      console.log(
+        "⏭️ ข้อมูลการวิเคราะห์เดิม ไม่บันทึกซ้ำ"
+      );
+
+    }
+    else if (
+      historyResult &&
+      historyResult.success
+    ) {
+
+      console.log(
+        "💾 บันทึก Analysis History สำเร็จ"
+      );
+
+    }
+
+  }
+  else {
 
     console.log(
-      "⏭️ ข้อมูลการวิเคราะห์เดิม ไม่บันทึกซ้ำ"
+      "🚫 ผู้ใช้เลือกไม่บันทึก Analysis History"
     );
 
   }
