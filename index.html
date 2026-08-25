@@ -2280,6 +2280,333 @@ document
 })();
 
 </script>  
+
+<!-- =====================================================
+     VOLATILITY ANIMATION
+===================================================== -->
+
+<style>
+
+/* =========================================
+   LOW VOLATILITY
+========================================= */
+
+.volatility-low {
+
+  animation:
+    volatilityLow
+    3s
+    ease-in-out
+    infinite;
+
+}
+
+
+@keyframes volatilityLow {
+
+  0%,
+  100% {
+
+    opacity: 1;
+
+  }
+
+  50% {
+
+    opacity: 0.72;
+
+  }
+
+}
+
+
+/* =========================================
+   MEDIUM VOLATILITY
+========================================= */
+
+.volatility-medium {
+
+  animation:
+    volatilityMedium
+    1.8s
+    ease-in-out
+    infinite;
+
+}
+
+
+@keyframes volatilityMedium {
+
+  0%,
+  100% {
+
+    transform:
+      scale(1);
+
+  }
+
+  50% {
+
+    transform:
+      scale(1.025);
+
+  }
+
+}
+
+
+/* =========================================
+   HIGH VOLATILITY
+========================================= */
+
+.volatility-high {
+
+  animation:
+    volatilityHigh
+    0.9s
+    ease-in-out
+    infinite;
+
+}
+
+
+@keyframes volatilityHigh {
+
+  0%,
+  100% {
+
+    transform:
+      scale(1);
+
+    filter:
+      brightness(1);
+
+  }
+
+  50% {
+
+    transform:
+      scale(1.055);
+
+    filter:
+      brightness(1.25);
+
+  }
+
+}
+
+
+/* =========================================
+   EXTREME
+========================================= */
+
+.volatility-extreme {
+
+  animation:
+    volatilityExtreme
+    0.55s
+    ease-in-out
+    infinite;
+
+}
+
+
+@keyframes volatilityExtreme {
+
+  0%,
+  100% {
+
+    transform:
+      scale(1);
+
+  }
+
+  50% {
+
+    transform:
+      scale(1.08);
+
+  }
+
+}
+
+</style>
+
+
+<script>
+
+(function () {
+
+
+  function animateVolatility() {
+
+    const elements =
+      document.querySelectorAll(
+        "div, section, article, span, p"
+      );
+
+
+    elements.forEach(
+      function (element) {
+
+        const text =
+          element.textContent
+            .trim()
+            .toLowerCase();
+
+
+        if (!text) {
+          return;
+        }
+
+
+        /* ===================================
+           EXTREME
+        =================================== */
+
+        if (
+
+          text.includes(
+            "extreme volatility"
+          )
+
+          ||
+
+          text.includes(
+            "extreme"
+          )
+
+        ) {
+
+          element.classList.add(
+            "volatility-extreme"
+          );
+
+          return;
+
+        }
+
+
+        /* ===================================
+           HIGH
+        =================================== */
+
+        if (
+
+          text.includes(
+            "high volatility"
+          )
+
+          ||
+
+          text.includes(
+            "high vol"
+          )
+
+        ) {
+
+          element.classList.add(
+            "volatility-high"
+          );
+
+          return;
+
+        }
+
+
+        /* ===================================
+           MEDIUM
+        =================================== */
+
+        if (
+
+          text.includes(
+            "medium volatility"
+          )
+
+          ||
+
+          text.includes(
+            "moderate volatility"
+          )
+
+        ) {
+
+          element.classList.add(
+            "volatility-medium"
+          );
+
+          return;
+
+        }
+
+
+        /* ===================================
+           LOW
+        =================================== */
+
+        if (
+
+          text.includes(
+            "low volatility"
+          )
+
+        ) {
+
+          element.classList.add(
+            "volatility-low"
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =========================================
+     INITIAL
+  ========================================= */
+
+  setTimeout(
+    animateVolatility,
+    700
+  );
+
+
+  /* =========================================
+     WATCH ANALYSIS RESULT
+  ========================================= */
+
+  const observer =
+    new MutationObserver(
+      function () {
+
+        setTimeout(
+          animateVolatility,
+          150
+        );
+
+      }
+    );
+
+
+  observer.observe(
+    document.body,
+    {
+
+      childList: true,
+
+      subtree: true
+
+    }
+  );
+
+
+})();
+
+</script>
   
 </body>
 </html>
