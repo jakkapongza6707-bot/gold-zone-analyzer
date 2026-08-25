@@ -464,6 +464,39 @@
       margin-top: 30px;
     }
 
+    /* QUICK SCROLL BUTTONS */
+    .quick-scroll {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 9999;
+    }
+
+    .quick-scroll button {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid #444;
+      background: rgba(20, 20, 20, 0.85);
+      color: #f2c94c;
+      font-size: 16px;
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    .quick-scroll button:hover {
+      background: #f2c94c;
+      color: #111;
+      border-color: #f2c94c;
+    }
+
     /* MARKET SCANNER MODAL */
     #marketScanner {
       position: fixed !important;
@@ -726,6 +759,12 @@
 
 </div>
 
+<!-- QUICK SCROLL BUTTONS -->
+<div class="quick-scroll">
+  <button id="scrollTopBtn" title="Go to top">▲</button>
+  <button id="scrollBottomBtn" title="Go to bottom">▼</button>
+</div>
+
 <!-- MARKET SCANNER ANIMATION MODAL -->
 <div id="marketScanner">
   <div class="scanner-box">
@@ -747,6 +786,17 @@
 <!-- External Scripts -->
 <script src="script.js?v=6"></script>
 <script src="history.js?v=4"></script>
+
+<!-- QUICK SCROLL CONTROLLER SCRIPT -->
+<script>
+  document.getElementById('scrollTopBtn')?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  document.getElementById('scrollBottomBtn')?.addEventListener('click', () => {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  });
+</script>
 
 <!-- MARKET SCANNER CONTROLLER SCRIPT -->
 <script>
