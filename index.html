@@ -401,7 +401,82 @@
       color: #ff5b5b;
       font-weight: 800;
     }
+/* ======================================================
+   ANALYSIS HISTORY
+====================================================== */
 
+.history-card {
+  background: #111;
+  border: 1px solid #292929;
+  border-radius: 14px;
+  padding: 14px;
+  margin-top: 10px;
+}
+
+.history-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  color: #ddd;
+  font-size: 12px;
+}
+
+.history-delete {
+  border: 1px solid #4a2525;
+  background: #1a1111;
+  color: #ff6b6b;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 11px;
+}
+
+.history-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.history-grid > div {
+  background: #171717;
+  border: 1px solid #262626;
+  border-radius: 9px;
+  padding: 9px;
+  color: #888;
+  font-size: 10px;
+}
+
+.history-grid strong {
+  display: block;
+  color: #f2c94c;
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+.history-zones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.history-zones span {
+  background: #19160d;
+  border: 1px solid #4b3b16;
+  color: #d8b64c;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 10px;
+}
+
+@media(max-width:650px) {
+
+  .history-grid {
+    grid-template-columns: repeat(2,1fr);
+  }
+
+}
     .footer {
       text-align: center;
       color: #555;
