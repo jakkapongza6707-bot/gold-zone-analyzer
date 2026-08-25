@@ -1778,6 +1778,227 @@ document
 })();
 </script>  
 
+<!-- =====================================================
+     SCORE ANIMATION
+===================================================== -->
+
+<style>
+
+.score-animate {
+  display: inline-block;
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.score-animate.score-pulse {
+  animation:
+    scorePulse 0.45s ease;
+}
+
+@keyframes scorePulse {
+
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.18);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+
+}
+
+</style>
+
+
+<script>
+
+(function () {
+
+  function animateScore(element) {
+
+    if (!element) return;
+
+    const text =
+      element.textContent.trim();
+
+    const match =
+      text.match(/(\d+(?:\.\d+)?)/);
+
+    if (!match) return;
+
+    const target =
+      parseFloat(match[1]);
+
+    if (
+      !Number.isFinite(target) ||
+      target <= 0
+    ) {
+      return;
+    }
+
+    const number =
+      target > 100
+        ? 100
+        : target;
+
+    const duration = 900;
+
+    const start =
+      performance.now();
+
+
+    element.classList.add(
+      "score-animate"
+    );
+
+
+    function update(now) {
+
+      const progress =
+        Math.min(
+          (now - start) /
+          duration,
+          1
+        );
+
+
+      /* Ease Out */
+
+      const eased =
+        1 -
+        Math.pow(
+          1 - progress,
+          3
+        );
+
+
+      const current =
+        number * eased;
+
+
+      element.textContent =
+        Math.round(current) +
+        (target <= 100 ? "/100" : "");
+
+
+      if (progress < 1) {
+
+        requestAnimationFrame(
+          update
+        );
+
+      }
+      else {
+
+        element.classList.add(
+          "score-pulse"
+        );
+
+
+        setTimeout(
+          function () {
+
+            element.classList.remove(
+              "score-pulse"
+            );
+
+          },
+          500
+        );
+
+      }
+
+    }
+
+
+    requestAnimationFrame(
+      update
+    );
+
+  }
+
+
+  /* ===================================================
+     ตรวจ DOM หลัง Analyze
+  =================================================== */
+
+  function scanScores() {
+
+    const elements =
+      document.querySelectorAll(
+        "*"
+      );
+
+
+    elements.forEach(
+      element => {
+
+        if (
+          element.children.length === 0
+        ) {
+
+          const text =
+            element.textContent.trim();
+
+
+          if (
+            /score/i.test(
+              text
+            )
+          ) {
+
+            animateScore(
+              element
+            );
+
+          }
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* ===================================================
+     เฝ้าดูผล Analysis
+  =================================================== */
+
+  const observer =
+    new MutationObserver(
+      function () {
+
+        setTimeout(
+          scanScores,
+          100
+        );
+
+      }
+    );
+
+
+  observer.observe(
+    document.body,
+    {
+
+      childList: true,
+
+      subtree: true
+
+    }
+  );
+
+
+})();
+
+</script>
+  
 </body>
 </html>
 
