@@ -1,9 +1,10 @@
 // ======================================================
 // GOLD ZONE ANALYZER PRO
-// ANALYSIS HISTORY V3
+// ANALYSIS HISTORY V4
 // ======================================================
 
 const HISTORY_KEY = "gold_zone_analysis_history";
+
 
 // ======================================================
 // NORMALIZE
@@ -30,7 +31,7 @@ function normalizeHistoryValue(value) {
 
 
 // ======================================================
-// CREATE UNIQUE ANALYSIS KEY
+// CREATE ANALYSIS KEY
 // ======================================================
 
 function createAnalysisKey(data) {
@@ -54,7 +55,7 @@ function createAnalysisKey(data) {
 
 
 // ======================================================
-// REMOVE OLD DUPLICATES
+// DEDUPE HISTORY
 // ======================================================
 
 function dedupeHistory(history) {
@@ -64,6 +65,7 @@ function dedupeHistory(history) {
   }
 
   const seen = new Set();
+
   const result = [];
 
   for (const item of history) {
@@ -87,9 +89,11 @@ function dedupeHistory(history) {
     }
 
     result.push(item);
+
   }
 
   return result;
+
 }
 
 
@@ -120,8 +124,6 @@ function getAnalysisHistory() {
     const cleaned =
       dedupeHistory(history);
 
-    // ถ้ามีรายการซ้ำ
-    // ล้างให้เหลือรายการเดียว
     if (
       cleaned.length !==
       history.length
@@ -137,6 +139,7 @@ function getAnalysisHistory() {
       console.log(
         "🧹 DUPLICATE HISTORY CLEANED"
       );
+
     }
 
     return cleaned;
@@ -149,7 +152,9 @@ function getAnalysisHistory() {
     );
 
     return [];
+
   }
+
 }
 
 
@@ -180,7 +185,9 @@ function saveAnalysisHistory(history) {
     );
 
     return false;
+
   }
+
 }
 
 
@@ -194,7 +201,7 @@ let lastAnalysisSavedAt = 0;
 
 
 // ======================================================
-// ADD ANALYSIS HISTORY
+// ADD HISTORY
 // ======================================================
 
 function addAnalysisHistory(data) {
@@ -202,14 +209,11 @@ function addAnalysisHistory(data) {
   if (!data) {
 
     return {
-
       success: false,
       duplicate: false
-
     };
 
   }
-
 
   const analysisKey =
     createAnalysisKey(data);
@@ -218,9 +222,9 @@ function addAnalysisHistory(data) {
     Date.now();
 
 
-  // ====================================================
+  // ----------------------------------------------------
   // กันการกด Analyze รัว ๆ
-  // ====================================================
+  // ----------------------------------------------------
 
   if (
 
@@ -240,7 +244,9 @@ function addAnalysisHistory(data) {
     return {
 
       success: false,
+
       duplicate: true,
+
       item: null
 
     };
@@ -248,17 +254,13 @@ function addAnalysisHistory(data) {
   }
 
 
-  // ====================================================
-  // โหลดประวัติเดิม
-  // ====================================================
-
   const history =
     getAnalysisHistory();
 
 
-  // ====================================================
-  // ตรวจว่ามีข้อมูลชุดนี้แล้วหรือยัง
-  // ====================================================
+  // ----------------------------------------------------
+  // ตรวจข้อมูลซ้ำ
+  // ----------------------------------------------------
 
   const duplicate =
     history.find(item => {
@@ -290,7 +292,9 @@ function addAnalysisHistory(data) {
     return {
 
       success: false,
+
       duplicate: true,
+
       item: duplicate
 
     };
@@ -298,9 +302,9 @@ function addAnalysisHistory(data) {
   }
 
 
-  // ====================================================
-  // CREATE RECORD
-  // ====================================================
+  // ----------------------------------------------------
+  // สร้างรายการใหม่
+  // ----------------------------------------------------
 
   const record = {
 
@@ -350,15 +354,9 @@ function addAnalysisHistory(data) {
   };
 
 
-  // ====================================================
-  // SAVE
-  // ====================================================
-
   history.unshift(record);
 
-  saveAnalysisHistory(
-    history
-  );
+  saveAnalysisHistory(history);
 
 
   lastAnalysisKey =
@@ -380,7 +378,9 @@ function addAnalysisHistory(data) {
   return {
 
     success: true,
+
     duplicate: false,
+
     item: record
 
   };
@@ -389,7 +389,194 @@ function addAnalysisHistory(data) {
 
 
 // ======================================================
-// DELETE ONE
+// 🔄 FILL HISTORY DATA BACK INTO FORM
+// ======================================================
+
+function refillAnalysisHistory(id) {
+
+  const history =
+    getAnalysisHistory();
+
+
+  const item =
+    history.find(
+      record =>
+        String(record.id) ===
+        String(id)
+    );
+
+
+  if (!item) {
+
+    alert(
+      "ไม่พบข้อมูลประวัติรายการนี้"
+    );
+
+    return;
+
+  }
+
+
+  // ----------------------------------------------------
+  // Helper
+  // ----------------------------------------------------
+
+  function setValue(
+    id,
+    value
+  ) {
+
+    const element =
+      document.getElementById(id);
+
+    if (!element) {
+      return;
+    }
+
+    if (
+      value === null ||
+      value === undefined
+    ) {
+
+      element.value = "";
+
+      return;
+
+    }
+
+    element.value =
+      value;
+
+  }
+
+
+  // ----------------------------------------------------
+  // PRICE
+  // ----------------------------------------------------
+
+  setValue(
+    "price",
+    item.price
+  );
+
+
+  // ----------------------------------------------------
+  // D1
+  // ----------------------------------------------------
+
+  setValue(
+    "d1ma12",
+    item.d1ma12
+  );
+
+  setValue(
+    "d1atr",
+    item.d1atr
+  );
+
+  setValue(
+    "d1sd",
+    item.d1sd
+  );
+
+  setValue(
+    "d1ma247",
+    item.d1ma247
+  );
+
+
+  // ----------------------------------------------------
+  // W1
+  // ----------------------------------------------------
+
+  setValue(
+    "w1ma12",
+    item.w1ma12
+  );
+
+  setValue(
+    "w1atr",
+    item.w1atr
+  );
+
+  setValue(
+    "w1sd",
+    item.w1sd
+  );
+
+
+  // ----------------------------------------------------
+  // ถ้ามีช่อง Mode
+  // ----------------------------------------------------
+
+  setValue(
+    "mode",
+    item.mode
+  );
+
+
+  // ----------------------------------------------------
+  // ถ้ามีช่อง Volatility
+  // ----------------------------------------------------
+
+  setValue(
+    "volatility",
+    item.volatility
+  );
+
+
+  // ----------------------------------------------------
+  // ถ้ามีช่อง Market Position
+  // ----------------------------------------------------
+
+  setValue(
+    "marketPosition",
+    item.marketPosition
+  );
+
+
+  // ----------------------------------------------------
+  // Scroll กลับไปด้านบน
+  // ----------------------------------------------------
+
+  window.scrollTo({
+
+    top: 0,
+
+    behavior: "smooth"
+
+  });
+
+
+  // ----------------------------------------------------
+  // แจ้งเตือน
+  // ----------------------------------------------------
+
+  console.log(
+    "🔄 HISTORY DATA REFILLED",
+    item
+  );
+
+
+  // ใช้ alert สั้น ๆ
+  // เพื่อให้รู้ว่ากรอกกลับแล้ว
+
+  setTimeout(
+    function() {
+
+      alert(
+        "🔄 กรอกข้อมูลจากประวัติเรียบร้อยแล้ว\n\nตรวจสอบข้อมูลก่อนกด Analyze"
+      );
+
+    },
+    350
+  );
+
+}
+
+
+// ======================================================
+// DELETE
 // ======================================================
 
 function deleteAnalysisHistory(id) {
@@ -426,11 +613,14 @@ function clearAnalysisHistory() {
   ) {
 
     return;
+
   }
+
 
   localStorage.removeItem(
     HISTORY_KEY
   );
+
 
   lastAnalysisKey =
     null;
@@ -438,7 +628,9 @@ function clearAnalysisHistory() {
   lastAnalysisSavedAt =
     0;
 
+
   renderAnalysisHistory();
+
 
   alert(
     "ลบประวัติทั้งหมดเรียบร้อยแล้ว 🧹"
@@ -457,8 +649,10 @@ function formatHistoryDate(date) {
     return "-";
   }
 
+
   const d =
     new Date(date);
+
 
   if (
     Number.isNaN(
@@ -467,7 +661,9 @@ function formatHistoryDate(date) {
   ) {
 
     return date;
+
   }
+
 
   return d.toLocaleString(
     "th-TH",
@@ -528,6 +724,7 @@ function renderAnalysisHistory() {
     `;
 
     return;
+
   }
 
 
@@ -561,32 +758,46 @@ function renderAnalysisHistory() {
 
 
       <button
+
         type="button"
-        onclick="clearAnalysisHistory()"
+
+        onclick="
+          clearAnalysisHistory()
+        "
+
         class="clear-history-btn"
+
       >
 
         🧹 ล้างทั้งหมด
 
       </button>
 
+
     </div>
 
 
     <div class="history-list">
 
+
       ${history.map(item => `
+
 
         <div class="history-card">
 
+
           <div
+
             class="history-top"
+
             style="
               display:flex;
               justify-content:space-between;
               gap:10px;
             "
+
           >
+
 
             <div>
 
@@ -624,6 +835,7 @@ function renderAnalysisHistory() {
               }
 
             </div>
+
 
           </div>
 
@@ -798,6 +1010,46 @@ function renderAnalysisHistory() {
           }
 
 
+          <!-- =====================================
+               🔄 REFILL BUTTON
+          ====================================== -->
+
+          <button
+
+            type="button"
+
+            onclick="
+              refillAnalysisHistory(
+                '${item.id}'
+              )
+            "
+
+            class="refill-history-btn"
+
+            style="
+              width:100%;
+              margin-top:12px;
+              padding:12px;
+              border:none;
+              border-radius:10px;
+              background:#2563eb;
+              color:white;
+              font-size:15px;
+              font-weight:bold;
+              cursor:pointer;
+            "
+
+          >
+
+            🔄 กรอกข้อมูลชุดนี้อีกครั้ง
+
+          </button>
+
+
+          <!-- =====================================
+               DELETE
+          ====================================== -->
+
           <button
 
             type="button"
@@ -819,7 +1071,9 @@ function renderAnalysisHistory() {
 
         </div>
 
+
       `).join("")}
+
 
     </div>
 
@@ -847,13 +1101,16 @@ window.GoldZoneHistory = {
     clearAnalysisHistory,
 
   render:
-    renderAnalysisHistory
+    renderAnalysisHistory,
+
+  refill:
+    refillAnalysisHistory
 
 };
 
 
 // ======================================================
-// COMPATIBILITY
+// GLOBAL FUNCTIONS
 // ======================================================
 
 window.clearAnalysisHistory =
@@ -862,12 +1119,15 @@ window.clearAnalysisHistory =
 window.deleteAnalysisHistory =
   deleteAnalysisHistory;
 
+window.refillAnalysisHistory =
+  refillAnalysisHistory;
+
 window.clearGoldAnalysisHistory =
   clearAnalysisHistory;
 
 
 // ======================================================
-// EXPORT
+// EXPORT HISTORY
 // ======================================================
 
 window.exportGoldAnalysisHistory =
@@ -875,6 +1135,7 @@ window.exportGoldAnalysisHistory =
 
     const history =
       getAnalysisHistory();
+
 
     const blob =
       new Blob(
@@ -906,17 +1167,25 @@ window.exportGoldAnalysisHistory =
         "a"
       );
 
+
     a.href =
       url;
+
 
     a.download =
       `gold-analysis-history-${Date.now()}.json`;
 
-    document.body.appendChild(a);
+
+    document.body.appendChild(
+      a
+    );
+
 
     a.click();
 
+
     a.remove();
+
 
     URL.revokeObjectURL(
       url
@@ -940,5 +1209,5 @@ document.addEventListener(
 
 
 console.log(
-  "✅ Gold Zone Analysis History V3 loaded"
+  "✅ Gold Zone Analysis History V4 loaded"
 );
