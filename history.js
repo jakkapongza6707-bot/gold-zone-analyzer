@@ -2,41 +2,49 @@
 // GOLD ZONE ANALYZER PRO
 // ANALYSIS HISTORY
 // ======================================================
+//
+// ระบบประวัติการวิเคราะห์
+//
+// ป้องกัน:
+// - กด Analyze ซ้ำด้วยข้อมูลเดิม
+// - บันทึกประวัติซ้ำโดยไม่จำเป็น
+//
+// Storage:
+// localStorage
+//
+// ======================================================
 
-const GOLD_HISTORY_KEY =
-  "gold_zone_analysis_history_v1";
-
-const GOLD_HISTORY_LIMIT = 200;
+const HISTORY_KEY = "gold_zone_analysis_history";
 
 
 // ======================================================
 // GET HISTORY
 // ======================================================
 
-function getGoldHistory() {
+function getAnalysisHistory() {
 
   try {
 
-    const raw =
+    const saved =
       localStorage.getItem(
-        GOLD_HISTORY_KEY
+        HISTORY_KEY
       );
 
-    if (!raw)
+    if (!saved)
       return [];
 
-    const data =
-      JSON.parse(raw);
+    const history =
+      JSON.parse(saved);
 
-    return Array.isArray(data)
-      ? data
+    return Array.isArray(history)
+      ? history
       : [];
 
   }
   catch (error) {
 
     console.error(
-      "History load error:",
+      "History Load Error:",
       error
     );
 
@@ -51,46 +59,132 @@ function getGoldHistory() {
 // SAVE HISTORY
 // ======================================================
 
-function saveGoldHistory(
-  history
-) {
+function saveAnalysisHistory(history) {
 
-  localStorage.setItem(
-    GOLD_HISTORY_KEY,
-    JSON.stringify(
-      history.slice(
-        0,
-        GOLD_HISTORY_LIMIT
-      )
-    )
-  );
+  try {
+
+    localStorage.setItem(
+      HISTORY_KEY,
+      JSON.stringify(history)
+    );
+
+    return true;
+
+  }
+  catch (error) {
+
+    console.error(
+      "History Save Error:",
+      error
+    );
+
+    return false;
+
+  }
 
 }
 
 
 // ======================================================
-// ADD HISTORY
+// CREATE UNIQUE ANALYSIS KEY
+// ======================================================
+//
+// ใช้ข้อมูลสำคัญของการวิเคราะห์
+// เพื่อเช็กว่าข้อมูลนี้เคยบันทึกแล้วหรือยัง
+//
+// ถ้าค่าเหมือนกันทั้งหมด
+// จะถือว่าเป็น Analysis เดิม
+//
 // ======================================================
 
-function addGoldAnalysisHistory(
-  snapshot
-) {
+function createAnalysisKey(data) {
+
+  return [
+
+    data.price,
+
+    data.d1ma12,
+    data.d1atr,
+    data.d1sd,
+    data.d1ma247,
+
+    data.w1ma12,
+    data.w1atr,
+    data.w1sd
+
+  ]
+    .map(value =>
+      value ?? ""
+    )
+    .join("|");
+
+}
+
+
+// ======================================================
+// ADD ANALYSIS HISTORY
+// ======================================================
+
+function addAnalysisHistory(data) {
 
   const history =
-    getGoldHistory();
+    getAnalysisHistory();
+
+
+  const analysisKey =
+    createAnalysisKey(data);
+
+
+  // --------------------------------------------------
+  // CHECK DUPLICATE
+  // --------------------------------------------------
+
+  const duplicate =
+    history.find(
+      item =>
+        item.analysisKey ===
+        analysisKey
+    );
+
+
+  if (duplicate) {
+
+    console.log(
+      "⏭️ Analysis already exists:",
+      analysisKey
+    );
+
+    return {
+
+      success:
+        false,
+
+      duplicate:
+        true,
+
+      item:
+        duplicate
+
+    };
+
+  }
+
+
+  // --------------------------------------------------
+  // CREATE NEW RECORD
+  // --------------------------------------------------
 
   const record = {
 
     id:
-      Date.now().toString(36) +
-      Math.random()
-        .toString(36)
-        .slice(2, 8),
+      Date.now().toString(),
+
+    analysisKey,
 
     createdAt:
       new Date().toISOString(),
 
-    ...snapshot
+    ...data
 
   };
 
@@ -100,53 +194,81 @@ function addGoldAnalysisHistory(
   );
 
 
-  saveGoldHistory(
-    history
+  // --------------------------------------------------
+  // จำกัดประวัติสูงสุด 500 รายการ
+  // --------------------------------------------------
+
+  const limitedHistory =
+    history.slice(
+      0,
+      500
+    );
+
+
+  saveAnalysisHistory(
+    limitedHistory
   );
 
 
-  renderGoldHistory();
+  console.log(
+    "✅ Analysis history saved:",
+    record
+  );
 
-  return record;
+
+  return {
+
+    success:
+      true,
+
+    duplicate:
+      false,
+
+    item:
+      record
+
+  };
 
 }
 
 
 // ======================================================
-// DELETE ONE
+// DELETE HISTORY
 // ======================================================
 
-function deleteGoldAnalysisHistory(
-  id
-) {
+function deleteAnalysisHistory(id) {
 
   const history =
-    getGoldHistory()
-      .filter(
-        item =>
-          item.id !== id
-      );
+    getAnalysisHistory();
 
 
-  saveGoldHistory(
-    history
+  const newHistory =
+    history.filter(
+      item =>
+        item.id !==
+        id
+    );
+
+
+  saveAnalysisHistory(
+    newHistory
   );
 
 
-  renderGoldHistory();
+  renderAnalysisHistory();
 
 }
 
 
 // ======================================================
-// CLEAR ALL
+// CLEAR HISTORY
 // ======================================================
 
-function clearGoldAnalysisHistory() {
+function clearAnalysisHistory() {
 
   if (
     !confirm(
-      "ต้องการล้างประวัติการวิเคราะห์ทั้งหมดใช่ไหม?"
+      "ต้องการลบประวัติการวิเคราะห์ทั้งหมดใช่ไหม?"
     )
   ) {
 
@@ -156,121 +278,68 @@ function clearGoldAnalysisHistory() {
 
 
   localStorage.removeItem(
-    GOLD_HISTORY_KEY
+    HISTORY_KEY
   );
 
 
-  renderGoldHistory();
+  renderAnalysisHistory();
+
+
+  alert(
+    "ลบประวัติทั้งหมดเรียบร้อยแล้ว 🧹"
+  );
 
 }
 
 
 // ======================================================
-// EXPORT JSON
+// FORMAT DATE
 // ======================================================
 
-function exportGoldAnalysisHistory() {
+function formatHistoryDate(
+  date
+) {
 
-  const history =
-    getGoldHistory();
+  if (!date)
+    return "-";
 
 
-  if (!history.length) {
+  const d =
+    new Date(date);
 
-    alert(
-      "ยังไม่มีประวัติการวิเคราะห์"
-    );
 
-    return;
+  if (
+    Number.isNaN(
+      d.getTime()
+    )
+  ) {
+
+    return date;
 
   }
 
 
-  const blob =
-    new Blob(
-      [
-        JSON.stringify(
-          history,
-          null,
-          2
-        )
-      ],
-      {
-        type:
-          "application/json"
-      }
-    );
+  return d.toLocaleString(
+    "th-TH",
+    {
 
+      year:
+        "numeric",
 
-  const url =
-    URL.createObjectURL(
-      blob
-    );
+      month:
+        "2-digit",
 
+      day:
+        "2-digit",
 
-  const link =
-    document.createElement(
-      "a"
-    );
+      hour:
+        "2-digit",
 
+      minute:
+        "2-digit"
 
-  link.href =
-    url;
-
-
-  link.download =
-    "gold-zone-analysis-history.json";
-
-
-  document.body.appendChild(
-    link
+    }
   );
-
-
-  link.click();
-
-
-  link.remove();
-
-
-  URL.revokeObjectURL(
-    url
-  );
-
-}
-
-
-// ======================================================
-// ESCAPE
-// ======================================================
-
-function historyEscape(
-  value
-) {
-
-  return String(
-    value ?? ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
 
 }
 
@@ -279,25 +348,25 @@ function historyEscape(
 // RENDER HISTORY
 // ======================================================
 
-function renderGoldHistory() {
+function renderAnalysisHistory() {
 
-  const output =
+  const container =
     document.getElementById(
-      "historyResults"
+      "analysisHistory"
     );
 
 
-  if (!output)
+  if (!container)
     return;
 
 
   const history =
-    getGoldHistory();
+    getAnalysisHistory();
 
 
   if (!history.length) {
 
-    output.innerHTML = `
+    container.innerHTML = `
 
       <div class="nearest-info">
 
@@ -312,456 +381,296 @@ function renderGoldHistory() {
   }
 
 
-  output.innerHTML =
-    history
-      .map(
-        item => {
+  container.innerHTML = `
 
-          const date =
-            new Date(
-              item.createdAt
-            )
-            .toLocaleString(
-              "th-TH"
-            );
+    <div class="history-header">
+
+      <div>
+
+        <h3 style="margin:0">
+
+          🕘 Analysis History
+
+        </h3>
+
+        <div class="nearest-info">
+
+          ${history.length}
+          รายการ
+
+        </div>
+
+      </div>
 
 
-          const zones =
-            Array.isArray(
-              item.zones
-            )
-              ? item.zones
-              : [];
+      <button
+        type="button"
+        onclick="clearAnalysisHistory()"
+        class="clear-history-btn"
+      >
+
+        🧹 ล้างทั้งหมด
+
+      </button>
+
+    </div>
 
 
-          return `
+    <div class="history-list">
 
-            <div class="history-card">
+      ${
+        history
+          .map(
+            item => `
 
-              <div class="history-head">
+              <div class="history-card">
 
-                <div>
+                <div class="history-top">
 
-                  📊
-                  <strong>
-                    ${historyEscape(date)}
-                  </strong>
+                  <div>
+
+                    <strong>
+
+                      💰 ${Number(
+                        item.price
+                      ).toFixed(2)}
+
+                    </strong>
+
+                  </div>
+
+
+                  <div class="nearest-info">
+
+                    ${formatHistoryDate(
+                      item.createdAt
+                    )}
+
+                  </div>
 
                 </div>
 
+
+                <div class="history-grid">
+
+                  <div>
+
+                    D1 MA12
+
+                    <strong>
+
+                      ${item.d1ma12 ?? "-"}
+
+                    </strong>
+
+                  </div>
+
+
+                  <div>
+
+                    D1 ATR14
+
+                    <strong>
+
+                      ${item.d1atr ?? "-"}
+
+                    </strong>
+
+                  </div>
+
+
+                  <div>
+
+                    D1 SD20
+
+                    <strong>
+
+                      ${item.d1sd ?? "-"}
+
+                    </strong>
+
+                  </div>
+
+
+                  <div>
+
+                    D1 MA247
+
+                    <strong>
+
+                      ${item.d1ma247 ?? "-"}
+
+                    </strong>
+
+                  </div>
+
+
+                  <div>
+
+                    W1 MA12
+
+                    <strong>
+
+                      ${item.w1ma12 ?? "-"}
+
+                    </strong>
+
+                  </div>
+
+
+                  <div>
+
+                    W1 ATR14
+
+                    <strong>
+
+                      ${item.w1atr ?? "-"}
+
+                    </strong>
+
+                  </div>
+
+
+                  <div>
+
+                    W1 SD20
+
+                    <strong>
+
+                      ${item.w1sd ?? "-"}
+
+                    </strong>
+
+                  </div>
+
+                </div>
+
+
+                ${
+                  item.mode
+                    ? `
+
+                      <div class="nearest-info">
+
+                        Mode:
+                        <strong>
+                          ${item.mode}
+                        </strong>
+
+                      </div>
+
+                    `
+                    : ""
+                }
+
+
+                ${
+                  item.volatility
+                    ? `
+
+                      <div class="nearest-info">
+
+                        Volatility:
+                        ${item.volatility}
+
+                      </div>
+
+                    `
+                    : ""
+                }
+
+
+                ${
+                  item.marketPosition
+                    ? `
+
+                      <div class="nearest-info">
+
+                        Market Position:
+                        ${item.marketPosition}
+
+                      </div>
+
+                    `
+                    : ""
+                }
+
+
                 <button
                   type="button"
-                  class="history-delete"
-                  onclick="
-                    deleteGoldAnalysisHistory(
-                      '${historyEscape(item.id)}'
-                    )
-                  "
+                  onclick="deleteAnalysisHistory('${item.id}')"
+                  class="delete-history-btn"
                 >
-                  ลบ
+
+                  🗑️ ลบรายการนี้
+
                 </button>
 
               </div>
 
+            `
+          )
+          .join("")
+      }
 
-              <div class="history-grid">
+    </div>
 
-                <div>
-                  ราคา
-                  <strong>
-                    ${
-                      Number.isFinite(
-                        Number(item.price)
-                      )
-                        ? Number(item.price).toFixed(2)
-                        : "-"
-                    }
-                  </strong>
-                </div>
-
-
-                <div>
-                  D1 MA12
-                  <strong>
-                    ${historyEscape(item.d1ma12)}
-                  </strong>
-                </div>
-
-
-                <div>
-                  D1 ATR14
-                  <strong>
-                    ${historyEscape(item.d1atr)}
-                  </strong>
-                </div>
-
-
-                <div>
-                  D1 SD20
-                  <strong>
-                    ${historyEscape(item.d1sd)}
-                  </strong>
-                </div>
-
-
-                <div>
-                  Market
-                  <strong>
-                    ${historyEscape(item.marketPosition)}
-                  </strong>
-                </div>
-
-
-                <div>
-                  Volatility
-                  <strong>
-                    ${historyEscape(item.volatility)}
-                  </strong>
-                </div>
-
-              </div>
-
-
-              ${
-                zones.length
-                  ? `
-
-                    <div class="history-zones">
-
-                      ${zones
-                        .slice(0, 8)
-                        .map(
-                          zone => `
-
-                            <span>
-
-                              ${historyEscape(
-                                zone.name
-                              )}
-
-                              :
-                              ${Number(
-                                zone.price
-                              ).toFixed(2)}
-
-                            </span>
-
-                          `
-                        )
-                        .join("")}
-
-                    </div>
-
-                  `
-                  : ""
-              }
-
-            </div>
-
-          `;
-
-        }
-      )
-      .join("");
+  `;
 
 }
 
 
 // ======================================================
-// CAPTURE CURRENT ANALYSIS
+// DUPLICATE MESSAGE
 // ======================================================
 
-function captureCurrentAnalysis() {
+function showDuplicateHistoryMessage() {
 
-  const price =
-    document.getElementById(
-      "price"
-    )?.value;
-
-
-  const d1ma12 =
-    document.getElementById(
-      "d1ma12"
-    )?.value;
-
-
-  const d1atr =
-    document.getElementById(
-      "d1atr"
-    )?.value;
-
-
-  const d1sd =
-    document.getElementById(
-      "d1sd"
-    )?.value;
-
-
-  const d1ma247 =
-    document.getElementById(
-      "d1ma247"
-    )?.value;
-
-
-  const w1ma12 =
-    document.getElementById(
-      "w1ma12"
-    )?.value;
-
-
-  const w1atr =
-    document.getElementById(
-      "w1atr"
-    )?.value;
-
-
-  const w1sd =
-    document.getElementById(
-      "w1sd"
-    )?.value;
-
-
-  const featureCards =
-    document.querySelectorAll(
-      "#results .feature-card"
-    );
-
-
-  let volatility =
-    "-";
-
-
-  let marketPosition =
-    "-";
-
-
-  if (
-    featureCards.length >= 2
-  ) {
-
-    volatility =
-      featureCards[0]
-        .querySelector(
-          ".feature-value"
-        )
-        ?.textContent
-        ?.trim() ||
-      "-";
-
-
-    marketPosition =
-      featureCards[1]
-        .querySelector(
-          ".feature-value"
-        )
-        ?.textContent
-        ?.trim() ||
-      "-";
-
-  }
-
-
-  const zoneElements =
-    document.querySelectorAll(
-      "#results .zone"
-    );
-
-
-  const zones =
-    Array.from(
-      zoneElements
-    )
-      .map(
-        zone => {
-
-          const name =
-            zone.querySelector(
-              ".zone-name"
-            )
-              ?.textContent
-              ?.replace(
-                "⭐",
-                ""
-              )
-              ?.trim();
-
-
-          const priceText =
-            zone.querySelector(
-              ".zone-price"
-            )
-              ?.textContent
-              ?.trim();
-
-
-          const strengthText =
-            zone.querySelector(
-              ".strength-score"
-            )
-              ?.textContent
-              ?.trim();
-
-
-          const price =
-            parseFloat(
-              priceText
-            );
-
-
-          const strengthMatch =
-            strengthText
-              ?.match(
-                /(\d+)\/100/
-              );
-
-
-          return {
-
-            name:
-              name || "-",
-
-            price:
-              Number.isFinite(price)
-                ? price
-                : null,
-
-            strength:
-              strengthMatch
-                ? Number(
-                    strengthMatch[1]
-                  )
-                : null
-
-          };
-
-        }
-      )
-      .filter(
-        zone =>
-          zone.name !== "-" ||
-          zone.price !== null
-      );
-
-
-  if (
-    !price ||
-    !zones.length
-  ) {
-
-    return null;
-
-  }
-
-
-  return {
-
-    price,
-
-    d1ma12,
-
-    d1atr,
-
-    d1sd,
-
-    d1ma247,
-
-    w1ma12,
-
-    w1atr,
-
-    w1sd,
-
-    volatility,
-
-    marketPosition,
-
-    zones
-
-  };
-
-}
-
-
-// ======================================================
-// AUTO SAVE AFTER ANALYSIS
-// ======================================================
-
-function setupHistoryAutoSave() {
-
-  const analyzeButton =
-    document.querySelector(
-      ".analyze-btn"
-    );
-
-
-  if (!analyzeButton)
-    return;
-
-
-  analyzeButton.addEventListener(
-    "click",
-    function() {
-
-      // รอให้ script.js
-      // สร้างผลวิเคราะห์เสร็จก่อน
-
-      setTimeout(
-        function() {
-
-          const snapshot =
-            captureCurrentAnalysis();
-
-
-          if (!snapshot)
-            return;
-
-
-          addGoldAnalysisHistory(
-            snapshot
-          );
-
-
-        },
-        500
-      );
-
-    }
+  console.log(
+    "⏭️ ไม่บันทึก เพราะเป็นข้อมูลการวิเคราะห์เดิม"
   );
 
 }
 
 
 // ======================================================
-// PUBLIC API
+// AUTO LOAD
 // ======================================================
 
-window.GoldAnalysisHistory = {
+document.addEventListener(
+  "DOMContentLoaded",
+  function() {
+
+    renderAnalysisHistory();
+
+  }
+);
+
+
+// ======================================================
+// EXPORT
+// ======================================================
+
+window.GoldZoneHistory = {
 
   get:
-    getGoldHistory,
+    getAnalysisHistory,
 
   add:
-    addGoldAnalysisHistory,
+    addAnalysisHistory,
 
-  remove:
-    deleteGoldAnalysisHistory,
+  delete:
+    deleteAnalysisHistory,
 
   clear:
-    clearGoldAnalysisHistory,
-
-  export:
-    exportGoldAnalysisHistory,
+    clearAnalysisHistory,
 
   render:
-    renderGoldHistory
+    renderAnalysisHistory
 
 };
 
 
-// ======================================================
-// INIT
-// ======================================================
-
-setupHistoryAutoSave();
-
-renderGoldHistory();
+console.log(
+  "✅ Gold Zone Analysis History loaded"
+);
