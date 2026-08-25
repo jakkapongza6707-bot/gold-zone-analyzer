@@ -843,6 +843,599 @@
     ⬇️
   </button>
 
+<!-- =====================================================
+     MARKET SCANNER ANIMATION
+===================================================== -->
+
+<div id="marketScanner">
+
+  <div class="scanner-box">
+
+    <div class="scanner-icon">
+      🔍
+    </div>
+
+    <div class="scanner-title">
+      SCANNING MARKET
+    </div>
+
+    <div class="scanner-subtitle">
+      กำลังวิเคราะห์ข้อมูลตลาด...
+    </div>
+
+    <div class="scanner-steps">
+
+      <div class="scanner-step">
+        <span>✓</span>
+        PRICE
+      </div>
+
+      <div class="scanner-step">
+        <span>✓</span>
+        D1 DATA
+      </div>
+
+      <div class="scanner-step">
+        <span>✓</span>
+        D1 ATR / SD
+      </div>
+
+      <div class="scanner-step">
+        <span>✓</span>
+        W1 DATA
+      </div>
+
+      <div class="scanner-step">
+        <span>✓</span>
+        W1 ATR / SD
+      </div>
+
+      <div class="scanner-step">
+        <span>✓</span>
+        ZONES
+      </div>
+
+    </div>
+
+    <div class="scanner-progress">
+
+      <div
+        id="scannerProgressBar"
+      ></div>
+
+    </div>
+
+    <div
+      id="scannerPercent"
+      class="scanner-percent"
+    >
+      0%
+    </div>
+
+    <div
+      id="scannerComplete"
+      class="scanner-complete"
+    >
+      🎯 ANALYSIS COMPLETE
+    </div>
+
+  </div>
+
+</div>
+
+
+<style>
+
+/* =====================================================
+   MARKET SCANNER
+===================================================== */
+
+#marketScanner {
+
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 100000;
+
+  display: none;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background:
+    rgba(0, 0, 0, 0.72);
+
+  backdrop-filter:
+    blur(6px);
+
+}
+
+
+/* =====================================================
+   BOX
+===================================================== */
+
+.scanner-box {
+
+  width: min(
+    90vw,
+    390px
+  );
+
+  padding: 28px 24px;
+
+  border-radius: 22px;
+
+  background:
+    rgba(20, 20, 28, 0.97);
+
+  border:
+    1px solid
+    rgba(255,255,255,0.12);
+
+  box-shadow:
+    0 20px 70px
+    rgba(0,0,0,0.55);
+
+  text-align: center;
+
+  animation:
+    scannerBoxIn
+    0.35s
+    ease-out;
+
+}
+
+
+@keyframes scannerBoxIn {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      scale(0.88)
+      translateY(15px);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      scale(1)
+      translateY(0);
+
+  }
+
+}
+
+
+/* =====================================================
+   ICON
+===================================================== */
+
+.scanner-icon {
+
+  font-size: 44px;
+
+  margin-bottom: 8px;
+
+  animation:
+    scannerPulse
+    1s
+    infinite;
+
+}
+
+
+@keyframes scannerPulse {
+
+  0%,
+  100% {
+
+    transform:
+      scale(1);
+
+  }
+
+  50% {
+
+    transform:
+      scale(1.15);
+
+  }
+
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.scanner-title {
+
+  font-size: 21px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+}
+
+
+.scanner-subtitle {
+
+  margin-top: 6px;
+
+  opacity: 0.65;
+
+  font-size: 13px;
+
+}
+
+
+/* =====================================================
+   STEPS
+===================================================== */
+
+.scanner-steps {
+
+  margin-top: 22px;
+
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 8px;
+
+}
+
+
+.scanner-step {
+
+  padding: 9px 8px;
+
+  border-radius: 9px;
+
+  background:
+    rgba(255,255,255,0.05);
+
+  font-size: 11px;
+
+  opacity: 0.35;
+
+  transform:
+    translateX(-5px);
+
+  transition:
+    all 0.35s ease;
+
+}
+
+
+.scanner-step span {
+
+  color: #00e676;
+
+  margin-right: 4px;
+
+}
+
+
+/* =====================================================
+   PROGRESS
+===================================================== */
+
+.scanner-progress {
+
+  height: 7px;
+
+  margin-top: 22px;
+
+  overflow: hidden;
+
+  border-radius: 20px;
+
+  background:
+    rgba(255,255,255,0.08);
+
+}
+
+
+#scannerProgressBar {
+
+  width: 0%;
+
+  height: 100%;
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #00c6ff,
+      #00e676
+    );
+
+  transition:
+    width 0.08s linear;
+
+}
+
+
+.scanner-percent {
+
+  margin-top: 8px;
+
+  font-size: 12px;
+
+  opacity: 0.7;
+
+}
+
+
+.scanner-complete {
+
+  display: none;
+
+  margin-top: 16px;
+
+  font-weight: 800;
+
+  font-size: 16px;
+
+  animation:
+    completePop
+    0.4s
+    ease-out;
+
+}
+
+
+@keyframes completePop {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      scale(0.7);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      scale(1);
+
+  }
+
+}
+
+</style>
+
+
+<script>
+
+/* =====================================================
+   MARKET SCANNER CONTROLLER
+===================================================== */
+
+(function () {
+
+  const scanner =
+    document.getElementById(
+      "marketScanner"
+    );
+
+  const progressBar =
+    document.getElementById(
+      "scannerProgressBar"
+    );
+
+  const percent =
+    document.getElementById(
+      "scannerPercent"
+    );
+
+  const complete =
+    document.getElementById(
+      "scannerComplete"
+    );
+
+  const steps =
+    document.querySelectorAll(
+      ".scanner-step"
+    );
+
+
+  if (!scanner) {
+    return;
+  }
+
+
+  function startScanner() {
+
+    scanner.style.display =
+      "flex";
+
+
+    progressBar.style.width =
+      "0%";
+
+    percent.textContent =
+      "0%";
+
+    complete.style.display =
+      "none";
+
+
+    steps.forEach(
+      step => {
+
+        step.style.opacity =
+          "0.35";
+
+        step.style.transform =
+          "translateX(-5px)";
+
+      }
+    );
+
+
+    let progress = 0;
+
+
+    const interval =
+      setInterval(
+        function () {
+
+          progress += 2;
+
+
+          if (
+            progress >= 100
+          ) {
+
+            progress = 100;
+
+          }
+
+
+          progressBar.style.width =
+            progress + "%";
+
+
+          percent.textContent =
+            progress + "%";
+
+
+          // เปิดแต่ละ Step ตามความคืบหน้า
+
+          const activeSteps =
+            Math.floor(
+              progress /
+              16.6
+            );
+
+
+          steps.forEach(
+            (step, index) => {
+
+              if (
+                index <
+                activeSteps
+              ) {
+
+                step.style.opacity =
+                  "1";
+
+                step.style.transform =
+                  "translateX(0)";
+
+              }
+
+            }
+          );
+
+
+          if (
+            progress >= 100
+          ) {
+
+            clearInterval(
+              interval
+            );
+
+
+            setTimeout(
+              function () {
+
+                complete.style.display =
+                  "block";
+
+              },
+              100
+            );
+
+
+            setTimeout(
+              function () {
+
+                scanner.style.display =
+                  "none";
+
+              },
+              500
+            );
+
+          }
+
+        },
+        18
+      );
+
+  }
+
+
+  /* ===================================================
+     หา Analyze Button อัตโนมัติ
+  =================================================== */
+
+  document.addEventListener(
+    "click",
+    function (event) {
+
+      const button =
+        event.target.closest(
+          "button"
+        );
+
+
+      if (!button) {
+        return;
+      }
+
+
+      const text =
+        button.textContent
+          .trim()
+          .toLowerCase();
+
+
+      if (
+
+        text.includes(
+          "analyze"
+        )
+
+        ||
+
+        text.includes(
+          "วิเคราะห์"
+        )
+
+      ) {
+
+        startScanner();
+
+      }
+
+    }
+  );
+
+
+})();
+
+</script>
+  
 </div>
 
 
