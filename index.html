@@ -1,952 +1,316 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Zone Analyzer Pro</title>
-<style>
-* {
-box-sizing: border-box;
-}
-body {
-margin: 0;
-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-background:
-radial-gradient(circle at top, #242424 0%, #0d0d0d 45%, #050505 100%);
-color: #f5f5f5;
-min-height: 100vh;
-}
-.container {
-width: 100%;
-max-width: 900px;
-margin: auto;
-padding: 24px 16px 50px;
-}
-.header {
-text-align: center;
-margin-bottom: 28px;
-}
-.logo {
-font-size: 38px;
-margin-bottom: 5px;
-}
-h1 {
-margin: 0;
-font-size: 30px;
-}
-.subtitle {
-color: #999;
-margin-top: 8px;
-font-size: 14px;
-}
-.panel {
-background: rgba(25,25,25,.88);
-border: 1px solid #303030;
-border-radius: 18px;
-padding: 20px;
-margin-bottom: 18px;
-box-shadow: 0 10px 35px rgba(0,0,0,.25);
-}
-.panel-title {
-display: flex;
-align-items: center;
-gap: 9px;
-font-size: 18px;
-font-weight: 700;
-margin-bottom: 16px;
-}
-.price-box {
-background: linear-gradient(135deg,#171717,#242424);
-border: 1px solid #8f701e;
-border-radius: 16px;
-padding: 20px;
-text-align: center;
-margin-bottom: 18px;
-}
-.price-label {
-color: #999;
-font-size: 13px;
-margin-bottom: 5px;
-}
-.price-input {
-font-size: 34px !important;
-font-weight: 700;
-text-align: center;
-color: #f5c84b !important;
-border: none !important;
-background: transparent !important;
-}
-.grid {
-display: grid;
-grid-template-columns: repeat(3,1fr);
-gap: 12px;
-}
-.field label {
-display: block;
-color: #999;
-font-size: 12px;
-margin-bottom: 7px;
-}
-input {
-width: 100%;
-padding: 13px 12px;
-border-radius: 10px;
-border: 1px solid #3a3a3a;
-background: #111;
-color: #fff;
-font-size: 15px;
-outline: none;
-}
-input:focus {
-border-color: #d6a928;
-box-shadow: 0 0 0 3px rgba(214,169,40,.12);
-}
-button {
-cursor: pointer;
-}
-.analyze-btn {
-width: 100%;
-padding: 16px;
-border: none;
-border-radius: 13px;
-background: linear-gradient(135deg,#f2c94c,#b8860b);
-color: #111;
-font-size: 17px;
-font-weight: 800;
-margin-top: 5px;
-}
-#clearDataBtn {
-width: 100%;
-padding: 12px;
-margin-top: 10px;
-border: 1px solid #333;
-border-radius: 12px;
-background: #151515;
-color: #999;
-font-size: 14px;
-}
-.backtest-file {
-display: block;
-width: 100%;
-padding: 15px;
-border: 1px dashed #555;
-border-radius: 12px;
-background: #111;
-color: #ddd;
-margin-bottom: 15px;
-}
-.backtest-file input {
-border: none;
-padding: 0;
-background: transparent;
-margin-top: 8px;
-}
-.backtest-settings {
-display: grid;
-grid-template-columns: repeat(3,1fr);
-gap: 12px;
-margin-bottom: 15px;
-}
-.backtest-btn {
-width: 100%;
-padding: 15px;
-border: 1px solid #80651d;
-border-radius: 12px;
-background: #201b0c;
-color: #f2c94c;
-font-size: 16px;
-font-weight: 800;
-}
-.file-status {
-color: #888;
-font-size: 12px;
-margin-top: 8px;
-}
-.results {
-margin-top: 20px;
-}
-.nearest-panel {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 12px;
-margin-bottom: 18px;
-}
-.nearest-card {
-background: #151515;
-border: 1px solid #292929;
-border-radius: 14px;
-padding: 16px;
-}
-.nearest-card:first-child {
-border-left: 4px solid #43d17a;
-}
-.nearest-card:last-child {
-border-left: 4px solid #ff5b5b;
-}
-.nearest-label {
-font-size: 12px;
-font-weight: 800;
-color: #aaa;
-margin-bottom: 8px;
-}
-.nearest-price {
-font-size: 25px;
-font-weight: 800;
-color: #f2c94c;
-}
-.nearest-info {
-color: #888;
-font-size: 11px;
-line-height: 1.7;
-margin-top: 6px;
-}
-.confluence-box {
-background: linear-gradient(
-135deg,
-rgba(214,169,40,.10),
-rgba(155,124,255,.08)
-);
-border: 1px solid #62521f;
-border-radius: 15px;
-padding: 16px;
-margin-bottom: 10px;
-}
-.confluence-title {
-color: #f2c94c;
-font-weight: 800;
-font-size: 13px;
-}
-.confluence-price {
-color: #fff;
-font-size: 23px;
-font-weight: 800;
-margin-top: 7px;
-}
-.zone {
-padding: 16px;
-margin: 9px 0;
-border-radius: 14px;
-background: #151515;
-border: 1px solid #292929;
-display: flex;
-justify-content: space-between;
-gap: 12px;
-}
-.zone-main {
-min-width: 0;
-flex: 1;
-}
-.zone-name {
-font-weight: 700;
-font-size: 14px;
-}
-.zone-price {
-color: #f2c94c;
-font-size: 21px;
-font-weight: 800;
-margin-top: 4px;
-}
-.zone-distance {
-text-align: right;
-font-size: 12px;
-color: #999;
-white-space: nowrap;
-}
-.above {
-border-left: 4px solid #3fa7ff;
-}
-.below {
-border-left: 4px solid #ff5b5b;
-}
-.strength-box {
-margin-top: 13px;
-padding: 12px;
-border-radius: 11px;
-background: #101010;
-border: 1px solid #262626;
-}
-.strength-title,
-.feature-label {
-color: #aaa;
-font-size: 11px;
-font-weight: 700;
-}
-.strength-score,
-.feature-value {
-color: #f2c94c;
-font-size: 18px;
-font-weight: 800;
-margin-top: 3px;
-}
-.strength-bar {
-width: 100%;
-height: 7px;
-background: #292929;
-border-radius: 10px;
-overflow: hidden;
-margin-top: 8px;
-}
-.strength-fill {
-height: 100%;
-background: linear-gradient(90deg,#8f701e,#f2c94c);
-border-radius: 10px;
-}
-.why-title {
-color: #888;
-font-size: 10px;
-font-weight: 800;
-margin-top: 12px;
-}
-.why-list {
-margin: 5px 0 0;
-padding-left: 17px;
-color: #aaa;
-font-size: 11px;
-line-height: 1.7;
-}
-.analysis-grid,
-.stats-grid {
-display: grid;
-grid-template-columns: repeat(2,1fr);
-gap: 10px;
-}
-.feature-card,
-.stat-card {
-background: #111;
-border: 1px solid #292929;
-border-radius: 12px;
-padding: 13px;
-}
-.stats-grid {
-grid-template-columns: repeat(4,1fr);
-}
-.backtest-table {
-width: 100%;
-border-collapse: collapse;
-margin-top: 18px;
-font-size: 11px;
-}
-.backtest-table th,
-.backtest-table td {
-border-bottom: 1px solid #292929;
-padding: 9px 5px;
-text-align: center;
-}
-.backtest-table th {
-color: #f2c94c;
-}
-.win {
-color: #43d17a;
-font-weight: 800;
-}
-.loss {
-color: #ff5b5b;
-font-weight: 800;
-}
-/* ANALYSIS HISTORY */
-.history-card {
-background: #111;
-border: 1px solid #292929;
-border-radius: 14px;
-padding: 14px;
-margin-top: 10px;
-}
-.history-head {
-display: flex;
-justify-content: space-between;
-align-items: center;
-gap: 10px;
-color: #ddd;
-font-size: 12px;
-}
-.history-delete {
-border: 1px solid #4a2525;
-background: #1a1111;
-color: #ff6b6b;
-border-radius: 8px;
-padding: 6px 10px;
-font-size: 11px;
-}
-.history-grid {
-display: grid;
-grid-template-columns: repeat(3,1fr);
-gap: 8px;
-margin-top: 12px;
-}
-.history-grid > div {
-background: #171717;
-border: 1px solid #262626;
-border-radius: 9px;
-padding: 9px;
-color: #888;
-font-size: 10px;
-}
-.history-grid strong {
-display: block;
-color: #f2c94c;
-font-size: 13px;
-margin-top: 3px;
-}
-.history-zones {
-display: flex;
-flex-wrap: wrap;
-gap: 6px;
-margin-top: 10px;
-}
-.history-zones span {
-background: #19160d;
-border: 1px solid #4b3b16;
-color: #d8b64c;
-border-radius: 8px;
-padding: 6px 8px;
-font-size: 10px;
-}
-.footer {
-text-align: center;
-color: #555;
-font-size: 11px;
-margin-top: 30px;
-}
-/* QUICK SCROLL BUTTONS */
-#quickScrollButtons {
-position: fixed;
-right: 15px;
-bottom: 20px;
-display: flex;
-flex-direction: column;
-gap: 10px;
-z-index: 99999;
-}
-#quickScrollButtons button {
-width: 48px;
-height: 48px;
-border-radius: 50%;
-border: none;
-background: #222;
-color: white;
-font-size: 22px;
-cursor: pointer;
-box-shadow: 0 4px 12px rgba(0,0,0,0.35);
-transition: transform 0.15s, opacity 0.15s;
-}
-#quickScrollButtons button:active {
-transform: scale(0.88);
-}
-/* MARKET SCANNER */
-#marketScanner {
-position: fixed !important;
-top: 0 !important;
-right: 0 !important;
-bottom: 0 !important;
-left: 0 !important;
-width: 100vw !important;
-height: 100vh !important;
-z-index: 100000 !important;
-display: none;
-align-items: center !important;
-justify-content: center !important;
-background: rgba(0, 0, 0, 0.72);
-backdrop-filter: blur(6px);
-margin: 0 !important;
-transform: none !important;
-}
-.scanner-box {
-position: relative !important;
-top: auto !important;
-right: auto !important;
-bottom: auto !important;
-left: auto !important;
-margin: 0 auto !important;
-width: min(90vw, 390px);
-padding: 28px 24px;
-border-radius: 22px;
-background: rgba(20, 20, 28, 0.97);
-border: 1px solid rgba(255,255,255,0.12);
-box-shadow: 0 20px 70px rgba(0,0,0,0.55);
-text-align: center;
-animation: scannerBoxIn 0.35s ease-out;
-transform: none;
-}
-@keyframes scannerBoxIn {
-from {
-opacity: 0;
-transform: scale(0.88) translateY(15px);
-}
-to {
-opacity: 1;
-transform: scale(1) translateY(0);
-}
-}
-.scanner-icon {
-font-size: 44px;
-margin-bottom: 8px;
-animation: scannerPulse 1s infinite;
-}
-@keyframes scannerPulse {
-0%, 100% {
-transform: scale(1);
-}
-50% {
-transform: scale(1.15);
-}
-}
-.scanner-title {
-font-size: 21px;
-font-weight: 800;
-letter-spacing: 1px;
-}
-.scanner-subtitle {
-margin-top: 6px;
-opacity: 0.65;
-font-size: 13px;
-}
-.scanner-steps {
-margin-top: 22px;
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 8px;
-}
-.scanner-step {
-padding: 9px 8px;
-border-radius: 9px;
-background: rgba(255,255,255,0.05);
-font-size: 11px;
-opacity: 0.35;
-transform: translateX(-5px);
-transition: all 0.35s ease;
-}
-.scanner-step span {
-color: #00e676;
-margin-right: 4px;
-}
-.scanner-progress {
-height: 7px;
-margin-top: 22px;
-overflow: hidden;
-border-radius: 20px;
-background: rgba(255,255,255,0.08);
-}
-#scannerProgressBar {
-width: 0%;
-height: 100%;
-border-radius: 20px;
-background: linear-gradient(90deg, #00c6ff, #00e676);
-transition: width 0.08s linear;
-}
-.scanner-percent {
-margin-top: 8px;
-font-size: 12px;
-opacity: 0.7;
-}
-.scanner-complete {
-display: none;
-margin-top: 16px;
-font-weight: 800;
-font-size: 16px;
-animation: completePop 0.4s ease-out;
-}
-@keyframes completePop {
-from {
-opacity: 0;
-transform: scale(0.7);
-}
-to {
-opacity: 1;
-transform: scale(1);
-}
-}
-@media(max-width:650px) {
-.container {
-padding: 18px 12px 40px;
-}
-h1 {
-font-size: 25px;
-}
-.grid,
-.backtest-settings,
-.nearest-panel {
-grid-template-columns: 1fr;
-}
-.stats-grid {
-grid-template-columns: repeat(2,1fr);
-}
-.history-grid {
-grid-template-columns: repeat(2,1fr);
-}
-.zone-price {
-font-size: 18px;
-}
-.price-input {
-font-size: 30px !important;
-}
-.backtest-table {
-font-size: 9px;
-}
-}
-</style>
-<script src="[https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2](https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2)"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Analysis & Trading Assistant</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #3b82f6;
+            --border-color: #334155;
+            --success-color: #22c55e;
+            --danger-color: #ef4444;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+        }
+
+        h1, h2, h3 {
+            margin-top: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input, select {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        /* Results Display */
+        #results {
+            display: none; /* ซ่อนไว้ก่อน พอกดวิเคราะห์ค่อยเปิด */
+        }
+
+        .zone-display-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .zone-box {
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .support-box {
+            background-color: rgba(34, 197, 94, 0.1);
+            border: 1px solid var(--success-color);
+        }
+
+        .resistance-box {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger-color);
+        }
+
+        .zone-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        /* Loading Spinner Animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 9999;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--border-color);
+            border-top: 5px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Market Scanner Window */
+        #marketScanner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            padding: 20px;
+        }
+
+        /* Quick Scroll Controls */
+        .scroll-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 500;
+        }
+
+        .scroll-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-<div class="header">
-<div class="logo">🥇</div>
-<h1>Gold Zone Analyzer Pro</h1>
-<div class="subtitle">
-XAUUSD • Statistical Volatility Analysis
-</div>
-</div>
-<!-- PRICE -->
-<div class="price-box">
-<div class="price-label">
-CURRENT GOLD PRICE
-</div>
-<input
-class="price-input"
-type="number"
-id="price"
-placeholder="4616"
-step="0.01"
->
-</div>
-<!-- D1 -->
-<div class="panel">
-<div class="panel-title">
-📅 D1 Market Data
-</div>
-<div class="grid">
-<div class="field">
-<label>MA12</label>
-<input
-type="number"
-id="d1ma12"
-placeholder="4418.6869"
-step="0.0001"
->
-</div>
-<div class="field">
-<label>ATR14</label>
-<input
-type="number"
-id="d1atr"
-placeholder="91.657"
-step="0.001"
->
-</div>
-<div class="field">
-<label>SD20</label>
-<input
-type="number"
-id="d1sd"
-placeholder="160.7930"
-step="0.0001"
->
-</div>
-<div class="field">
-<label>MA247</label>
-<input
-type="number"
-id="d1ma247"
-placeholder="Optional"
-step="0.0001"
->
-</div>
-</div>
-</div>
-<!-- W1 -->
-<div class="panel">
-<div class="panel-title">
-📊 W1 Market Data
-</div>
-<div class="grid">
-<div class="field">
-<label>MA12</label>
-<input
-type="number"
-id="w1ma12"
-placeholder="4210.2075"
-step="0.0001"
->
-</div>
-<div class="field">
-<label>ATR14</label>
-<input
-type="number"
-id="w1atr"
-placeholder="226.111"
-step="0.001"
->
-</div>
-<div class="field">
-<label>SD20</label>
-<input
-type="number"
-id="w1sd"
-placeholder="260.7582"
-step="0.0001"
->
-</div>
-</div>
-</div>
-<button class="analyze-btn">
-🔍 วิเคราะห์ Gold Zones
-</button>
-<button id="clearDataBtn">
-🧹 ล้างข้อมูลที่บันทึกไว้
-</button>
-<!-- BACKTEST -->
-<div class="panel">
-<div class="panel-title">
-🧪 Backtest ระบบ Gold Zone
-</div>
-<label class="backtest-file">
-📁 เลือกไฟล์ข้อมูลย้อนหลัง CSV
-<input
-type="file"
-id="backtestFile"
-accept=".csv,text/csv"
->
-<div
-id="fileStatus"
-class="file-status"
->
-ยังไม่ได้เลือกไฟล์
-</div>
-</label>
-<div class="backtest-settings">
-<div class="field">
-<label>Minimum Strength</label>
-<input
-type="number"
-id="minStrength"
-value="60"
-min="0"
-max="100"
->
-</div>
-<div class="field">
-<label>Risk (R)</label>
-<input
-type="number"
-id="riskR"
-value="1"
-step="0.1"
-min="0.1"
->
-</div>
-<div class="field">
-<label>Reward (R)</label>
-<input
-type="number"
-id="rewardR"
-value="2"
-step="0.1"
-min="0.1"
->
-</div>
-</div>
-<button
-id="runBacktestBtn"
-class="backtest-btn"
->
-🚀 เริ่ม Backtest
-</button>
-</div>
-<!-- RESULTS -->
-<div id="results"></div>
-<div id="backtestResults"></div>
-<!-- ANALYSIS HISTORY -->
-<div class="panel">
-<div class="panel-title">
-🕘 ประวัติการวิเคราะห์
-</div>
-<div class="nearest-info">
-ระบบจะบันทึกผลการวิเคราะห์
-ทุกครั้งที่กดปุ่มวิเคราะห์
-</div>
-<div style="
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-margin-top:12px;
-">
-<button
-type="button"
-onclick="clearGoldAnalysisHistory()"
-style="
-padding:12px;
-border:1px solid #333;
-border-radius:12px;
-background:#151515;
-color:#ff6b6b;
-font-weight:700;
-"
->
-🗑️ ล้างประวัติ
-</button>
-<button
-type="button"
-onclick="exportGoldAnalysisHistory()"
-style="
-padding:12px;
-border:1px solid #80651d;
-border-radius:12px;
-background:#201b0c;
-color:#f2c94c;
-font-weight:700;
-"
->
-📤 Export
-</button>
-</div>
-<div
-id="historyResults"
-style="margin-top:15px"
-></div>
-</div>
-<div class="footer">
-Gold Zone Analyzer Pro • XAUUSD Quantitative Tool
-</div>
-</div>
-<!-- QUICK SCROLL BUTTONS -->
-<div id="quickScrollButtons">
-<button
-type="button"
-id="scrollTopBtn"
-title="ขึ้นบนสุด"
-> 
-⬆️
-</button>
-<button
-type="button"
-id="scrollBottomBtn"
-title="ลงล่างสุด"
-> 
-⬇️
-</button>
-</div>
-<!-- MARKET SCANNER ANIMATION -->
-<div id="marketScanner">
-<div class="scanner-box">
-<div class="scanner-icon">
-🔍
-</div>
-<div class="scanner-title">
-SCANNING MARKET
-</div>
-<div class="scanner-subtitle">
-กำลังตรวจสอบ Market Conditions...
-</div>
-<div class="scanner-steps">
-<div class="scanner-step">
-<span>✓</span>
-PRICE
-</div>
-<div class="scanner-step">
-<span>✓</span>
-D1 DATA
-</div>
-<div class="scanner-step">
-<span>✓</span>
-D1 ATR / SD
-</div>
-<div class="scanner-step">
-<span>✓</span>
-W1 DATA
-</div>
-<div class="scanner-step">
-<span>✓</span>
-W1 ATR / SD
-</div>
-<div class="scanner-step">
-<span>✓</span>
-ZONES
-</div>
-</div>
-<div class="scanner-progress">
-<div id="scannerProgressBar"></div>
-</div>
-<div id="scannerPercent" class="scanner-percent">
-0%
-</div>
-<div id="scannerComplete" class="scanner-complete">
-🎯 ANALYSIS COMPLETE
-</div>
-</div>
-</div>
-<script src="script.js?v=6"></script>
-<script src="history.js?v=4"></script>
-<script>
-/* =====================================================
-QUICK SCROLL CONTROLLER
-===================================================== */
-document.getElementById("scrollTopBtn").addEventListener("click", function() {
-window.scrollTo({
-top: 0,
-behavior: "smooth"
-});
-});
-document.getElementById("scrollBottomBtn").addEventListener("click", function() {
-window.scrollTo({
-top: document.documentElement.scrollHeight,
-behavior: "smooth"
-});
-});
-/* =====================================================
-MARKET SCANNER CONTROLLER (SINGLE INSTANCE)
-===================================================== */
-(function () {
-const scanner = document.getElementById("marketScanner");
-if (!scanner) return;
-const progressBar = document.getElementById("scannerProgressBar");
-const percent = document.getElementById("scannerPercent");
-const complete = document.getElementById("scannerComplete");
-const steps = document.querySelectorAll(".scanner-step");
-function startScanner() {
-scanner.style.display = "flex";
-if (progressBar) progressBar.style.width = "0%";
-if (percent) percent.textContent = "0%";
-if (complete) complete.style.display = "none";
-steps.forEach(step => {
-step.style.opacity = "0.35";
-step.style.transform = "translateX(-5px)";
-const icon = step.querySelector("span");
-if (icon) icon.textContent = "✓";
-});
-let progress = 0;
-const interval = setInterval(function () {
-progress += 2;
-if (progress >= 100) {
-progress = 100;
-}
-if (progressBar) progressBar.style.width = progress + "%";
-if (percent) percent.textContent = progress + "%";
-const activeSteps = Math.floor(progress / (100 / (steps.length || 1)));
-steps.forEach((step, index) => {
-if (index < activeSteps) {
-step.style.opacity = "1";
-step.style.transform = "translateX(0)";
-}
-});
-if (progress >= 100) {
-clearInterval(interval);
-setTimeout(function () {
-if (complete) complete.style.display = "block";
-}, 100);
-setTimeout(function () {
-scanner.style.display = "none";
-}, 500);
-}
-}, 18);
-}
-document.addEventListener("click", function (event) {
-const button = event.target.closest("button");
-if (!button) return;
-const text = button.textContent.trim().toLowerCase();
-if (text.includes("analyze") || text.includes("วิเคราะห์")) {
-startScanner();
-}
-});
-})();
-</script>
+
+    <div class="container">
+        <!-- Form Section -->
+        <div class="card">
+            <h2>กำหนดค่าและโซนราคาตลาด</h2>
+            <form id="analysisForm" onsubmit="event.preventDefault(); handleAnalyze();">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="symbolInput">สัญลักษณ์ / คู่เงิน (Symbol):</label>
+                        <input type="text" id="symbolInput" placeholder="เช่น EUR/USD, BTCUSDT" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="supportInput">แนวรับ (Support Zone):</label>
+                        <input type="number" step="any" id="supportInput" placeholder="ระบุราคาแนวรับ" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="resistanceInput">แนวต้าน (Resistance Zone):</label>
+                        <input type="number" step="any" id="resistanceInput" placeholder="ระบุราคาแนวต้าน" required>
+                    </div>
+                </div>
+                <button type="submit" id="btnAnalyze">วิเคราะห์ / ค้นหา</button>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="card">
+            <h2>ผลการวิเคราะห์โซนราคาตลาด</h2>
+            <div id="symbolDisplay" style="font-size: 18px; color: var(--accent-color); font-weight: bold;"></div>
+            
+            <div class="zone-display-container">
+                <div class="zone-box support-box">
+                    <h3>โซนแนวรับ (Support)</h3>
+                    <div id="displaySupport" class="zone-value">-</div>
+                </div>
+                <div class="zone-box resistance-box">
+                    <h3>โซนแนวต้าน (Resistance)</h3>
+                    <div id="displayResistance" class="zone-value">-</div>
+                </div>
+            </div>
+
+            <div id="backtestResults" style="margin-top: 20px;"></div>
+            <div id="historyResults" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <!-- Scanner Window -->
+    <div id="marketScanner">
+        <h3>Market Scanner</h3>
+        <p>กำลังค้นหารูปแบบราคาและสแกนตลาด...</p>
+        <button onclick="toggleScanner(false)">ปิด</button>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p style="margin-top: 16px; color: var(--text-color);">กำลังวิเคราะห์และประมวลผลโซนราคา...</p>
+    </div>
+
+    <!-- Quick Scroll Buttons -->
+    <div class="scroll-buttons">
+        <button class="scroll-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+        <button class="scroll-btn" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})">▼</button>
+    </div>
+
+    <!-- External Scripts -->
+    <script src="script.js"></script>
+    <script src="history.js"></script>
+
+    <!-- Main Controller Script -->
+    <script>
+        // ฟังก์ชันเมื่อกดปุ่มวิเคราะห์ / ค้นหา
+        function handleAnalyze() {
+            // 1. แสดง Loading Animation
+            showLoading();
+
+            // 2. จำลองการดึงและประมวลผลข้อมูล
+            setTimeout(() => {
+                const symbol = document.getElementById('symbolInput')?.value;
+                const support = document.getElementById('supportInput')?.value;
+                const resistance = document.getElementById('resistanceInput')?.value;
+
+                // 3. แสดงผลโซนราคาที่กรอกลงใน UI
+                renderMarketZones(symbol, support, resistance);
+
+                // 4. ซ่อน Loading Animation
+                hideLoading();
+
+                // 5. เลื่อนหน้าจอลงมาดูผลลัพธ์
+                document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+            }, 600); // ระยะเวลาโหลด 0.6 วินาที
+        }
+
+        // เปิด/ปิด Loading Overlay
+        function showLoading() {
+            const loader = document.getElementById('loadingOverlay');
+            if (loader) loader.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            const loader = document.getElementById('loadingOverlay');
+            if (loader) loader.style.display = 'none';
+        }
+
+        // แสดงผลโซนราคาตลาด
+        function renderMarketZones(symbol, support, resistance) {
+            const resultsContainer = document.getElementById('results');
+            if (resultsContainer) {
+                resultsContainer.style.display = 'block'; // เปิดให้แสดงผลกล่องผลลัพธ์
+            }
+
+            const symbolElem = document.getElementById('symbolDisplay');
+            const supportElem = document.getElementById('displaySupport');
+            const resistanceElem = document.getElementById('displayResistance');
+
+            if (symbolElem) symbolElem.innerText = `Symbol: ${symbol || 'N/A'}`;
+            if (supportElem) supportElem.innerText = support ? Number(support).toLocaleString() : '-';
+            if (resistanceElem) resistanceElem.innerText = resistance ? Number(resistance).toLocaleString() : '-';
+        }
+
+        // ควบคุม Market Scanner Window
+        function toggleScanner(show) {
+            const scanner = document.getElementById('marketScanner');
+            if (scanner) {
+                scanner.style.display = show ? 'block' : 'none';
+            }
+        }
+    </script>
 </body>
 </html>
