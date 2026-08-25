@@ -2750,8 +2750,45 @@ if (
               )
             : null;
 
+        // ======================================================
+// SAVE ANALYSIS HISTORY
+// PREVENT DUPLICATE ANALYSIS
+// ======================================================
 
-        await supabaseClient
+if (window.GoldZoneHistory) {
+
+  const historyResult =
+    window.GoldZoneHistory.add({
+
+      price,
+
+      d1ma12,
+      d1atr,
+      d1sd,
+      d1ma247,
+
+      w1ma12,
+      w1atr,
+      w1sd
+
+    });
+
+
+  if (
+    historyResult &&
+    historyResult.duplicate
+  ) {
+
+    console.log(
+      "⏭️ ข้อมูลการวิเคราะห์เดิม ไม่บันทึกซ้ำ"
+    );
+
+  }
+
+}
+
+        
+       await supabaseClient
           .from(
             "gold_settings"
           )
