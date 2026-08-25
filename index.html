@@ -667,7 +667,74 @@
 
   <div id="results"></div>
 
-  <div id="backtestResults"></div>
+<div id="backtestResults"></div>
+
+
+<!-- ==================================================
+     ANALYSIS HISTORY
+================================================== -->
+
+<div class="panel">
+
+  <div class="panel-title">
+    🕘 ประวัติการวิเคราะห์
+  </div>
+
+  <div class="nearest-info">
+
+    ระบบจะบันทึกผลการวิเคราะห์
+    ทุกครั้งที่กดปุ่มวิเคราะห์
+
+  </div>
+
+
+  <div style="
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:12px;
+  ">
+
+    <button
+      type="button"
+      onclick="clearGoldAnalysisHistory()"
+      style="
+        padding:12px;
+        border:1px solid #333;
+        border-radius:12px;
+        background:#151515;
+        color:#ff6b6b;
+        font-weight:700;
+      "
+    >
+      🗑️ ล้างประวัติ
+    </button>
+
+
+    <button
+      type="button"
+      onclick="exportGoldAnalysisHistory()"
+      style="
+        padding:12px;
+        border:1px solid #80651d;
+        border-radius:12px;
+        background:#201b0c;
+        color:#f2c94c;
+        font-weight:700;
+      "
+    >
+      📤 Export
+    </button>
+
+  </div>
+
+
+  <div
+    id="historyResults"
+    style="margin-top:15px"
+  ></div>
+
+</div>
 
 
   <div class="footer">
