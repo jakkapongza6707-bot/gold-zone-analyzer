@@ -1,20 +1,107 @@
 // ======================================================
 // GOLD ZONE ANALYZER PRO
-// ANALYSIS HISTORY
+// ANALYSIS HISTORY V2
 // ======================================================
 //
 // ระบบประวัติการวิเคราะห์
 //
-// ป้องกัน:
-// - กด Analyze ซ้ำด้วยข้อมูลเดิม
-// - บันทึกประวัติซ้ำโดยไม่จำเป็น
+// กฎ:
+// - ข้อมูลชุดเดียวกัน = บันทึกเพียงครั้งเดียว
+// - กด Analyze ซ้ำ = ไม่สร้างรายการใหม่
+// - เปลี่ยนราคา = รายการใหม่
+// - เปลี่ยนค่า D1/W1 = รายการใหม่
+// - ลบรายการได้
+// - ล้างทั้งหมดได้
 //
 // Storage:
 // localStorage
 //
 // ======================================================
 
-const HISTORY_KEY = "gold_zone_analysis_history";
+
+const HISTORY_KEY =
+  "gold_zone_analysis_history";
+
+
+// ======================================================
+// NORMALIZE VALUE
+// ======================================================
+
+function normalizeHistoryValue(value) {
+
+  if (
+    value === null ||
+    value === undefined ||
+    value === ""
+  ) {
+
+    return "";
+
+  }
+
+
+  const number =
+    Number(value);
+
+
+  if (
+    Number.isFinite(number)
+  ) {
+
+    return number.toFixed(8);
+
+  }
+
+
+  return String(value)
+    .trim();
+
+}
+
+
+// ======================================================
+// CREATE UNIQUE ANALYSIS KEY
+// ======================================================
+
+function createAnalysisKey(data) {
+
+  return [
+
+    normalizeHistoryValue(
+      data.price
+    ),
+
+    normalizeHistoryValue(
+      data.d1ma12
+    ),
+
+    normalizeHistoryValue(
+      data.d1atr
+    ),
+
+    normalizeHistoryValue(
+      data.d1sd
+    ),
+
+    normalizeHistoryValue(
+      data.d1ma247
+    ),
+
+    normalizeHistoryValue(
+      data.w1ma12
+    ),
+
+    normalizeHistoryValue(
+      data.w1atr
+    ),
+
+    normalizeHistoryValue(
+      data.w1sd
+    )
+
+  ].join("|");
+
+}
 
 
 // ======================================================
@@ -30,18 +117,28 @@ function getAnalysisHistory() {
         HISTORY_KEY
       );
 
+
     if (!saved)
       return [];
+
 
     const history =
       JSON.parse(saved);
 
-    return Array.isArray(history)
-      ? history
-      : [];
+
+    if (
+      !Array.isArray(history)
+    ) {
+
+      return [];
+
+    }
+
+
+    return history;
 
   }
-  catch (error) {
+  catch(error) {
 
     console.error(
       "History Load Error:",
@@ -59,7 +156,9 @@ function getAnalysisHistory() {
 // SAVE HISTORY
 // ======================================================
 
-function saveAnalysisHistory(history) {
+function saveAnalysisHistory(
+  history
+) {
 
   try {
 
@@ -71,7 +170,7 @@ function saveAnalysisHistory(history) {
     return true;
 
   }
-  catch (error) {
+  catch(error) {
 
     console.error(
       "History Save Error:",
@@ -86,73 +185,66 @@ function saveAnalysisHistory(history) {
 
 
 // ======================================================
-// CREATE UNIQUE ANALYSIS KEY
-// ======================================================
-//
-// ใช้ข้อมูลสำคัญของการวิเคราะห์
-// เพื่อเช็กว่าข้อมูลนี้เคยบันทึกแล้วหรือยัง
-//
-// ถ้าค่าเหมือนกันทั้งหมด
-// จะถือว่าเป็น Analysis เดิม
-//
-// ======================================================
-
-function createAnalysisKey(data) {
-
-  return [
-
-    data.price,
-
-    data.d1ma12,
-    data.d1atr,
-    data.d1sd,
-    data.d1ma247,
-
-    data.w1ma12,
-    data.w1atr,
-    data.w1sd
-
-  ]
-    .map(value =>
-      value ?? ""
-    )
-    .join("|");
-
-}
-
-
-// ======================================================
 // ADD ANALYSIS HISTORY
 // ======================================================
 
-function addAnalysisHistory(data) {
+function addAnalysisHistory(
+  data
+) {
+
+  if (!data)
+    return {
+
+      success:
+        false,
+
+      duplicate:
+        false
+
+    };
+
 
   const history =
     getAnalysisHistory();
 
 
   const analysisKey =
-    createAnalysisKey(data);
+    createAnalysisKey(
+      data
+    );
 
 
-  // --------------------------------------------------
-  // CHECK DUPLICATE
-  // --------------------------------------------------
+  // ==================================================
+  // DUPLICATE CHECK
+  // ==================================================
 
   const duplicate =
     history.find(
-      item =>
-        item.analysisKey ===
-        analysisKey
+      item => {
+
+        // รองรับประวัติเก่าที่ไม่มี key
+        const oldKey =
+          item.analysisKey ||
+          createAnalysisKey(
+            item
+          );
+
+
+        return (
+          oldKey ===
+          analysisKey
+        );
+
+      }
     );
 
 
   if (duplicate) {
 
     console.log(
-      "⏭️ Analysis already exists:",
-      analysisKey
+      "⏭️ DUPLICATE ANALYSIS — NOT SAVED"
     );
+
 
     return {
 
@@ -170,50 +262,86 @@ function addAnalysisHistory(data) {
   }
 
 
-  // --------------------------------------------------
-  // CREATE NEW RECORD
-  // --------------------------------------------------
+  // ==================================================
+  // CREATE RECORD
+  // ==================================================
 
   const record = {
 
     id:
-      Date.now().toString(),
+      `${Date.now()}_${Math.random()
+        .toString(36)
+        .slice(2, 8)}`,
 
     analysisKey,
 
     createdAt:
       new Date().toISOString(),
 
-    ...data
+    price:
+      data.price ?? null,
+
+    d1ma12:
+      data.d1ma12 ?? null,
+
+    d1atr:
+      data.d1atr ?? null,
+
+    d1sd:
+      data.d1sd ?? null,
+
+    d1ma247:
+      data.d1ma247 ?? null,
+
+    w1ma12:
+      data.w1ma12 ?? null,
+
+    w1atr:
+      data.w1atr ?? null,
+
+    w1sd:
+      data.w1sd ?? null,
+
+    mode:
+      data.mode ?? null,
+
+    volatility:
+      data.volatility ?? null,
+
+    marketPosition:
+      data.marketPosition ?? null
 
   };
 
+
+  // ==================================================
+  // SAVE
+  // ==================================================
 
   history.unshift(
     record
   );
 
 
-  // --------------------------------------------------
-  // จำกัดประวัติสูงสุด 500 รายการ
-  // --------------------------------------------------
-
-  const limitedHistory =
+  saveAnalysisHistory(
     history.slice(
       0,
       500
-    );
-
-
-  saveAnalysisHistory(
-    limitedHistory
+    )
   );
 
 
   console.log(
-    "✅ Analysis history saved:",
+    "✅ NEW ANALYSIS HISTORY SAVED",
     record
   );
+
+
+  // ==================================================
+  // REFRESH UI
+  // ==================================================
+
+  renderAnalysisHistory();
 
 
   return {
@@ -236,7 +364,9 @@ function addAnalysisHistory(data) {
 // DELETE HISTORY
 // ======================================================
 
-function deleteAnalysisHistory(id) {
+function deleteAnalysisHistory(
+  id
+) {
 
   const history =
     getAnalysisHistory();
@@ -245,8 +375,8 @@ function deleteAnalysisHistory(id) {
   const newHistory =
     history.filter(
       item =>
-        item.id !==
-        id
+        String(item.id) !==
+        String(id)
     );
 
 
@@ -431,9 +561,15 @@ function renderAnalysisHistory() {
 
                     <strong>
 
-                      💰 ${Number(
-                        item.price
-                      ).toFixed(2)}
+                      💰 ${
+                        Number.isFinite(
+                          Number(item.price)
+                        )
+                          ? Number(
+                              item.price
+                            ).toFixed(2)
+                          : "-"
+                      }
 
                     </strong>
 
@@ -442,9 +578,11 @@ function renderAnalysisHistory() {
 
                   <div class="nearest-info">
 
-                    ${formatHistoryDate(
-                      item.createdAt
-                    )}
+                    ${
+                      formatHistoryDate(
+                        item.createdAt
+                      )
+                    }
 
                   </div>
 
@@ -454,93 +592,58 @@ function renderAnalysisHistory() {
                 <div class="history-grid">
 
                   <div>
-
                     D1 MA12
-
                     <strong>
-
                       ${item.d1ma12 ?? "-"}
-
                     </strong>
-
                   </div>
 
 
                   <div>
-
                     D1 ATR14
-
                     <strong>
-
                       ${item.d1atr ?? "-"}
-
                     </strong>
-
                   </div>
 
 
                   <div>
-
                     D1 SD20
-
                     <strong>
-
                       ${item.d1sd ?? "-"}
-
                     </strong>
-
                   </div>
 
 
                   <div>
-
                     D1 MA247
-
                     <strong>
-
                       ${item.d1ma247 ?? "-"}
-
                     </strong>
-
                   </div>
 
 
                   <div>
-
                     W1 MA12
-
                     <strong>
-
                       ${item.w1ma12 ?? "-"}
-
                     </strong>
-
                   </div>
 
 
                   <div>
-
                     W1 ATR14
-
                     <strong>
-
                       ${item.w1atr ?? "-"}
-
                     </strong>
-
                   </div>
 
 
                   <div>
-
                     W1 SD20
-
                     <strong>
-
                       ${item.w1sd ?? "-"}
-
                     </strong>
-
                   </div>
 
                 </div>
@@ -598,7 +701,11 @@ function renderAnalysisHistory() {
 
                 <button
                   type="button"
-                  onclick="deleteAnalysisHistory('${item.id}')"
+                  onclick="
+                    deleteAnalysisHistory(
+                      '${item.id}'
+                    )
+                  "
                   class="delete-history-btn"
                 >
 
@@ -618,33 +725,6 @@ function renderAnalysisHistory() {
   `;
 
 }
-
-
-// ======================================================
-// DUPLICATE MESSAGE
-// ======================================================
-
-function showDuplicateHistoryMessage() {
-
-  console.log(
-    "⏭️ ไม่บันทึก เพราะเป็นข้อมูลการวิเคราะห์เดิม"
-  );
-
-}
-
-
-// ======================================================
-// AUTO LOAD
-// ======================================================
-
-document.addEventListener(
-  "DOMContentLoaded",
-  function() {
-
-    renderAnalysisHistory();
-
-  }
-);
 
 
 // ======================================================
@@ -671,6 +751,28 @@ window.GoldZoneHistory = {
 };
 
 
+window.clearAnalysisHistory =
+  clearAnalysisHistory;
+
+
+window.deleteAnalysisHistory =
+  deleteAnalysisHistory;
+
+
+// ======================================================
+// AUTO LOAD
+// ======================================================
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function() {
+
+    renderAnalysisHistory();
+
+  }
+);
+
+
 console.log(
-  "✅ Gold Zone Analysis History loaded"
+  "✅ Gold Zone Analysis History V2 loaded"
 );
